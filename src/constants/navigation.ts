@@ -4,26 +4,26 @@ export const NAVIGATION_TABS: TabItem[] = [
     {
         path: '/profile',
         title: '내 정보',
-        icon: '/src/assets/tab-bar-icon/mypage.png'
+        icon: '/src/assets/icon/mypage.png'
     },
     {
         path: '/hold',
         title: '문제 출제',
-        icon: '/src/assets/tab-bar-icon/hold.png'
+        icon: '/src/assets/icon/hold.png'
     },
     {
         path: '/timeline',
         title: '타임라인',
-        icon: '/src/assets/tab-bar-icon/timeline.png'
+        icon: '/src/assets/icon/timeline.png'
     },
     {
         path: '/community',
         title: '커뮤니티',
-        icon: '/src/assets/tab-bar-icon/community.png'
+        icon: '/src/assets/icon/community.png'
     },
     {
         path: '/foot-analysis',
         title: '암벽화',
-        icon: '/src/assets/tab-bar-icon/shoes.png'
+        icon: '/src/assets/icon/shoes.png'
     }
 ] as const;

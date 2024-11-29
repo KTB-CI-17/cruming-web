@@ -1,5 +1,12 @@
 {
-  "files": [],
+  "compilerOptions": {
+    "typeRoots": ["./types", "./node_modules/@types"],
+    "esModuleInterop": true,
+    "jsx": "react"
+  },
+  "files": [
+    "./env.d.ts"
+  ],
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }

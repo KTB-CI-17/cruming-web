@@ -26,26 +26,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         checkAuth();
     }, []);
 
-    async function checkAuth() {
-        try {
-            const tokenDataString = localStorage.getItem('tokenData');
-            if (!tokenDataString) {
-                setIsAuthenticated(false);
-                setUser(null);
-                setLoading(false);
-                return;
-            }
-
-            const tokenData = JSON.parse(tokenDataString);
-            setIsAuthenticated(true);
-            setLoading(false);
-
-        } catch (error) {
-            console.error('Error checking auth:', error);
-            setLoading(false);
-        }
-    }
-
     const login = async (provider: 'kakao' | 'naver') => {
         if (provider === 'kakao') {
             const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${import.meta.env.VITE_KAKAO_REST_API_KEY}&redirect_uri=${import.meta.env.VITE_KAKAO_LOGIN_REDIRECT_URL}&response_type=code`;
@@ -54,12 +34,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     const getValidToken = async (): Promise<string | null> => {
-        const tokenDataString = localStorage.getItem('tokenData');
-        if (!tokenDataString) return null;
-
-        const tokenData = JSON.parse(tokenDataString);
-        return tokenData.accessToken;
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) return null;
+        return accessToken;
     };
+
+    async function checkAuth() {
+        try {
+            const accessToken = localStorage.getItem('accessToken');
+            if (!accessToken) {
+                setIsAuthenticated(false);
+                setUser(null);
+                setLoading(false);
+                return;
+            }
+            setIsAuthenticated(true);
+            setLoading(false);
+        } catch (error) {
+            console.error('Error checking auth:', error);
+            setLoading(false);
+        }
+    }
 
     async function logout() {
         try {

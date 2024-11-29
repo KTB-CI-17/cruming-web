@@ -1,15 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from '../context/AuthContext';
 
 interface TokenResponse {
     accessToken: string;
-    refreshToken: string;
-    expiresAt: number;
 }
 
-const KakaoCallback: React.FC = () => {
+const KakaoCallback = () => {
     const navigate = useNavigate();
     const { setIsAuthenticated } = useAuth();
     const [isLoading, setIsLoading] = useState(true);
@@ -26,11 +24,15 @@ const KakaoCallback: React.FC = () => {
             }
 
             try {
-                const response = await axios.get<TokenResponse>('http://localhost:8080/api/v1/auth/code', {
-                    params: { code }
-                });
+                const response = await axios.get<TokenResponse>(
+                    'http://localhost:8080/api/v1/auth/code',
+                    {
+                        params: { code },
+                        withCredentials: true
+                    }
+                );
 
-                localStorage.setItem('tokenData', JSON.stringify(response.data));
+                localStorage.setItem('accessToken', response.data.accessToken);
                 setIsAuthenticated(true);
                 setIsLoading(false);
                 navigate('/timeline', { replace: true });

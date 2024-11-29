@@ -1,11 +1,15 @@
 import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import {useNavigate, useLocation, Navigate} from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const LoginPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { login } = useAuth();
+    const { isAuthenticated, login } = useAuth();
+
+    if (isAuthenticated) {
+        return <Navigate to="/timeline" replace />;
+    }
 
     const handleSocialLogin = async (provider: 'kakao' | 'naver') => {
         try {

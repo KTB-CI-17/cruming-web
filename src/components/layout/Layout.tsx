@@ -1,11 +1,11 @@
 import { memo } from 'react';
+import { Outlet } from 'react-router-dom';
 import { Header } from './Header';
 import { TabBar } from './TabBar';
-import { LayoutProps } from '../../types/layout';
 import { LAYOUT, PADDING } from '../../constants/layout';
 import { COLORS } from '../../styles/theme';
 
-export const Layout = memo(({ children }: LayoutProps) => {
+export const Layout = memo(() => {
     return (
         <div
             className="fixed inset-0 flex items-center justify-center"
@@ -39,7 +39,7 @@ export const Layout = memo(({ children }: LayoutProps) => {
                                 }
                             `}
                         </style>
-                        {children}
+                        <Outlet />
                     </main>
 
                     <TabBar />

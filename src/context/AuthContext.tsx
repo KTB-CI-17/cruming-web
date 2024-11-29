@@ -1,42 +1,87 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import { Auth } from '../types/auth';
 
 interface AuthContextType {
     isAuthenticated: boolean;
+    setIsAuthenticated: (isAuthenticated: boolean) => void;
+    user: Auth | null;
+    loading: boolean;
     login: (provider: 'kakao' | 'naver') => Promise<void>;
-    logout: () => void;
+    logout: () => Promise<void>;
+    getValidToken: () => Promise<string | null>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+    const [user, setUser] = useState<Auth | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     useEffect(() => {
-        // 로컬 스토리지나 토큰을 확인하여 인증 상태 초기화
-        const token = localStorage.getItem('auth_token');
-        setIsAuthenticated(!!token);
+        if (window.location.pathname === '/login') {
+            setLoading(false);
+            return;
+        }
+        checkAuth();
     }, []);
 
-    const login = async (provider: 'kakao' | 'naver') => {
+    async function checkAuth() {
         try {
-            // 소셜 로그인 로직 구현
-            // 성공 시 토큰을 로컬 스토리지에 저장
-            const token = 'dummy_token'; // 실제 인증 토큰으로 대체
-            localStorage.setItem('auth_token', token);
+            const tokenDataString = localStorage.getItem('tokenData');
+            if (!tokenDataString) {
+                setIsAuthenticated(false);
+                setUser(null);
+                setLoading(false);
+                return;
+            }
+
+            const tokenData = JSON.parse(tokenDataString);
             setIsAuthenticated(true);
+            setLoading(false);
+
         } catch (error) {
-            console.error(`${provider} login failed:`, error);
-            throw error;
+            console.error('Error checking auth:', error);
+            setLoading(false);
+        }
+    }
+
+    const login = async (provider: 'kakao' | 'naver') => {
+        if (provider === 'kakao') {
+            const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${import.meta.env.VITE_KAKAO_REST_API_KEY}&redirect_uri=${import.meta.env.VITE_KAKAO_LOGIN_REDIRECT_URL}&response_type=code`;
+            window.location.href = kakaoURL;
         }
     };
 
-    const logout = () => {
-        localStorage.removeItem('auth_token');
-        setIsAuthenticated(false);
+    const getValidToken = async (): Promise<string | null> => {
+        const tokenDataString = localStorage.getItem('tokenData');
+        if (!tokenDataString) return null;
+
+        const tokenData = JSON.parse(tokenDataString);
+        return tokenData.accessToken;
     };
 
+    async function logout() {
+        try {
+            localStorage.removeItem('accessToken');
+            setIsAuthenticated(false);
+            setUser(null);
+            window.location.href = '/login';
+        } catch (error) {
+            console.error('Error logging out:', error);
+        }
+    }
+
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+        <AuthContext.Provider value={{
+            user,
+            loading,
+            login,
+            logout,
+            isAuthenticated,
+            setIsAuthenticated,
+            getValidToken
+        }}>
             {children}
         </AuthContext.Provider>
     );

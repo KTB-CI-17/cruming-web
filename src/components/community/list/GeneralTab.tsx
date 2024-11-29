@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import PostCard from './PostCard';
-import { usePostList } from '../../hooks/usePostList';
-import ErrorState from "./ErrorState.tsx";
+import PostCard from './PostCard.tsx';
+import ErrorState from './ErrorState.tsx';
+import { usePostList } from '../../../hooks/usePostList.ts';
 
-const TimelineTab = () => {
+const GeneralTab = () => {
     const navigate = useNavigate();
     const {
         posts,
@@ -13,7 +13,7 @@ const TimelineTab = () => {
         hasMore,
         handleLoadMore,
         handleRetry
-    } = usePostList({ category: 'TIMELINE' });
+    } = usePostList({ category: 'GENERAL' });
 
     const handlePostClick = useCallback((id: number) => {
         navigate(`/community/${id}`);
@@ -25,6 +25,14 @@ const TimelineTab = () => {
 
     if (error) {
         return <ErrorState onRetry={handleRetry} />;
+    }
+
+    if (posts.length === 0) {
+        return (
+            <div className="flex flex-col items-center justify-center h-[calc(100vh-300px)]">
+                <p className="text-[#8F9BB3] text-base">게시글이 존재하지 않습니다.</p>
+            </div>
+        );
     }
 
     return (
@@ -50,4 +58,4 @@ const TimelineTab = () => {
     );
 };
 
-export default TimelineTab;
+export default GeneralTab;

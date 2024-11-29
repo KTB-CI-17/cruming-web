@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import PostCard from './PostCard';
-import ErrorState from './ErrorState';
-import { usePostList } from '../../hooks/usePostList';
+import PostCard from './PostCard.tsx';
+import { usePostList } from '../../../hooks/usePostList.ts';
+import ErrorState from "./ErrorState.tsx";
 
-const GeneralTab = () => {
+const ProblemTab = () => {
     const navigate = useNavigate();
     const {
         posts,
@@ -13,7 +13,7 @@ const GeneralTab = () => {
         hasMore,
         handleLoadMore,
         handleRetry
-    } = usePostList({ category: 'GENERAL' });
+    } = usePostList({ category: 'PROBLEM' });
 
     const handlePostClick = useCallback((id: number) => {
         navigate(`/community/${id}`);
@@ -58,4 +58,4 @@ const GeneralTab = () => {
     );
 };
 
-export default GeneralTab;
+export default ProblemTab;

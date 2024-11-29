@@ -1,6 +1,6 @@
 import { Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { LAYOUT } from '../../constants/layout';
+import { LAYOUT } from '../../../constants/layout.ts';
 
 const AddButton = () => {
     const navigate = useNavigate();

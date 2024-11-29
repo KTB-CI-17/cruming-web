@@ -38,7 +38,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ onTabChange }) => {
     };
 
     return (
-        <div className="w-full border-b border-gray-200 bg-white">
+        <div className="w-full border-b border-gray-200 bg-white px-3 my-2">
             <nav className="flex justify-between px-2">
                 {tabs.map(tab => (
                     <Tab

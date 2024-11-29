@@ -1,6 +1,6 @@
 import React from 'react';
 import { format, parseISO } from 'date-fns';
-import { ListPost } from '../../types/community';
+import { ListPost } from '../../../types/community.ts';
 import {ko} from "date-fns/locale";
 
 interface PostCardProps {
@@ -22,7 +22,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
     return (
         <button
             onClick={() => onClick(post.id)}
-            className="w-full py-4 border-b border-[#F0F0F0] text-left"
+            className="w-full py-3 border-b border-[#F0F0F0] text-left"
         >
             <div className="flex justify-between items-center">
                 <div className="flex items-center flex-1 mr-2">

@@ -6,7 +6,7 @@ const SearchBar = () => {
     const [searchText, setSearchText] = useState('');
 
     return (
-        <div className="px-5 py-3">
+        <div className="px-5 py-0">
             <div className={`
                 flex items-center h-10 px-4 
                 border rounded-full bg-white

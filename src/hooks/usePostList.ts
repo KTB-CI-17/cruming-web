@@ -1,12 +1,25 @@
+import { api } from '../config/axios';
+import { PostCategory, PostListResponse, ListPost } from '../types/community';
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { ListPost, PostCategory } from '../types/community';
 import axios from 'axios';
-import {Post} from "../services/post";
+
+interface GetPostsParams {
+    page: number;
+    size: number;
+    category: PostCategory;
+}
 
 interface UsePostListProps {
     category: PostCategory;
     pageSize?: number;
 }
+
+export const Post = {
+    getPosts: async (params: GetPostsParams): Promise<PostListResponse> => {
+        const response = await api.get<PostListResponse>('/posts', { params });
+        return response.data;
+    }
+};
 
 export const usePostList = ({ category, pageSize = 10 }: UsePostListProps) => {
     const [posts, setPosts] = useState<ListPost[]>([]);
@@ -19,23 +32,8 @@ export const usePostList = ({ category, pageSize = 10 }: UsePostListProps) => {
     const isMountedRef = useRef(true);
     const isLoadingMoreRef = useRef(false);
 
-    useEffect(() => {
-        setPosts([]);
-        setPageNumber(0);
-        setHasMore(true);
-        setError(null);
-        isLoadingMoreRef.current = false;
-
-        if (abortControllerRef.current) {
-            abortControllerRef.current.abort();
-            abortControllerRef.current = null;
-        }
-    }, [category]);
-
     const fetchPosts = useCallback(async (page: number, isRefresh: boolean = false) => {
-        if (isLoadingMoreRef.current || (!isRefresh && !hasMore)) {
-            return;
-        }
+        if (isLoadingMoreRef.current || (!isRefresh && !hasMore)) return;
 
         try {
             isLoadingMoreRef.current = !isRefresh;
@@ -48,30 +46,25 @@ export const usePostList = ({ category, pageSize = 10 }: UsePostListProps) => {
                 size: pageSize,
                 category
             });
+            console.log('API Response:', response);
 
             if (!isMountedRef.current) return;
 
             const newPosts = response.content;
 
-            if (isRefresh) {
-                setPosts(newPosts);
-            } else {
-                setPosts(prevPosts => {
-                    const existingIds = new Set(prevPosts.map(post => post.id));
-                    const uniqueNewPosts = newPosts.filter(post => !existingIds.has(post.id));
-                    return [...prevPosts, ...uniqueNewPosts];
-                });
-            }
+            setPosts(prevPosts => {
+                if (isRefresh) return newPosts;
+                const existingIds = new Set(prevPosts.map(post => post.id));
+                const uniqueNewPosts = newPosts.filter(post => !existingIds.has(post.id));
+                return [...prevPosts, ...uniqueNewPosts];
+            });
 
             setHasMore(!response.last && newPosts.length > 0);
             setPageNumber(page);
 
         } catch (error) {
-            if (!isMountedRef.current) return;
+            if (!isMountedRef.current || axios.isCancel(error)) return;
 
-            if (axios.isCancel(error)) {
-                return;
-            }
             setError('게시글을 불러오는데 실패했습니다.');
             setHasMore(false);
         } finally {
@@ -85,9 +78,17 @@ export const usePostList = ({ category, pageSize = 10 }: UsePostListProps) => {
 
     useEffect(() => {
         isMountedRef.current = true;
-        fetchPosts(0, true);
+        let ignore = false;
+
+        const fetchInitialPosts = async () => {
+            await fetchPosts(0, true);
+            if (ignore) return;
+        };
+
+        fetchInitialPosts();
 
         return () => {
+            ignore = true;
             isMountedRef.current = false;
             if (abortControllerRef.current) {
                 abortControllerRef.current.abort();
@@ -101,12 +102,11 @@ export const usePostList = ({ category, pageSize = 10 }: UsePostListProps) => {
         setPageNumber(0);
         setHasMore(true);
         fetchPosts(0, true);
-    }, [fetchPosts]);
+    }, [fetchPosts, isRefreshing]);
 
     const handleLoadMore = useCallback(() => {
         if (!isLoadingMoreRef.current && hasMore && !isRefreshing) {
-            const nextPage = pageNumber + 1;
-            fetchPosts(nextPage, false);
+            fetchPosts(pageNumber + 1, false);
         }
     }, [pageNumber, fetchPosts, hasMore, isRefreshing]);
 

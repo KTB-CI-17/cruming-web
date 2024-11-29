@@ -34,7 +34,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
                             NEW
                         </span>
                     )}
-                    <h3 className="flex-1 text-base text-[#1A1F36] truncate">
+                    <h3 className="flex-1 text-base text-[#333333] truncate">
                         {post.title}
                     </h3>
                 </div>

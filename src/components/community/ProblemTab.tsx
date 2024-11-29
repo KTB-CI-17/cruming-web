@@ -27,6 +27,14 @@ const ProblemTab = () => {
         return <ErrorState onRetry={handleRetry} />;
     }
 
+    if (posts.length === 0) {
+        return (
+            <div className="flex flex-col items-center justify-center h-[calc(100vh-300px)]">
+                <p className="text-[#8F9BB3] text-base">게시글이 존재하지 않습니다.</p>
+            </div>
+        );
+    }
+
     return (
         <div>
             {posts.map(post => (

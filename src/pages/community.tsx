@@ -23,17 +23,18 @@ const CommunityPage: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col min-h-screen bg-white">
-            <div className="fixed top-0 left-0 right-0 z-10 bg-white">
-                <SearchBar />
-                <TabNavigation onTabChange={setCurrentTab} />
+        <div className="flex flex-col h-full bg-white page-container">
+            <div className="bg-white">
+                <TabNavigation onTabChange={setCurrentTab}/>
+                <SearchBar/>
             </div>
-            <div className="mt-[116px] pb-20 max-w-screen-sm mx-auto w-full">
+            <div className="max-w-screen-sm mx-auto w-full">
                 {renderTabContent()}
             </div>
-            <AddButton />
+            <AddButton/>
         </div>
     );
+
 };
 
 export default CommunityPage;

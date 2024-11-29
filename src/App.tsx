@@ -5,6 +5,7 @@ import Profile from "./pages/profile";
 import Timeline from "./pages/timeline";
 import FootAnalysis from "./pages/foot-analysis";
 import Community from "./pages/community";
+import CommunityDetail from "./pages/communityDetail";
 import Hold from "./pages/hold";
 import { ProtectedRoute } from "./components/ProtectedRoute.tsx";
 import Login from "./pages/login.tsx";
@@ -25,6 +26,7 @@ function App() {
                             <Route path="/hold" element={<Hold />} />
                             <Route path="/timeline" element={<Timeline />} />
                             <Route path="/community" element={<Community />} />
+                            <Route path="/community/:id" element={<CommunityDetail />} />
                             <Route path="/foot-analysis" element={<FootAnalysis />} />
                         </Route>
                     </Route>

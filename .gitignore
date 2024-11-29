@@ -1,0 +1,41 @@
+# Node modules
+node_modules/
+
+# Build output
+dist/
+
+# Temporary files
+*.log
+*.tmp
+*.temp
+
+# Local environment files
+.env
+.env.*.local
+
+# Editor specific files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Typescript
+*.tsbuildinfo
+
+# Vite
+.vite
+.cache
+
+# NPM/Yarn/Pnpm lock files (if not needed)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml

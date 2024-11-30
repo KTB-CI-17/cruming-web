@@ -46,7 +46,6 @@ export const usePostList = ({ category, pageSize = 15 }: UsePostListProps) => {
                 size: pageSize,
                 category
             });
-            console.log('API Response:', response);
 
             if (!isMountedRef.current) return;
 

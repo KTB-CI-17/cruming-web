@@ -21,7 +21,7 @@ function App() {
 
                     <Route element={<ProtectedRoute />}>
                         <Route element={<Layout />}>
-                            <Route path="/" element={<Navigate to="/profile" replace />} />
+                            <Route path="/" element={<Navigate to="/timeline" replace />} />
                             <Route path="/profile" element={<Profile />} />
                             <Route path="/hold" element={<Hold />} />
                             <Route path="/timeline" element={<Timeline />} />

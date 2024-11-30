@@ -70,7 +70,7 @@ class ApiClient {
                     return Promise.reject(error);
                 }
 
-                if (error.response?.status === 401 && !originalRequest._retry) {
+                if (error.response?.status === 403 && !originalRequest._retry) {
                     if (this.isRefreshing) {
                         return new Promise(resolve => {
                             this.subscribeTokenRefresh(token => {

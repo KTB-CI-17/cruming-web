@@ -21,7 +21,7 @@ export const Post = {
     }
 };
 
-export const usePostList = ({ category, pageSize = 10 }: UsePostListProps) => {
+export const usePostList = ({ category, pageSize = 15 }: UsePostListProps) => {
     const [posts, setPosts] = useState<ListPost[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);

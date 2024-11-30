@@ -9,7 +9,8 @@ import CommunityDetail from "./pages/communityDetail";
 import Hold from "./pages/hold";
 import { ProtectedRoute } from "./components/ProtectedRoute.tsx";
 import Login from "./pages/login.tsx";
-import KakaoCallback from "./pages/kakao-login-call-back.tsx";
+import KakaoCallback from "./pages/KakaoCallback.tsx";
+import NewPost from "./pages/new.tsx";
 
 function App() {
     return (
@@ -25,8 +26,12 @@ function App() {
                             <Route path="/profile" element={<Profile />} />
                             <Route path="/hold" element={<Hold />} />
                             <Route path="/timeline" element={<Timeline />} />
+
                             <Route path="/community" element={<Community />} />
                             <Route path="/community/:id" element={<CommunityDetail />} />
+                            <Route path="/community/new" element={<NewPost />} />
+
+
                             <Route path="/foot-analysis" element={<FootAnalysis />} />
                         </Route>
                     </Route>

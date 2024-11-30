@@ -16,14 +16,6 @@
     position: relative;
 }
 
-/* 모바일 최적화 */
-@media (max-width: 430px) {
-    html, body {
-        overflow-x: hidden;
-    }
-}
-
-/* 탭바 여백을 위한 패딩 설정 */
 .page-container {
     padding-bottom: calc(var(--bottom-nav-height) + 1rem);
 }

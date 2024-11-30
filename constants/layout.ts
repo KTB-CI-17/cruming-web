@@ -1,7 +1,7 @@
 export const LAYOUT = {
     HEADER_HEIGHT: '60px',
     TAB_BAR_HEIGHT: '60px',
-    MAX_CONTENT_WIDTH: '1000px',
+    MAX_CONTENT_WIDTH: '500px',
     MAX_CONTENT_HEIGHT: '1000px',
     SAFE_TOP: 'env(safe-area-inset-top)',
     SAFE_BOTTOM: 'env(safe-area-inset-bottom)'

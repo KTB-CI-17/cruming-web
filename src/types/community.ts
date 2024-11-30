@@ -136,3 +136,47 @@ export type ReplyAction =
     | { type: 'SET_SUBMITTING'; payload: boolean }
     | { type: 'SET_ERROR'; payload: Error | null }
     | { type: 'UPDATE_CHILDREN'; payload: { parentId: number; children: Reply[]; page: number } };
+
+export interface PostFormData {
+    title: string;
+    content: string;
+    files: File[];
+}
+
+export interface ImageUploadResponse {
+    id: number;
+    url: string;
+    fileKey: string;
+    displayOrder: number;
+}
+
+export interface CreatePostRequest {
+    title: string;
+    content: string;
+    files: {
+        originalFileName: string;
+        displayOrder: number;
+    }[];
+}
+
+export interface UploadImage {
+    file: File;
+    preview: string;
+}
+
+export interface PostFormContentProps {
+    title: string,
+    content: string,
+    images: UploadImage[],
+    onTitleChange: (value: string) => void,
+    onContentChange: (value: string) => void,
+    onImagesChange: (images: UploadImage[]) => void,
+    isLoading: boolean,
+    className?: string
+}
+
+export interface ImageUploadAreaProps {
+    images: UploadImage[];
+    onImagesChange: (images: UploadImage[]) => void;
+    disabled?: boolean;
+}

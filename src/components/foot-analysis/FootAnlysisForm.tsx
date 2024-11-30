@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FormData, ShapeType, FootType, LevelType } from '../../types/foot-analysis';
-import { SHAPE_OPTIONS, TYPE_OPTIONS, LEVEL_OPTIONS } from '../../constants/foot-analysis';
+import { SHAPE_OPTIONS, TYPE_OPTIONS, LEVEL_OPTIONS } from '../../../constants/foot-analysis';
 
 interface OptionProps<T extends string> {
     selected: boolean;

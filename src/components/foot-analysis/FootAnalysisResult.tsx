@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FormData } from '../../types/foot-analysis';
-import { DUMMY_RESULTS } from '../../constants/foot-analysis';
+import { DUMMY_RESULTS } from '../../../constants/foot-analysis';
 import { ShoeCard } from './ShoeCard';
 import {FootAnalysisForm} from "./FootAnlysisForm.tsx";
 

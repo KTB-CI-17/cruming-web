@@ -1,4 +1,4 @@
-import {OptionType, ShapeType, FootType, LevelType, ShoeData} from '../types/foot-analysis';
+import {OptionType, ShapeType, FootType, LevelType, ShoeData} from '../src/types/foot-analysis';
 
 export const SHAPE_OPTIONS: OptionType<ShapeType>[] = [
     { id: 'Egyptian', label: 'Egyptian' },

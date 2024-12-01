@@ -1,47 +1,68 @@
-import { Post } from '../types/community';
-import { api } from '../config/axios';
+import { useState, useCallback } from 'react';
+import { AxiosError } from 'axios';
+import {api} from "../config/axios.ts";
+import {Post} from "../types/community.ts";
 
-export const usePostDetail = () => ({
-    fetchPost: async (postId: string): Promise<Post> => {
-        const { data } = await api.get(`/posts/${postId}`);
-        return data;
-    },
+export function usePost(postId: string) {
+    const [post, setPost] = useState<Post | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    deletePost: async (postId: number) => {
-        await api.delete(`/posts/${postId}`);
-    },
+    const fetchPost = useCallback(async () => {
+        try {
+            setIsLoading(true);
+            const { data } = await api.get<Post>(`/posts/${postId}`);
+            setPost(data);
+            return data;
+        } catch (e) {
+            const error = e as AxiosError;
+            const message = error.response?.status === 404
+                ? "게시글을 찾을 수 없습니다."
+                : "게시글을 불러오는데 실패했습니다.";
+            setError(message);
+            throw new Error(message);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [postId]);
 
-    togglePostLike: async (postId: number): Promise<boolean> => {
-        const { data } = await api.post(`/posts/${postId}/likes`);
-        return data;
-    },
+    const deletePost = useCallback(async () => {
+        if (!post) return;
 
-    fetchReplies: async (postId: string, page = 0, size = 10) => {
-        const { data } = await api.get(
-            `/posts/${postId}/replies?page=${page}&size=${size}&sort=createdAt,asc`
-        );
-        return data;
-    },
+        try {
+            await api.delete(`/posts/${post.id}`);
+            return true;
+        } catch (error) {
+            throw new Error("삭제에 실패했습니다.");
+        }
+    }, [post]);
 
-    fetchChildReplies: async (parentId: number, page = 0) => {
-        const { data } = await api.get(
-            `/posts/replies/${parentId}/children?page=${page}&size=5&sort=createdAt,asc`
-        );
-        return data;
-    },
+    const togglePostLike = useCallback(async () => {
+        if (!post) return false;
 
-    createReply: async (postId: string, content: string, parentId?: number | null) => {
-        const url = parentId ? `/posts/${postId}/replies/${parentId}` : `/posts/${postId}/replies`;
-        const { data } = await api.post(url, { content });
-        return data;
-    },
+        try {
+            const { data } = await api.post<boolean>(`/posts/${post.id}/likes`);
+            setPost(prev => {
+                if (!prev) return null;
+                return {
+                    ...prev,
+                    isLiked: data,
+                    likeCount: data ? prev.likeCount + 1 : prev.likeCount - 1
+                };
+            });
+            return data;
+        } catch (error) {
+            throw new Error("좋아요 처리에 실패했습니다.");
+        }
+    }, [post]);
 
-    updateReply: async (replyId: number, content: string) => {
-        const { data } = await api.put(`/posts/replies/${replyId}`, { content });
-        return data;
-    },
-
-    deleteReply: async (replyId: number) => {
-        await api.delete(`/posts/replies/${replyId}`);
-    }
-});
+    return {
+        post,
+        isLoading,
+        error,
+        fetchPost,
+        deletePost,
+        togglePostLike,
+        setPost
+    };
+}

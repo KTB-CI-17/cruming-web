@@ -1,5 +1,4 @@
-import { Reply } from '../../../types/community';
-
+import {Reply} from "../../../types/community.ts";
 
 interface PostReplyProps {
     replies: Reply[];
@@ -25,6 +24,7 @@ export default function PostReply({
                                       onLoadChildren,
                                       onDeleteReply,
                                       onEditReply,
+                                      totalCount,
                                       loadingStates = {},
                                   }: PostReplyProps) {
     const formatDate = (dateString: string) => {
@@ -41,37 +41,70 @@ export default function PostReply({
         return date.toLocaleDateString();
     };
 
-    const renderReplyItem = (item: Reply, isChild = false) => (
-        <div key={item.id} className={`p-4 ${isChild ? 'ml-8 bg-gray-50' : 'border-b border-gray-100'}`}>
-            <div className="flex items-center gap-2 mb-2">
-                <img
-                    src="/default-profile.png"
-                    alt="Profile"
-                    className="w-8 h-8 rounded-full"
-                    onClick={() => onProfilePress(item.userId)}
-                />
-                <span className="font-semibold">{item.userNickname}</span>
+    const renderReplyItem = (reply: Reply, isChild = false) => (
+        <div key={reply.id} className={`px-4 py-4 ${isChild ? 'pl-12' : ''}`}>
+            <div className="flex items-center justify-between mb-2">
+                <button
+                    className="flex items-center"
+                    onClick={() => onProfilePress(reply.userId)}
+                >
+                    <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200">
+                        <img
+                            src="/images/default-profile.png"
+                            alt="Profile"
+                            className="w-full h-full object-cover"
+                        />
+                    </div>
+                    <span className="ml-2 text-sm font-semibold">
+                        {reply.userNickname}
+                    </span>
+                </button>
             </div>
-            <p className="mb-2 ml-10">{item.content}</p>
-            <div className="flex gap-4 text-sm text-gray-500 ml-10">
-                <span>{formatDate(item.createdAt)}</span>
-                {!isChild && <button onClick={() => onReply(item.id)}>답글</button>}
-                {item.isWriter && (
-                    <>
-                        <button onClick={() => onEditReply(item.id)}>수정</button>
-                        <button onClick={() => onDeleteReply(item.id)}>삭제</button>
-                    </>
-                )}
-            </div>
-            {item.children && item.children.length > 0 && (
-                <div className="mt-2">
-                    {item.children.map(child => renderReplyItem(child, true))}
-                    {item.childCount && item.childCount > item.children.length && !loadingStates[item.id] && (
+
+            <p className="text-sm leading-relaxed ml-10 text-gray-900">{reply.content}</p>
+
+            <div className="flex items-center justify-between mt-2 ml-10">
+                <span className="text-xs text-gray-500">{formatDate(reply.createdAt)}</span>
+                <div className="flex items-center gap-4">
+                    {!isChild && (
                         <button
-                            onClick={() => onLoadChildren(item.id, Math.ceil(item.children!.length / 5))}
-                            className="ml-8 mt-2 text-sm text-gray-500"
+                            onClick={() => onReply(reply.id)}
+                            className="text-xs text-gray-500 hover:text-gray-700"
                         >
-                            대댓글 {item.childCount - item.children.length}개 더보기
+                            답글
+                        </button>
+                    )}
+                    {reply.isWriter && (
+                        <>
+                            <button
+                                onClick={() => onEditReply(reply.id)}
+                                className="text-xs text-gray-500 hover:text-gray-700"
+                            >
+                                수정
+                            </button>
+                            <button
+                                onClick={() => onDeleteReply(reply.id)}
+                                className="text-xs text-gray-500 hover:text-gray-700"
+                            >
+                                삭제
+                            </button>
+                        </>
+                    )}
+                </div>
+            </div>
+
+            {!isChild && reply.children && reply.children.length > 0 && (
+                <div className="mt-4 space-y-4">
+                    {reply.children.map(child => renderReplyItem(child, true))}
+                    {reply.childCount && reply.childCount > (reply.children?.length || 0) && !loadingStates[reply.id] && (
+                        <button
+                            onClick={() => {
+                                const nextPage = Math.ceil((reply.children?.length || 0) / 5);
+                                onLoadChildren(reply.id, nextPage);
+                            }}
+                            className="ml-12 px-4 py-2 text-xs text-gray-500 bg-gray-50 hover:bg-gray-100 rounded-lg"
+                        >
+                            답글 {reply.childCount - (reply.children?.length || 0)}개 더보기
                         </button>
                     )}
                 </div>
@@ -79,22 +112,26 @@ export default function PostReply({
         </div>
     );
 
+    const remainingReplies = totalCount - replies.length;
+
     return (
-        <div className="divide-y divide-gray-100">
-            {replies.map(reply => renderReplyItem(reply))}
-            {loading && (
-                <div className="py-4 text-center">
-                    <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"></div>
-                </div>
-            )}
-            {!loading && hasMore && (
-                <button
-                    onClick={onLoadMore}
-                    className="w-full py-3 text-gray-500 hover:bg-gray-50"
-                >
-                    댓글 더보기
-                </button>
-            )}
+        <div className="border-t border-gray-100">
+            <div>
+                {replies.map(reply => renderReplyItem(reply))}
+                {loading && (
+                    <div className="flex justify-center py-4">
+                        <div className="w-6 h-6 border-2 border-gray-200 border-t-blue-600 rounded-full animate-spin" />
+                    </div>
+                )}
+                {!loading && hasMore && remainingReplies > 0 && (
+                    <button
+                        onClick={onLoadMore}
+                        className="w-full py-3 text-sm text-gray-600 hover:bg-gray-50"
+                    >
+                        댓글 더보기
+                    </button>
+                )}
+            </div>
         </div>
     );
 }

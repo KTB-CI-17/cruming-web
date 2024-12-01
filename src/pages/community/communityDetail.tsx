@@ -16,6 +16,11 @@ export default function CommunityDetail() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const [imagesCache, setImagesCache] = useState<{[key: string]: string}>({});
+
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const {

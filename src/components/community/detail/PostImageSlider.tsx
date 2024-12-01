@@ -37,7 +37,7 @@ export default function PostImageSlider({
     };
 
     return (
-        <div className="relative w-full aspect-square bg-black mb-8">
+        <div className="relative w-full aspect-square bg-white mb-8">
             <div className="absolute inset-0 flex items-center justify-center">
                 <img
                     src={cachedImages[currentIndex]}

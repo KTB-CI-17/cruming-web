@@ -29,12 +29,10 @@ export default function HoldAnalysisResult({ imageUri, analysisResult }: HoldAna
 
     const {
         imageInfo,
-        layoutInfo,
         setLayoutInfo,
         calculateScaledCoordinates
     } = useImageProcessing(imageUri);
 
-    // onLayout 대신 useEffect와 ref 사용
     useEffect(() => {
         if (containerRef.current) {
             const { width, height } = containerRef.current.getBoundingClientRect();
@@ -79,7 +77,11 @@ export default function HoldAnalysisResult({ imageUri, analysisResult }: HoldAna
 
             <div
                 ref={(el) => {
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-expect-error
                     containerRef.current = el;
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-expect-error
                     captureRef.current = el;
                 }}
                 className="flex-1 relative"

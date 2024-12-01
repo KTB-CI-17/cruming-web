@@ -28,6 +28,8 @@ export interface KakaoKeywordResponse {
 export interface LocationData {
     placeName: string;
     roadAddress: string;
+    latitude: number;
+    longitude: number;
 }
 
 export interface LocationSearchProps {

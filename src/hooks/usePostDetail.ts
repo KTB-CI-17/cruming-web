@@ -33,6 +33,7 @@ export function usePost(postId: string) {
             await api.delete(`/posts/${post.id}`);
             return true;
         } catch (error) {
+            console.error(error);
             throw new Error("삭제에 실패했습니다.");
         }
     }, [post]);
@@ -52,6 +53,7 @@ export function usePost(postId: string) {
             });
             return data;
         } catch (error) {
+            console.error(error);
             throw new Error("좋아요 처리에 실패했습니다.");
         }
     }, [post]);

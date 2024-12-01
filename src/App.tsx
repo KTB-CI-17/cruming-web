@@ -1,16 +1,16 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { Layout } from './components/layout/Layout';
-import Profile from "./pages/profile";
-import Timeline from "./pages/timeline";
-import FootAnalysis from "./pages/foot-analysis";
-import Community from "./pages/community";
-import CommunityDetail from "./pages/communityDetail";
-import Hold from "./pages/hold";
+import Profile from "./pages/profile/profile.tsx";
+import Timeline from "./pages/timeline/timeline.tsx";
+import FootAnalysis from "./pages/foot-analysis/foot-analysis.tsx";
+import Community from "./pages/community/community.tsx";
+import CommunityDetail from "./pages/community/communityDetail.tsx";
+import Hold from "./pages/hold/hold.tsx";
 import { ProtectedRoute } from "./components/ProtectedRoute.tsx";
-import Login from "./pages/login.tsx";
-import KakaoCallback from "./pages/KakaoCallback.tsx";
-import NewPost from "./pages/new.tsx";
+import Login from "./pages/login/login.tsx";
+import KakaoCallback from "./pages/login/KakaoCallback.tsx";
+import NewPost from "./pages/community/new.tsx";
 
 function App() {
     return (

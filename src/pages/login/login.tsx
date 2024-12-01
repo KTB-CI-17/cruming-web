@@ -1,6 +1,6 @@
 import React from 'react';
 import {useNavigate, useLocation, Navigate} from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext.tsx';
 
 const LoginPage: React.FC = () => {
     const navigate = useNavigate();

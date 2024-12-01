@@ -1,8 +1,8 @@
 import { useRef } from 'react';
 import { Camera } from 'lucide-react';
-import HoldAnalysisLoading from "../components/hold/HoldAnalysisLoading.tsx";
-import HoldAnalysisResult from "../components/hold/HoldAnalysisResult.tsx";
-import {useMockHoldAnalysis} from "../hooks/useMockHoldAnalysis.ts";
+import HoldAnalysisLoading from "../../components/hold/HoldAnalysisLoading.tsx";
+import HoldAnalysisResult from "../../components/hold/HoldAnalysisResult.tsx";
+import {useMockHoldAnalysis} from "../../hooks/useMockHoldAnalysis.ts";
 
 export default function HoldPage() {
     const fileInputRef = useRef<HTMLInputElement>(null);

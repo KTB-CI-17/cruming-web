@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { PostFormContent } from '../components/community/new/PostFormContent';
-import { useUploadPost } from '../hooks/useUploadPost';
-import { UploadImage } from '../types/community';
-import { PADDING } from '../../constants/layout.ts';
+import { PostFormContent } from '../../components/community/new/PostFormContent.tsx';
+import { useUploadPost } from '../../hooks/useUploadPost.ts';
+import { UploadImage } from '../../types/community.ts';
+import { PADDING } from '../../../constants/layout.ts';
 
 export default function NewPost() {
     const [title, setTitle] = useState('');

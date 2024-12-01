@@ -160,7 +160,7 @@ export interface CreatePostRequest {
 }
 
 export interface UploadImage {
-    file: File;
+    file: globalThis.File;
     preview: string;
 }
 

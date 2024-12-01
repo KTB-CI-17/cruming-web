@@ -22,15 +22,29 @@ class ApiClient {
         if (!this.instance) {
             this.instance = axios.create({
                 baseURL: 'http://localhost:8080/api/v1',
-                withCredentials: true,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                withCredentials: true
             });
 
             this.setupInterceptors();
         }
         return this.instance;
+    }
+
+    public static getMultipartInstance(): AxiosInstance {
+        const instance = this.getInstance();
+        const multipartInstance = axios.create({
+            ...instance.defaults,
+            headers: {
+                ...instance.defaults.headers,
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+
+        // 인터셉터 재사용
+        multipartInstance.interceptors.request = instance.interceptors.request;
+        multipartInstance.interceptors.response = instance.interceptors.response;
+
+        return multipartInstance;
     }
 
     private static async refreshToken() {
@@ -109,3 +123,4 @@ class ApiClient {
 }
 
 export const api = ApiClient.getInstance();
+export const multipartApi = ApiClient.getMultipartInstance();

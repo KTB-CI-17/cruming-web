@@ -1,9 +1,9 @@
 import { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import html2canvas from 'html2canvas';
-import {useHoldSelection} from "../../hooks/useHoldSelection.ts";
-import {useImageProcessing} from "../../hooks/useImageProcessing.tsx";
-import {AnalysisResponse} from "../../types/hold.ts";
+import { useHoldSelection } from "../../hooks/useHoldSelection.ts";
+import { useImageProcessing } from "../../hooks/useImageProcessing.tsx";
+import { AnalysisResponse } from "../../types/hold.ts";
 
 interface HoldAnalysisResultProps {
     imageUri: string;
@@ -12,8 +12,8 @@ interface HoldAnalysisResultProps {
 
 export default function HoldAnalysisResult({ imageUri, analysisResult }: HoldAnalysisResultProps) {
     const navigate = useNavigate();
-    const captureRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
+    const imageContainerRef = useRef<HTMLDivElement>(null);
     const [showSaveButtons, setShowSaveButtons] = useState(true);
 
     const {
@@ -41,13 +41,23 @@ export default function HoldAnalysisResult({ imageUri, analysisResult }: HoldAna
     }, []);
 
     const handleDownload = async () => {
-        if (!captureRef.current) return;
+        if (!imageContainerRef.current) return;
 
         try {
             setShowSaveButtons(false);
             await new Promise(resolve => setTimeout(resolve, 100));
 
-            const canvas = await html2canvas(captureRef.current);
+            const canvas = await html2canvas(imageContainerRef.current, {
+                backgroundColor: null,
+                useCORS: true,
+                logging: false,
+                imageTimeout: 0,
+                ignoreElements: (element) => {
+                    // 다운로드/게시글 작성 버튼 영역 제외
+                    return element.classList.contains('button-container');
+                }
+            });
+
             const image = canvas.toDataURL('image/jpg', 1.0);
 
             const link = document.createElement('a');
@@ -75,74 +85,66 @@ export default function HoldAnalysisResult({ imageUri, analysisResult }: HoldAna
                 </h2>
             </div>
 
-            <div
-                ref={(el) => {
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-expect-error
-                    containerRef.current = el;
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-expect-error
-                    captureRef.current = el;
-                }}
-                className="flex-1 relative"
-            >
-                {imageInfo && (
-                    <img
-                        src={imageUri}
-                        alt="Analyzed climbing hold"
-                        className="absolute"
-                        style={{
-                            width: imageInfo.displayWidth,
-                            height: imageInfo.displayHeight,
-                            marginLeft: imageInfo.offsetX,
-                            marginTop: imageInfo.offsetY,
-                        }}
-                    />
-                )}
+            <div ref={containerRef} className="flex-1 relative">
+                <div ref={imageContainerRef} className="relative">
+                    {imageInfo && (
+                        <img
+                            src={imageUri}
+                            alt="Analyzed climbing hold"
+                            className="relative"
+                            style={{
+                                width: imageInfo.displayWidth,
+                                height: imageInfo.displayHeight,
+                                marginLeft: imageInfo.offsetX,
+                                marginTop: imageInfo.offsetY,
+                            }}
+                        />
+                    )}
 
-                {imageInfo && analysisResult?.detections?.map((detection, index) => {
-                    const shouldShow = selectionStep === 'initial' ||
-                        (selectionStep !== 'complete' && selectedHolds.includes(index)) ||
-                        (selectionStep === 'complete' && (selectedHolds.includes(index) || index === startHold || index === endHold));
+                    {imageInfo && analysisResult?.detections?.map((detection, index) => {
+                        const shouldShow = selectionStep === 'initial' ||
+                            (selectionStep !== 'complete' && selectedHolds.includes(index)) ||
+                            (selectionStep === 'complete' && (selectedHolds.includes(index) || index === startHold || index === endHold));
 
-                    if (!shouldShow) return null;
+                        if (!shouldShow) return null;
 
-                    const scaledCoords = calculateScaledCoordinates(detection.coordinates);
+                        const scaledCoords = calculateScaledCoordinates(detection.coordinates);
 
-                    return (
-                        <div key={index}>
-                            <button
-                                className={`absolute border-2 transition-colors cursor-pointer ${
-                                    selectedHolds.includes(index) ? 'border-red-500' : 'border-transparent'
-                                } ${index === startHold ? '!border-green-500' : ''}
-                                ${index === endHold ? '!border-blue-500' : ''}`}
-                                style={{
-                                    left: scaledCoords.left,
-                                    top: scaledCoords.top,
-                                    width: scaledCoords.width,
-                                    height: scaledCoords.height,
-                                }}
-                                onClick={() => selectionStep !== 'complete' && handleHoldClick(index)}
-                            />
-                            {(index === startHold || index === endHold) && (
-                                <div
-                                    className={`absolute px-2 py-1 rounded text-xs font-bold text-white ${
-                                        index === startHold ? 'bg-green-500' : 'bg-blue-500'
-                                    }`}
+                        return (
+                            <div key={index}>
+                                <button
+                                    className={`absolute border-2 transition-colors cursor-pointer ${
+                                        selectedHolds.includes(index) ? 'border-red-500' : 'border-transparent'
+                                    } ${index === startHold ? '!border-green-500' : ''}
+                                    ${index === endHold ? '!border-blue-500' : ''}`}
                                     style={{
                                         left: scaledCoords.left,
-                                        top: scaledCoords.top - 25,
+                                        top: scaledCoords.top,
+                                        width: scaledCoords.width,
+                                        height: scaledCoords.height,
                                     }}
-                                >
-                                    {index === startHold ? '시작' : '종료'}
-                                </div>
-                            )}
-                        </div>
-                    );
-                })}
+                                    onClick={() => selectionStep !== 'complete' && handleHoldClick(index)}
+                                />
+                                {(index === startHold || index === endHold) && (
+                                    <div
+                                        className={`absolute px-2 py-1 rounded text-xs font-bold text-white ${
+                                            index === startHold ? 'bg-green-500' : 'bg-blue-500'
+                                        }`}
+                                        style={{
+                                            left: scaledCoords.left,
+                                            top: scaledCoords.top - 25,
+                                        }}
+                                    >
+                                        {index === startHold ? '시작' : '종료'}
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
 
                 {selectionStep === 'complete' && showSaveButtons && (
-                    <div className="absolute bottom-0 left-0 right-0 flex gap-3 p-5 bg-white">
+                    <div className="absolute bottom-0 left-0 right-0 flex gap-3 p-5 bg-white button-container">
                         <button
                             onClick={handleDownload}
                             className="flex-1 py-4 rounded-xl bg-gray-100 text-gray-900 font-semibold"

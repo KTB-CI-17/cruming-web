@@ -89,12 +89,6 @@ export default function PostReply({
 
     return (
         <div className="px-4">
-            <div className="py-4">
-                <span className="text-lg font-medium">
-                    댓글 {totalCount}
-                </span>
-            </div>
-
             {replies.map(reply => (
                 <div key={reply.id} className="py-4">
                     <div className="flex space-x-2">

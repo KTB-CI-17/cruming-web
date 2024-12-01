@@ -40,41 +40,99 @@ export default function HoldAnalysisResult({ imageUri, analysisResult }: HoldAna
         }
     }, []);
 
-    const handleDownload = async () => {
-        if (!imageContainerRef.current) return;
+    const generateImage = async () => {
+        if (!imageContainerRef.current || !imageInfo) return null;
 
         try {
             setShowSaveButtons(false);
             await new Promise(resolve => setTimeout(resolve, 100));
 
-            const canvas = await html2canvas(imageContainerRef.current, {
+            // 이미지 요소만을 포함하는 임시 div 생성
+            const tempDiv = document.createElement('div');
+            tempDiv.style.position = 'absolute';
+            tempDiv.style.left = '0';
+            tempDiv.style.top = '0';
+            tempDiv.style.width = `${imageInfo.displayWidth}px`;
+            tempDiv.style.height = `${imageInfo.displayHeight}px`;
+
+            // 원본 컨테이너의 내용을 복제
+            const clone = imageContainerRef.current.cloneNode(true) as HTMLElement;
+
+            // 클론된 요소의 스타일 조정
+            const clonedImg = clone.querySelector('img');
+            if (clonedImg) {
+                clonedImg.style.margin = '0';
+                clonedImg.style.width = `${imageInfo.displayWidth}px`;
+                clonedImg.style.height = `${imageInfo.displayHeight}px`;
+            }
+
+            tempDiv.appendChild(clone);
+            document.body.appendChild(tempDiv);
+
+            const canvas = await html2canvas(tempDiv, {
                 backgroundColor: null,
                 useCORS: true,
                 logging: false,
                 imageTimeout: 0,
+                width: imageInfo.displayWidth,
+                height: imageInfo.displayHeight,
                 ignoreElements: (element) => {
-                    // 다운로드/게시글 작성 버튼 영역 제외
                     return element.classList.contains('button-container');
                 }
             });
 
+            document.body.removeChild(tempDiv);
+
             const image = canvas.toDataURL('image/jpg', 1.0);
-
-            const link = document.createElement('a');
-            link.download = 'climbing-problem.jpg';
-            link.href = image;
-            link.click();
-
             setShowSaveButtons(true);
+            return image;
         } catch (error) {
-            console.error('Download failed:', error);
-            alert('이미지 저장에 실패했습니다.');
+            console.error('Image generation failed:', error);
             setShowSaveButtons(true);
+            return null;
         }
     };
 
-    const handleCreatePost = () => {
-        navigate('/community/new');
+    const handleDownload = async () => {
+        const image = await generateImage();
+        if (!image) {
+            alert('이미지 저장에 실패했습니다.');
+            return;
+        }
+
+        const link = document.createElement('a');
+        link.download = 'climbing-problem.jpg';
+        link.href = image;
+        link.click();
+    };
+
+    const handleCreatePost = async () => {
+        const image = await generateImage();
+        if (!image) {
+            alert('이미지 생성에 실패했습니다.');
+            return;
+        }
+
+        navigate('/community/problem', {
+            state: {
+                problemImage: {
+                    file: dataURLtoFile(image, 'climbing-problem.jpg'),
+                    preview: image
+                }
+            }
+        });
+    };
+
+    const dataURLtoFile = (dataurl: string, filename: string): File => {
+        const arr = dataurl.split(',');
+        const mime = arr[0].match(/:(.*?);/)?.[1];
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new File([u8arr], filename, { type: mime });
     };
 
     return (

@@ -1,7 +1,7 @@
 import { PostFormContentProps } from '../../../types/community';
 import { ImageUploadArea } from './ImageUploadArea';
 
-export const PostFormContent = ({
+export const GeneralForm = ({
                                     title,
                                     content,
                                     images,

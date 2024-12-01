@@ -7,7 +7,7 @@ const AddButton = () => {
 
     return (
         <button
-            onClick={() => navigate('/community/new')}
+            onClick={() => navigate('/community/general')}
             style={{
                 bottom: `calc(${LAYOUT.TAB_BAR_HEIGHT} + ${PADDING.MAIN.BOTTOM})`,
                 right: PADDING.MAIN.HORIZONTAL,

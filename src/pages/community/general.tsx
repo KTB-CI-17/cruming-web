@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { PostFormContent } from '../../components/community/new/PostFormContent.tsx';
+import { GeneralForm } from '../../components/community/new/GeneralForm.tsx';
 import { useUploadPost } from '../../hooks/useUploadPost.ts';
 import { UploadImage } from '../../types/community.ts';
 import { PADDING } from '../../../constants/layout.ts';
 
-export default function NewPost() {
+export default function NewGeneralPage() {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [images, setImages] = useState<UploadImage[]>([]);
@@ -22,7 +22,7 @@ export default function NewPost() {
     return (
         <div className="flex flex-col h-full bg-white">
             <div className="flex-1" style={{ paddingTop: PADDING.MAIN.TOP }}>
-                <PostFormContent
+                <GeneralForm
                     title={title}
                     content={content}
                     images={images}

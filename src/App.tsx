@@ -10,7 +10,8 @@ import Hold from "./pages/hold/hold.tsx";
 import { ProtectedRoute } from "./components/ProtectedRoute.tsx";
 import Login from "./pages/login/login.tsx";
 import KakaoCallback from "./pages/login/KakaoCallback.tsx";
-import NewPost from "./pages/community/new.tsx";
+import NewGeneralPage from "./pages/community/general.tsx";
+import NewProblemPage from "./pages/community/problem.tsx";
 
 function App() {
     return (
@@ -29,7 +30,8 @@ function App() {
 
                             <Route path="/community" element={<Community />} />
                             <Route path="/community/:id" element={<CommunityDetail />} />
-                            <Route path="/community/new" element={<NewPost />} />
+                            <Route path="/community/general" element={<NewGeneralPage />} />
+                            <Route path="/community/problem" element={<NewProblemPage />} />
 
 
                             <Route path="/foot-analysis" element={<FootAnalysis />} />

@@ -10,6 +10,7 @@ import PostHeader from "../components/community/detail/PostHeader.tsx";
 import PostReply from "../components/community/detail/PostReply.tsx";
 import PostActions from "../components/community/detail/PostActions.tsx";
 import PostReplyInput from "../components/community/detail/PostReplyInput.tsx";
+import {REPLY_PAGINATION} from "../../constants/replyPagination.ts";
 
 export default function CommunityDetail() {
     const { id } = useParams<{ id: string }>();
@@ -82,10 +83,6 @@ export default function CommunityDetail() {
         return replyState.replies.reduce<Reply | null>((found, reply) => {
             if (found) return found;
             if (reply.id === replyState.selectedReplyId) return reply;
-            if (reply.children) {
-                const childReply = reply.children.find(child => child.id === replyState.selectedReplyId);
-                if (childReply) return childReply;
-            }
             return found;
         }, null);
     };
@@ -101,6 +98,7 @@ export default function CommunityDetail() {
                     await deletePost();
                     navigate(-1);
                 } catch (error) {
+                    console.error(error);
                     alert('삭제에 실패했습니다.');
                 }
             }
@@ -195,7 +193,9 @@ export default function CommunityDetail() {
                 <div id="replies">
                     <PostReply
                         replies={replyState.replies}
-                        onLoadMore={() => replyActions.fetchReplies(Math.ceil(replyState.replies.length / 10))}
+                        onLoadMore={() => replyActions.fetchReplies(
+                            Math.ceil(replyState.replies.length / REPLY_PAGINATION.REPLIES_PER_PAGE)
+                        )}
                         hasMore={replyState.hasMore}
                         loading={replyState.isSubmitting}
                         onReply={replyActions.selectReply}
@@ -205,6 +205,8 @@ export default function CommunityDetail() {
                         onEditReply={replyActions.setEditing}
                         totalCount={replyState.totalCount}
                         loadingStates={replyState.loadingStates}
+                        childrenMap={replyState.childrenMap}
+                        childrenHasMore={replyState.childrenHasMore}
                     />
                 </div>
             </main>

@@ -1,13 +1,13 @@
 import { useReducer, useCallback } from 'react';
 import {api} from "../config/axios.ts";
 import {ReplyAction, ReplyState} from "../types/community.ts";
+import {REPLY_PAGINATION} from "../../constants/replyPagination.ts";
 
 const initialState: ReplyState = {
     replies: [],
     childrenMap: {},
+    childrenHasMore: {},
     loadingStates: {},
-    pageStates: {},
-    pendingReplies: {},
     selectedReplyId: null,
     editingReplyId: null,
     replyText: '',
@@ -15,6 +15,7 @@ const initialState: ReplyState = {
     error: null,
     totalCount: 0,
     hasMore: true,
+    currentPage: 0,
 };
 
 function replyReducer(state: ReplyState, action: ReplyAction): ReplyState {
@@ -25,57 +26,49 @@ function replyReducer(state: ReplyState, action: ReplyAction): ReplyState {
                 replies: action.page === 0 ? action.payload : [...state.replies, ...action.payload],
                 totalCount: action.totalCount,
                 hasMore: action.hasMore,
+                currentPage: action.page,
+            };
+        case 'SET_CHILDREN':
+            return {
+                ...state,
+                childrenMap: {
+                    ...state.childrenMap,
+                    [action.payload.parentId]: action.payload.children
+                },
+                childrenHasMore: {
+                    ...state.childrenHasMore,
+                    [action.payload.parentId]: action.payload.hasMore
+                }
             };
         case 'UPDATE_REPLY':
             return {
                 ...state,
-                replies: state.replies.map(reply => {
-                    if (reply.id === action.payload.id) {
-                        return { ...reply, content: action.payload.content };
-                    }
-                    if (reply.children) {
-                        return {
-                            ...reply,
-                            children: reply.children.map(child =>
-                                child.id === action.payload.id
-                                    ? { ...child, content: action.payload.content }
-                                    : child
-                            ),
-                        };
-                    }
-                    return reply;
-                }),
-            };
-        case 'UPDATE_CHILDREN':
-            return {
-                ...state,
-                replies: state.replies.map(reply => {
-                    if (reply.id === action.payload.parentId) {
-                        const existingChildren = reply.children || [];
-                        const newChildren = action.payload.page === 0
-                            ? action.payload.children
-                            : [...existingChildren, ...action.payload.children];
-
-                        return {
-                            ...reply,
-                            children: newChildren,
-                        };
-                    }
-                    return reply;
-                }),
+                replies: state.replies.map(reply =>
+                    reply.id === action.payload.id
+                        ? { ...reply, content: action.payload.content }
+                        : reply
+                ),
+                childrenMap: Object.fromEntries(
+                    Object.entries(state.childrenMap).map(([parentId, children]) => [
+                        parentId,
+                        children.map(child =>
+                            child.id === action.payload.id
+                                ? { ...child, content: action.payload.content }
+                                : child
+                        )
+                    ])
+                )
             };
         case 'DELETE_REPLY':
             return {
                 ...state,
-                replies: state.replies.filter(reply => {
-                    if (reply.id === action.payload) return false;
-                    if (reply.children) {
-                        reply.children = reply.children.filter(
-                            child => child.id !== action.payload
-                        );
-                    }
-                    return true;
-                }),
+                replies: state.replies.filter(reply => reply.id !== action.payload),
+                childrenMap: Object.fromEntries(
+                    Object.entries(state.childrenMap).map(([parentId, children]) => [
+                        parentId,
+                        children.filter(child => child.id !== action.payload)
+                    ])
+                )
             };
         case 'SET_LOADING':
             return {
@@ -123,7 +116,11 @@ export function useReply(postId: string) {
     const fetchReplies = useCallback(async (page = 0) => {
         try {
             const { data } = await api.get(`/posts/${postId}/replies`, {
-                params: { page, size: 10, sort: 'createdAt,asc' }
+                params: {
+                    page,
+                    size: REPLY_PAGINATION.REPLIES_PER_PAGE,
+                    sort: 'createdAt,asc'
+                }
             });
 
             dispatch({
@@ -145,15 +142,22 @@ export function useReply(postId: string) {
 
         try {
             const { data } = await api.get(`/posts/replies/${parentId}/children`, {
-                params: { page, size: 5, sort: 'createdAt,asc' }
+                params: {
+                    page,
+                    size: REPLY_PAGINATION.CHILD_REPLIES_PER_PAGE,
+                    sort: 'createdAt,asc'
+                }
             });
 
             dispatch({
-                type: 'UPDATE_CHILDREN',
+                type: 'SET_CHILDREN',
                 payload: {
                     parentId,
-                    children: data.content,
-                    page
+                    children: page === 0 ? data.content : [
+                        ...(state.childrenMap[parentId] || []),
+                        ...data.content
+                    ],
+                    hasMore: !data.last
                 }
             });
             return true;
@@ -163,7 +167,7 @@ export function useReply(postId: string) {
         } finally {
             dispatch({ type: 'SET_LOADING', payload: { replyId: parentId, isLoading: false } });
         }
-    }, []);
+    }, [state.childrenMap]);
 
     const createReply = useCallback(async (content: string, parentId?: number | null) => {
         dispatch({ type: 'SET_SUBMITTING', payload: true });
@@ -202,6 +206,9 @@ export function useReply(postId: string) {
     }, []);
 
     const deleteReply = useCallback(async (replyId: number) => {
+        if (!confirm("댓글을 삭제하시겠습니까?")) {
+            return;
+        }
         try {
             await api.delete(`/posts/replies/${replyId}`);
             dispatch({ type: 'DELETE_REPLY', payload: replyId });
@@ -215,11 +222,9 @@ export function useReply(postId: string) {
         const parentReply = state.replies.find(reply => reply.id === replyId);
         if (parentReply) return parentReply;
 
-        for (const reply of state.replies) {
-            if (reply.children) {
-                const childReply = reply.children.find(child => child.id === replyId);
-                if (childReply) return childReply;
-            }
+        for (const children of Object.values(state.childrenMap)) {
+            const childReply = children.find(child => child.id === replyId);
+            if (childReply) return childReply;
         }
         return null;
     };

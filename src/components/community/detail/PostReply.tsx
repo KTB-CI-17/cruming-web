@@ -1,21 +1,26 @@
 import {Reply} from "../../../types/community.ts";
+import {useCallback, useEffect, useRef} from "react";
+import {formatTimeAgo} from "../../../utils/formatTime.ts";
+import {REPLY_PAGINATION} from "../../../../constants/replyPagination.ts";
 
 interface PostReplyProps {
     replies: Reply[];
     onLoadMore: () => void;
     hasMore: boolean;
     loading: boolean;
-    onReply: (replyId: number) => void;
+    onReply: (id: number | null) => void;
     onProfilePress: (userId: number) => void;
-    onLoadChildren: (parentId: number, page: number) => Promise<boolean>;
-    onDeleteReply: (replyId: number) => void;
-    onEditReply: (replyId: number) => void;
+    onDeleteReply: (id: number) => void;
+    onEditReply: (id: number | null) => void;
     totalCount: number;
-    loadingStates?: { [key: number]: boolean };
+    loadingStates: { [key: number]: boolean };
+    childrenMap: { [key: number]: Reply[] };
+    childrenHasMore: { [key: number]: boolean };
+    onLoadChildren: (parentId: number, page: number) => Promise<boolean>;
 }
 
 export default function PostReply({
-                                      replies,
+                                      replies = [],
                                       onLoadMore,
                                       hasMore,
                                       loading,
@@ -24,122 +29,189 @@ export default function PostReply({
                                       onLoadChildren,
                                       onDeleteReply,
                                       onEditReply,
-                                      totalCount,
-                                      loadingStates = {},
+                                      totalCount = 0,
+                                      childrenMap = {}
                                   }: PostReplyProps) {
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        const now = new Date();
-        const diffMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
-        const diffHours = Math.floor(diffMinutes / 60);
-        const diffDays = Math.floor(diffHours / 24);
+    const observerRef = useRef<IntersectionObserver | null>(null);
+    const loadingRef = useRef<HTMLDivElement>(null);
 
-        if (diffMinutes < 2) return '방금 전';
-        if (diffMinutes < 60) return `${diffMinutes}분 전`;
-        if (diffHours < 24) return `${diffHours}시간 전`;
-        if (diffDays < 7) return `${diffDays}일 전`;
-        return date.toLocaleDateString();
-    };
+    useEffect(() => {
+        const options = {
+            root: null,
+            rootMargin: '20px',
+            threshold: 0.1,
+        };
 
-    const handleDeleteReply = (replyId: number) => {
-        if (window.confirm('댓글을 삭제하시겠습니까?')) {
-            onDeleteReply(replyId);
+        observerRef.current = new IntersectionObserver((entries) => {
+            const target = entries[0];
+            if (target.isIntersecting && hasMore && !loading) {
+                onLoadMore();
+            }
+        }, options);
+
+        if (loadingRef.current) {
+            observerRef.current.observe(loadingRef.current);
         }
-    };
 
-    const renderReplyItem = (reply: Reply, isChild = false) => (
-        <div key={reply.id} className={`px-4 py-4 ${isChild ? 'pl-12' : ''}`}>
-            <div className="flex items-center justify-between mb-2">
-                <button
-                    className="flex items-center"
-                    onClick={() => onProfilePress(reply.userId)}
-                >
-                    <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200">
-                        <img
-                            src="/images/default-profile.png"
-                            alt="Profile"
-                            className="w-full h-full object-cover"
-                        />
-                    </div>
-                    <span className="ml-2 text-sm font-semibold">
-                        {reply.userNickname}
-                    </span>
-                </button>
-            </div>
+        return () => {
+            if (observerRef.current) {
+                observerRef.current.disconnect();
+            }
+        };
+    }, [hasMore, loading, onLoadMore]);
 
-            <p className="text-sm leading-relaxed ml-10 text-gray-900 whitespace-pre-wrap break-words overflow-hidden">
-                {reply.content}
-            </p>
+    const handleReplyPress = useCallback((reply: Reply) => {
+        onReply(reply.id);
+    }, [onReply]);
 
-            <div className="flex items-center justify-between mt-2 ml-10">
-                <span className="text-xs text-gray-500">{formatDate(reply.createdAt)}</span>
-                <div className="flex items-center gap-4">
-                    {!isChild && (
-                        <button
-                            onClick={() => onReply(reply.id)}
-                            className="text-xs text-gray-500 hover:text-gray-700"
-                        >
-                            답글
-                        </button>
-                    )}
-                    {reply.isWriter && (
-                        <>
-                            <button
-                                onClick={() => onEditReply(reply.id)}
-                                className="text-xs text-gray-500 hover:text-gray-700"
-                            >
-                                수정
-                            </button>
-                            <button
-                                onClick={() => handleDeleteReply(reply.id)}
-                                className="text-xs text-gray-500 hover:text-gray-700"
-                            >
-                                삭제
-                            </button>
-                        </>
-                    )}
+    const handleChildReplyPress = useCallback((parentId: number) => {
+        onReply(parentId);
+    }, [onReply]);
+
+    if (loading && replies.length === 0) {
+        return (
+            <div className="px-4">
+                <div className="py-4 border-b border-gray-200">
+                    <span className="text-lg font-medium">댓글</span>
                 </div>
+                {[1, 2, 3].map((_, index) => (
+                    <div key={index} className="py-4 border-b border-gray-200 animate-pulse">
+                        <div className="flex space-x-2">
+                            <div className="w-20 h-4 bg-gray-200 rounded" />
+                            <div className="w-16 h-4 bg-gray-200 rounded" />
+                        </div>
+                        <div className="mt-2 w-3/4 h-4 bg-gray-200 rounded" />
+                    </div>
+                ))}
+            </div>
+        );
+    }
+
+    return (
+        <div className="px-4">
+            <div className="py-4">
+                <span className="text-lg font-medium">
+                    댓글 {totalCount}
+                </span>
             </div>
 
-            {!isChild && reply.children && reply.children.length > 0 && (
-                <div className="mt-4 space-y-4">
-                    {reply.children.map(child => renderReplyItem(child, true))}
-                    {reply.childCount && reply.childCount > (reply.children?.length || 0) && !loadingStates[reply.id] && (
+            {replies.map(reply => (
+                <div key={reply.id} className="py-4">
+                    <div className="flex space-x-2">
                         <button
-                            onClick={() => {
-                                const nextPage = Math.ceil((reply.children?.length || 0) / 5);
-                                onLoadChildren(reply.id, nextPage);
-                            }}
-                            className="ml-12 px-4 py-2 text-xs text-gray-500 bg-gray-50 hover:bg-gray-100 rounded-lg"
+                            onClick={() => onProfilePress(reply.userId)}
+                            className="font-medium"
                         >
-                            답글 {reply.childCount - (reply.children?.length || 0)}개 더보기
+                            {reply.userNickname}
                         </button>
+                        <span className="text-gray-400">
+                            {formatTimeAgo(reply.createdAt)}
+                        </span>
+                        {reply.isWriter && (
+                            <span className="text-blue-500 text-sm">작성자</span>
+                        )}
+                    </div>
+
+                    <p className="mt-1 break-words whitespace-pre-wrap">
+                        {reply.content}
+                    </p>
+
+                    <div className="flex items-center space-x-4 mt-2">
+                        <button
+                            onClick={() => handleReplyPress(reply)}
+                            className="text-gray-500 text-sm"
+                        >
+                            답글 달기
+                        </button>
+                        {reply.isWriter && (
+                            <>
+                                <button
+                                    onClick={() => onEditReply(reply.id)}
+                                    className="text-gray-500 text-sm"
+                                >
+                                    수정
+                                </button>
+                                <button
+                                    onClick={() => onDeleteReply(reply.id)}
+                                    className="text-red-500 text-sm"
+                                >
+                                    삭제
+                                </button>
+                            </>
+                        )}
+                    </div>
+
+                    <div className="ml-8 mt-2">
+                        {childrenMap[reply.id] && childrenMap[reply.id].map(childReply => (
+                            <div key={childReply.id} className="py-4">
+                                <div className="flex space-x-2">
+                                    <button
+                                        onClick={() => onProfilePress(childReply.userId)}
+                                        className="font-medium"
+                                    >
+                                        {childReply.userNickname}
+                                    </button>
+                                    <span className="text-gray-400">
+                                        {formatTimeAgo(childReply.createdAt)}
+                                    </span>
+                                    {childReply.isWriter && (
+                                        <span className="text-blue-500 text-sm">작성자</span>
+                                    )}
+                                </div>
+
+                                <p className="mt-1 break-words whitespace-pre-wrap">
+                                    {childReply.content}
+                                </p>
+
+                                <div className="flex items-center space-x-4 mt-2">
+                                    <button
+                                        onClick={() => handleChildReplyPress(reply.id)}
+                                        className="text-gray-500 text-sm"
+                                    >
+                                        답글 달기
+                                    </button>
+                                    {childReply.isWriter && (
+                                        <>
+                                            <button
+                                                onClick={() => onEditReply(childReply.id)}
+                                                className="text-gray-500 text-sm"
+                                            >
+                                                수정
+                                            </button>
+                                            <button
+                                                onClick={() => onDeleteReply(childReply.id)}
+                                                className="text-red-500 text-sm"
+                                            >
+                                                삭제
+                                            </button>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+
+                        {reply.childCount > 0 && (!childrenMap[reply.id] || reply.childCount > childrenMap[reply.id].length) && (
+                            <button
+                                onClick={() => {
+                                    const nextPage = (childrenMap[reply.id]?.length || 0) / REPLY_PAGINATION.CHILD_REPLIES_PER_PAGE;
+                                    onLoadChildren(reply.id, nextPage);
+                                }}
+                                className="mt-2 text-gray-500 text-sm"
+                            >
+                                답글 {reply.childCount - (childrenMap[reply.id]?.length || 0)}개 보기
+                            </button>
+                        )}
+                    </div>
+                </div>
+            ))}
+
+            {hasMore && (
+                <div ref={loadingRef} className="py-4 flex justify-center">
+                    {loading && (
+                        <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
                     )}
                 </div>
             )}
-        </div>
-    );
-
-    const remainingReplies = totalCount - replies.length;
-
-    return (
-        <div className="border-t border-gray-100">
-            <div>
-                {replies.map(reply => renderReplyItem(reply))}
-                {loading && (
-                    <div className="flex justify-center py-4">
-                        <div className="w-6 h-6 border-2 border-gray-200 border-t-blue-600 rounded-full animate-spin" />
-                    </div>
-                )}
-                {!loading && hasMore && remainingReplies > 0 && (
-                    <button
-                        onClick={onLoadMore}
-                        className="w-full py-3 text-sm text-gray-600 hover:bg-gray-50"
-                    >
-                        댓글 더보기
-                    </button>
-                )}
-            </div>
         </div>
     );
 }

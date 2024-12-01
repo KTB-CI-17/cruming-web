@@ -38,25 +38,7 @@ export interface PostListResponse {
     empty: boolean;
 }
 
-export interface PostListParams {
-    page: number;
-    size: number;
-    category: PostCategory;
-}
-
 export type PostCategory = 'GENERAL' | 'PROBLEM' | 'TIMELINE';
-
-export interface UsePostListReturn {
-    posts: ListPost[];
-    isLoading: boolean;
-    isRefreshing: boolean;
-    isLoadingMore: boolean;
-    error: string | null;
-    hasMore: boolean;
-    handleRefresh: () => void;
-    handleLoadMore: () => void;
-    handleRetry: () => void;
-}
 
 export interface Post extends BasePost {
     content: string;
@@ -94,7 +76,6 @@ export interface Reply {
     userNickname: string;
     createdAt: string;
     isWriter: boolean;
-    children?: Reply[];
     childCount: number;
     parent?: Reply;
     parentId?: number | null;
@@ -102,10 +83,7 @@ export interface Reply {
 
 export interface ReplyState {
     replies: Reply[];
-    childrenMap: { [key: number]: Reply[] };
     loadingStates: { [key: number]: boolean };
-    pageStates: { [key: number]: number };
-    pendingReplies: { [key: string]: PendingReply };
     selectedReplyId: number | null;
     editingReplyId: number | null;
     replyText: string;
@@ -113,42 +91,22 @@ export interface ReplyState {
     error: Error | null;
     totalCount: number;
     hasMore: boolean;
-}
-
-export interface PendingReply {
-    id: string;
-    content: string;
-    parentId: number | null;
-    timestamp: number;
+    childrenMap: { [key: number]: Reply[] };
+    childrenHasMore: { [key: number]: boolean };
+    currentPage: number;
 }
 
 export type ReplyAction =
     | { type: 'SET_REPLIES'; payload: Reply[]; totalCount: number; hasMore: boolean; page: number }
-    | { type: 'ADD_REPLY'; payload: Reply }
+    | { type: 'SET_CHILDREN'; payload: { parentId: number; children: Reply[]; hasMore: boolean } }
     | { type: 'UPDATE_REPLY'; payload: { id: number; content: string } }
     | { type: 'DELETE_REPLY'; payload: number }
-    | { type: 'SET_CHILDREN'; payload: { parentId: number; children: Reply[] } }
     | { type: 'SET_LOADING'; payload: { replyId: number; isLoading: boolean } }
-    | { type: 'SET_PAGE'; payload: { replyId: number; page: number } }
     | { type: 'SELECT_REPLY'; payload: number | null }
     | { type: 'SET_EDITING'; payload: number | null }
     | { type: 'SET_REPLY_TEXT'; payload: string }
     | { type: 'SET_SUBMITTING'; payload: boolean }
-    | { type: 'SET_ERROR'; payload: Error | null }
-    | { type: 'UPDATE_CHILDREN'; payload: { parentId: number; children: Reply[]; page: number } };
-
-export interface PostFormData {
-    title: string;
-    content: string;
-    files: File[];
-}
-
-export interface ImageUploadResponse {
-    id: number;
-    url: string;
-    fileKey: string;
-    displayOrder: number;
-}
+    | { type: 'SET_ERROR'; payload: Error };
 
 export interface CreatePostRequest {
     title: string;

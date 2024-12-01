@@ -1,7 +1,12 @@
+import React from "react";
+import {LocationData} from "../../../types/location.ts";
+import LocationSearch from "../../common/LocationSearch.tsx";
+
 interface ProblemFormContentProps {
     title: string;
     content: string;
     level: string;
+    location: LocationData | null;
     image: {
         file: File;
         preview: string;
@@ -9,6 +14,7 @@ interface ProblemFormContentProps {
     onTitleChange: (title: string) => void;
     onContentChange: (content: string) => void;
     onLevelChange: (level: string) => void;
+    onLocationChange: (location: LocationData) => void;
     isLoading?: boolean;
 }
 
@@ -16,16 +22,18 @@ export const ProblemForm = ({
                                 title,
                                 content,
                                 level,
+                                location,
                                 image,
                                 onTitleChange,
                                 onContentChange,
                                 onLevelChange,
+                                onLocationChange,
                                 isLoading = false
                             }: ProblemFormContentProps) => {
     const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const textarea = e.target;
-        textarea.style.height = 'auto';  // 현재 높이를 초기화
-        textarea.style.height = `${textarea.scrollHeight}px`;  // 스크롤 높이로 설정
+        textarea.style.height = 'auto';
+        textarea.style.height = `${textarea.scrollHeight}px`;
         onContentChange(e.target.value);
     };
 
@@ -40,6 +48,11 @@ export const ProblemForm = ({
                     maxLength={100}
                     disabled={isLoading}
                     className="w-full px-4 py-3 text-base border-b border-gray-100 focus:outline-none disabled:bg-gray-50"
+                />
+
+                <LocationSearch
+                    value={location?.placeName || ''}
+                    onLocationSelect={onLocationChange}
                 />
 
                 <input

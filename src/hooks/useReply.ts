@@ -178,7 +178,8 @@ export function useReply(postId: string) {
             dispatch({ type: 'SET_REPLY_TEXT', payload: '' });
             dispatch({ type: 'SELECT_REPLY', payload: null });
         } catch (error) {
-            throw new Error('댓글 작성에 실패했습니다.');
+            dispatch({ type: 'SET_ERROR', payload: error as Error });
+            throw error;
         } finally {
             dispatch({ type: 'SET_SUBMITTING', payload: false });
         }
@@ -193,7 +194,8 @@ export function useReply(postId: string) {
             dispatch({ type: 'SET_REPLY_TEXT', payload: '' });
             dispatch({ type: 'SET_EDITING', payload: null });
         } catch (error) {
-            throw new Error('댓글 수정에 실패했습니다.');
+            dispatch({ type: 'SET_ERROR', payload: error as Error });
+            throw error;
         } finally {
             dispatch({ type: 'SET_SUBMITTING', payload: false });
         }
@@ -204,9 +206,23 @@ export function useReply(postId: string) {
             await api.delete(`/posts/replies/${replyId}`);
             dispatch({ type: 'DELETE_REPLY', payload: replyId });
         } catch (error) {
-            throw new Error('댓글 삭제에 실패했습니다.');
+        dispatch({ type: 'SET_ERROR', payload: error as Error });
+        throw error;
         }
     }, []);
+
+    const findReplyById = (replyId: number) => {
+        const parentReply = state.replies.find(reply => reply.id === replyId);
+        if (parentReply) return parentReply;
+
+        for (const reply of state.replies) {
+            if (reply.children) {
+                const childReply = reply.children.find(child => child.id === replyId);
+                if (childReply) return childReply;
+            }
+        }
+        return null;
+    };
 
     return {
         state,
@@ -217,7 +233,17 @@ export function useReply(postId: string) {
             updateReply,
             deleteReply,
             selectReply: (id: number | null) => dispatch({ type: 'SELECT_REPLY', payload: id }),
-            setEditing: (id: number | null) => dispatch({ type: 'SET_EDITING', payload: id }),
+            setEditing: (id: number | null) => {
+                if (id) {
+                    const reply = findReplyById(id);
+                    if (reply) {
+                        dispatch({ type: 'SET_REPLY_TEXT', payload: reply.content });
+                    }
+                } else {
+                    dispatch({ type: 'SET_REPLY_TEXT', payload: '' });
+                }
+                dispatch({ type: 'SET_EDITING', payload: id });
+            },
             setReplyText: (text: string) => dispatch({ type: 'SET_REPLY_TEXT', payload: text }),
         },
     };

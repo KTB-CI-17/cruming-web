@@ -41,6 +41,12 @@ export default function PostReply({
         return date.toLocaleDateString();
     };
 
+    const handleDeleteReply = (replyId: number) => {
+        if (window.confirm('댓글을 삭제하시겠습니까?')) {
+            onDeleteReply(replyId);
+        }
+    };
+
     const renderReplyItem = (reply: Reply, isChild = false) => (
         <div key={reply.id} className={`px-4 py-4 ${isChild ? 'pl-12' : ''}`}>
             <div className="flex items-center justify-between mb-2">
@@ -61,7 +67,9 @@ export default function PostReply({
                 </button>
             </div>
 
-            <p className="text-sm leading-relaxed ml-10 text-gray-900">{reply.content}</p>
+            <p className="text-sm leading-relaxed ml-10 text-gray-900 whitespace-pre-wrap break-words overflow-hidden">
+                {reply.content}
+            </p>
 
             <div className="flex items-center justify-between mt-2 ml-10">
                 <span className="text-xs text-gray-500">{formatDate(reply.createdAt)}</span>
@@ -83,7 +91,7 @@ export default function PostReply({
                                 수정
                             </button>
                             <button
-                                onClick={() => onDeleteReply(reply.id)}
+                                onClick={() => handleDeleteReply(reply.id)}
                                 className="text-xs text-gray-500 hover:text-gray-700"
                             >
                                 삭제

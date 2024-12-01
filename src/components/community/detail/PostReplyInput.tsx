@@ -1,7 +1,7 @@
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { PaperAirplaneIcon } from '@heroicons/react/24/solid';
 import { Reply } from "../../../types/community.ts";
-import {useRef} from "react";
+import { useRef, useEffect } from "react";
 
 interface PostReplyInputProps {
     replyText: string;
@@ -35,6 +35,17 @@ export default function PostReplyInput({
         }
     };
 
+    useEffect(() => {
+        if (textareaRef.current && replyText) {
+            adjustHeight(textareaRef.current);
+        }
+    }, [replyText]);
+
+    const handleCancel = () => {
+        resetTextarea();
+        onCancelReply();
+    };
+
     const handleSubmit = async () => {
         await onSubmitReply();
         resetTextarea();
@@ -47,11 +58,11 @@ export default function PostReplyInput({
                     <div className="flex items-center gap-2">
                         <div className="w-1 h-4 bg-blue-400 rounded-full"/>
                         <span className="text-sm text-blue-700 font-medium">
-                    {isEditing ? '댓글 수정' : `${selectedReply?.userNickname}님에게 답글 작성`}
-                </span>
+                            {isEditing ? '댓글 수정' : `${selectedReply?.userNickname}님에게 답글 작성`}
+                        </span>
                     </div>
                     <button
-                        onClick={onCancelReply}
+                        onClick={handleCancel}
                         className="p-1.5 hover:bg-blue-100 rounded-full transition-colors"
                     >
                         <XMarkIcon className="w-4 h-4 text-blue-600"/>

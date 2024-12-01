@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import {usePost} from "../hooks/usePostDetail.ts";
 import {useReply} from "../hooks/useReply.ts";
 import {api} from "../config/axios.ts";
@@ -37,7 +36,18 @@ export default function CommunityDetail() {
             navigate('/community');
             return;
         }
-        fetchPost();
+
+        // 게시글과 댓글 동시에 로딩
+        const loadData = async () => {
+            try {
+                await fetchPost();
+                await replyActions.fetchReplies(0);  // 첫 페이지(0)부터 댓글 로딩
+            } catch (error) {
+                console.error('Failed to load data:', error);
+            }
+        };
+
+        loadData();
     }, [id]);
 
     useEffect(() => {
@@ -45,7 +55,7 @@ export default function CommunityDetail() {
             if (!post) return;
             try {
                 const imagePromises = post.files.map(async file => {
-                    const response = await api.get(`/files${file.url}`, { responseType: 'blob' });
+                    const response = await api.get(`${file.url}`, { responseType: 'blob' });
                     const imageUrl = URL.createObjectURL(response.data);
                     return { [file.url]: imageUrl };
                 });
@@ -210,10 +220,18 @@ export default function CommunityDetail() {
                         replyActions.setEditing(null);
                         replyActions.setReplyText('');
                     }}
-                    onSubmitReply={() => replyActions.createReply(
-                        replyState.replyText.trim(),
-                        replyState.selectedReplyId
-                    )}
+                    onSubmitReply={() => {
+                        if (replyState.editingReplyId) {
+                            return replyActions.updateReply(
+                                replyState.editingReplyId,
+                                replyState.replyText.trim()
+                            );
+                        }
+                        return replyActions.createReply(
+                            replyState.replyText.trim(),
+                            replyState.selectedReplyId
+                        );
+                    }}
                     isSubmitting={replyState.isSubmitting}
                     isEditing={!!replyState.editingReplyId}
                 />

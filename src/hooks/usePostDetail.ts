@@ -13,6 +13,7 @@ export function usePost(postId: string) {
             setIsLoading(true);
             const { data } = await api.get<Post>(`/posts/${postId}`);
             setPost(data);
+            console.log(data);
             return data;
         } catch (e) {
             const error = e as AxiosError;
@@ -33,7 +34,7 @@ export function usePost(postId: string) {
                 if (!prev) return null;
                 return {
                     ...prev,
-                    viewCount: prev.viewCount + 1
+                    views: prev.views + 1
                 };
             });
         } catch (error) {

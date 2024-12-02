@@ -6,7 +6,6 @@ import {api} from "../../config/axios.ts";
 import {Reply} from "../../types/community.ts";
 import PostContent from "../../components/community/detail/PostContent.tsx";
 import PostImageSlider from "../../components/community/detail/PostImageSlider.tsx";
-import PostHeader from "../../components/community/detail/PostHeader.tsx";
 import PostReply from "../../components/community/detail/PostReply.tsx";
 import PostActions from "../../components/community/detail/PostActions.tsx";
 import PostReplyInput from "../../components/community/detail/PostReplyInput.tsx";
@@ -94,19 +93,6 @@ export default function CommunityDetail() {
         };
     }, [post]);
 
-    const getSelectedReplyInfo = () => {
-        if (!replyState.selectedReplyId) return null;
-        return replyState.replies.reduce<Reply | null>((found, reply) => {
-            if (found) return found;
-            if (reply.id === replyState.selectedReplyId) return reply;
-            return found;
-        }, null);
-    };
-
-    const handleProfilePress = (userId: number) => {
-        navigate(`/profile/${userId}`);
-    };
-
     const handlePostAction = async (action: 'delete' | 'edit') => {
         if (action === 'delete') {
             if (window.confirm('게시글을 삭제하시겠습니까?')) {
@@ -121,6 +107,19 @@ export default function CommunityDetail() {
         } else {
             navigate(`/community/edit/${id}`);
         }
+    };
+
+    const getSelectedReplyInfo = () => {
+        if (!replyState.selectedReplyId) return null;
+        return replyState.replies.reduce<Reply | null>((found, reply) => {
+            if (found) return found;
+            if (reply.id === replyState.selectedReplyId) return reply;
+            return found;
+        }, null);
+    };
+
+    const handleProfilePress = (userId: number) => {
+        navigate(`/profile/${userId}`);
     };
 
     const showActionSheet = () => {
@@ -182,13 +181,10 @@ export default function CommunityDetail() {
     return (
         <div className="flex flex-col h-full bg-white page-container">
             <main className="flex-1 pb-[calc(var(--bottom-nav-height)+1rem)]">
-                <PostHeader
+                <PostContent
                     post={post}
                     onProfilePress={handleProfilePress}
-                    onMorePress={showActionSheet}
-                />
-
-                <PostContent post={post}/>
+                    onMorePress={showActionSheet}/>
 
                 <PostImageSlider
                     files={post.files}

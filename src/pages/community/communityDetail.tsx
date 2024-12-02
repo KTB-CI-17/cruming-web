@@ -29,7 +29,8 @@ export default function CommunityDetail() {
         error,
         fetchPost,
         deletePost,
-        togglePostLike
+        togglePostLike,
+        incrementView
     } = usePost(id || '');
 
     const {
@@ -47,7 +48,17 @@ export default function CommunityDetail() {
         const loadData = async () => {
             try {
                 await fetchPost();
-                await replyActions.fetchReplies(0);  // 첫 페이지(0)부터 댓글 로딩
+                await replyActions.fetchReplies(0);
+
+                // 로컬 스토리지에서 최근 조회 시간 확인
+                const lastViewTime = localStorage.getItem(`post-${id}-view`);
+                const thirtyMinutesAgo = Date.now() - (30 * 60 * 1000);
+
+                // 30분 이내 조회 기록이 없으면 조회수 증가
+                if (!lastViewTime || parseInt(lastViewTime) < thirtyMinutesAgo) {
+                    await incrementView();
+                    localStorage.setItem(`post-${id}-view`, Date.now().toString());
+                }
             } catch (error) {
                 console.error('Failed to load data:', error);
             }

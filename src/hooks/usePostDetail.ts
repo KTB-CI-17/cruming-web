@@ -26,6 +26,21 @@ export function usePost(postId: string) {
         }
     }, [postId]);
 
+    const incrementView = useCallback(async () => {
+        try {
+            await api.post(`/posts/${postId}/views`);
+            setPost(prev => {
+                if (!prev) return null;
+                return {
+                    ...prev,
+                    viewCount: prev.viewCount + 1
+                };
+            });
+        } catch (error) {
+            console.error('Failed to increment view:', error);
+        }
+    }, [postId]);
+
     const deletePost = useCallback(async () => {
         if (!post) return;
 
@@ -65,6 +80,7 @@ export function usePost(postId: string) {
         fetchPost,
         deletePost,
         togglePostLike,
+        incrementView,
         setPost
     };
 }

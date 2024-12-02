@@ -54,6 +54,7 @@ export interface Post extends BasePost {
     isLiked: boolean;
     likeCount: number;
     replyCount: number;
+    viewCount: number;
 }
 
 export interface File {

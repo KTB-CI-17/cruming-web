@@ -150,10 +150,6 @@ export default function PostReply({
 
     return (
         <div className="px-4">
-            <div className="py-4">
-                <span className="text-lg font-medium">댓글 {totalCount}</span>
-            </div>
-
             {replies.map((reply, index) => (
                 <div key={reply.id}>
                     <div className={index !== replies.length - 1 ? "border-b border-gray-200" : ""}>

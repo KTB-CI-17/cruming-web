@@ -41,7 +41,12 @@ export default function PostContent({ post, onProfilePress, onMorePress }: PostH
                         />
                     </div>
                     <div>
-                        <p className="text-base font-medium text-gray-900">{post.userNickname}</p>
+                        <div className="flex items-center gap-2">
+                            <p className="text-base font-medium text-gray-900">{post.userNickname}</p>
+                            {post.instagram_id && (
+                                <span className="text-sm text-gray-500">@{post.instagram_id}</span>
+                            )}
+                        </div>
                         <div className="flex items-center text-sm text-gray-500 gap-2">
                             <span>{formatTimeAgo(post.createdAt)}</span>
                             <span>·</span>

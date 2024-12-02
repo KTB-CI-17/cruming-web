@@ -1,8 +1,9 @@
 import {Reply} from "../../../types/community.ts";
-import {useCallback, useEffect, useRef} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import {formatTimeAgo} from "../../../utils/formatTime.ts";
 import {REPLY_PAGINATION} from "../../../../constants/replyPagination.ts";
 import {EllipsisHorizontalIcon} from "@heroicons/react/24/outline";
+import MoreActionsMenu from "../../common/MoreActionsMenu.tsx";
 
 interface PostReplyProps {
     replies: Reply[];
@@ -35,6 +36,7 @@ export default function PostReply({
                                   }: PostReplyProps) {
     const observerRef = useRef<IntersectionObserver | null>(null);
     const loadingRef = useRef<HTMLDivElement>(null);
+    const [selectedReplyId, setSelectedReplyId] = useState<number | null>(null);
 
     useEffect(() => {
         const options = {
@@ -66,33 +68,7 @@ export default function PostReply({
     }, [onReply]);
 
     const handleMorePress = (reply: Reply) => {
-        // 수정/삭제 팝업 메뉴 표시
-        const menu = document.createElement('div');
-        menu.className = 'absolute right-4 top-16 bg-white shadow-lg rounded-lg overflow-hidden z-50';
-        menu.innerHTML = `
-            <button class="w-full px-4 py-2 text-left hover:bg-gray-100">수정</button>
-            <button class="w-full px-4 py-2 text-left hover:bg-gray-100 text-red-600">삭제</button>
-        `;
-        document.body.appendChild(menu);
-
-        const handleClick = (e: MouseEvent) => {
-            const target = e.target as HTMLElement;
-            if (target.textContent === '수정') {
-                onEditReply(reply.id);
-            } else if (target.textContent === '삭제') {
-                onDeleteReply(reply.id);
-            }
-            menu.remove();
-            document.removeEventListener('click', handleClick);
-        };
-
-        menu.addEventListener('click', handleClick);
-        setTimeout(() => {
-            document.addEventListener('click', () => {
-                menu.remove();
-                document.removeEventListener('click', handleClick);
-            });
-        }, 0);
+        setSelectedReplyId(reply.id);
     };
 
     const renderReply = (reply: Reply, isChild: boolean = false) => (
@@ -174,6 +150,10 @@ export default function PostReply({
 
     return (
         <div className="px-4">
+            <div className="py-4">
+                <span className="text-lg font-medium">댓글 {totalCount}</span>
+            </div>
+
             {replies.map((reply, index) => (
                 <div key={reply.id}>
                     <div className={index !== replies.length - 1 ? "border-b border-gray-200" : ""}>
@@ -210,6 +190,23 @@ export default function PostReply({
                     )}
                 </div>
             )}
+
+            <MoreActionsMenu
+                isOpen={selectedReplyId !== null}
+                onClose={() => setSelectedReplyId(null)}
+                onEdit={() => {
+                    if (selectedReplyId) {
+                        onEditReply(selectedReplyId);
+                        setSelectedReplyId(null);
+                    }
+                }}
+                onDelete={() => {
+                    if (selectedReplyId) {
+                        onDeleteReply(selectedReplyId);
+                        setSelectedReplyId(null);
+                    }
+                }}
+            />
         </div>
     );
 }

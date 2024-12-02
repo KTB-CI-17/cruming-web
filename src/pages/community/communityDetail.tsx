@@ -10,12 +10,13 @@ import PostReply from "../../components/community/detail/PostReply.tsx";
 import PostActions from "../../components/community/detail/PostActions.tsx";
 import PostReplyInput from "../../components/community/detail/PostReplyInput.tsx";
 import {REPLY_PAGINATION} from "../../../constants/replyPagination.ts";
+import MoreActionsMenu from "../../components/common/MoreActionsMenu.tsx";
 
 export default function CommunityDetail() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const [imagesCache, setImagesCache] = useState<{[key: string]: string}>({});
-
+    const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
@@ -122,36 +123,6 @@ export default function CommunityDetail() {
         navigate(`/profile/${userId}`);
     };
 
-    const showActionSheet = () => {
-        // 웹에서는 드롭다운 메뉴로 구현
-        const menu = document.createElement('div');
-        menu.className = 'absolute right-4 top-16 bg-white shadow-lg rounded-lg overflow-hidden z-50';
-        menu.innerHTML = `
-            <button class="w-full px-4 py-2 text-left hover:bg-gray-100">수정</button>
-            <button class="w-full px-4 py-2 text-left hover:bg-gray-100 text-red-600">삭제</button>
-        `;
-        document.body.appendChild(menu);
-
-        const handleClick = (e: MouseEvent) => {
-            const target = e.target as HTMLElement;
-            if (target.textContent === '수정') {
-                handlePostAction('edit');
-            } else if (target.textContent === '삭제') {
-                handlePostAction('delete');
-            }
-            menu.remove();
-            document.removeEventListener('click', handleClick);
-        };
-
-        menu.addEventListener('click', handleClick);
-        setTimeout(() => {
-            document.addEventListener('click', () => {
-                menu.remove();
-                document.removeEventListener('click', handleClick);
-            });
-        }, 0);
-    };
-
     if (isLoading) {
         return (
             <div className="flex flex-col h-full bg-white page-container">
@@ -184,7 +155,8 @@ export default function CommunityDetail() {
                 <PostContent
                     post={post}
                     onProfilePress={handleProfilePress}
-                    onMorePress={showActionSheet}/>
+                    onMorePress={() => setIsMoreMenuOpen(true)}
+                />
 
                 <PostImageSlider
                     files={post.files}
@@ -221,6 +193,14 @@ export default function CommunityDetail() {
                         childrenHasMore={replyState.childrenHasMore}
                     />
                 </div>
+                {post.isWriter && (
+                    <MoreActionsMenu
+                        isOpen={isMoreMenuOpen}
+                        onClose={() => setIsMoreMenuOpen(false)}
+                        onEdit={() => handlePostAction('edit')}
+                        onDelete={() => handlePostAction('delete')}
+                    />
+                )}
             </main>
 
             <div

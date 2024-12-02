@@ -1,7 +1,7 @@
 import React from 'react';
 import { format, parseISO } from 'date-fns';
 import { ListPost } from '../../../types/community.ts';
-import {ko} from "date-fns/locale";
+import { ko } from "date-fns/locale";
 
 interface PostCardProps {
     post: ListPost;
@@ -24,21 +24,21 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
             onClick={() => onClick(post.id)}
             className="w-full py-3 border-b border-[#F0F0F0] text-left"
         >
-            <div className="flex justify-between items-center">
-                <div className="flex items-center flex-1 mr-2">
+            <div className="flex items-center gap-2">
+                <div className="flex items-center min-w-0 flex-1">
                     {post.isHot && (
-                        <span className="mr-2 text-base">🔥</span>
+                        <span className="flex-shrink-0 mr-2 text-base">🔥</span>
                     )}
                     {post.isNew && (
-                        <span className="px-1.5 py-0.5 mr-2 text-xs font-semibold text-white bg-[#826CF6] rounded">
+                        <span className="flex-shrink-0 px-1.5 py-0.5 mr-2 text-xs font-semibold text-white bg-[#826CF6] rounded">
                             NEW
                         </span>
                     )}
-                    <h3 className="flex-1 text-base text-[#333333] truncate">
+                    <h3 className="truncate text-base text-[#333333]">
                         {post.title}
                     </h3>
                 </div>
-                <span className="text-sm text-[#8F9BB3]">
+                <span className="flex-shrink-0 text-sm text-[#8F9BB3]">
                     {formatDate(post.createdAt)}
                 </span>
             </div>

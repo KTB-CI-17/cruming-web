@@ -25,6 +25,7 @@ function App() {
                         <Route element={<Layout />}>
                             <Route path="/" element={<Navigate to="/timeline" replace />} />
                             <Route path="/profile" element={<Profile />} />
+                            <Route path="/profile/:id" element={<Profile />} />
                             <Route path="/hold" element={<Hold />} />
                             <Route path="/timeline" element={<Timeline />} />
 

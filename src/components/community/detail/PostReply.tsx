@@ -31,7 +31,6 @@ export default function PostReply({
                                       onLoadChildren,
                                       onDeleteReply,
                                       onEditReply,
-                                      totalCount,
                                       childrenMap = {},
                                   }: PostReplyProps) {
     const observerRef = useRef<IntersectionObserver | null>(null);

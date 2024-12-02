@@ -13,7 +13,6 @@ export function usePost(postId: string) {
             setIsLoading(true);
             const { data } = await api.get<Post>(`/posts/${postId}`);
             setPost(data);
-            console.log(data);
             return data;
         } catch (e) {
             const error = e as AxiosError;

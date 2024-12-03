@@ -1,5 +1,5 @@
 import React from "react";
-import {LocationData} from "../../../types/location.ts";
+import { LocationData } from "../../../types/location.ts";
 import LocationSearch from "../../common/LocationSearch.tsx";
 
 interface ProblemFormContentProps {
@@ -10,11 +10,14 @@ interface ProblemFormContentProps {
     image: {
         file: File;
         preview: string;
+        id?: number;  // 기존 이미지의 ID
     } | null;
     onTitleChange: (title: string) => void;
     onContentChange: (content: string) => void;
     onLevelChange: (level: string) => void;
     onLocationChange: (location: LocationData) => void;
+    onFileDelete?: (fileId: number) => void;  // 파일 삭제 핸들러 추가
+    onImageChange?: (image: { file: File; preview: string; } | null) => void;  // 이미지 변경 핸들러 추가
     isLoading?: boolean;
 }
 
@@ -28,6 +31,7 @@ export const ProblemForm = ({
                                 onContentChange,
                                 onLevelChange,
                                 onLocationChange,
+                                onImageChange,
                                 isLoading = false
                             }: ProblemFormContentProps) => {
     const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -35,6 +39,16 @@ export const ProblemForm = ({
         textarea.style.height = 'auto';
         textarea.style.height = `${textarea.scrollHeight}px`;
         onContentChange(e.target.value);
+    };
+
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0] && onImageChange) {
+            const file = e.target.files[0];
+            onImageChange({
+                file,
+                preview: URL.createObjectURL(file)
+            });
+        }
     };
 
     return (
@@ -73,9 +87,9 @@ export const ProblemForm = ({
                 />
             </div>
 
-            <div className="w-full mt-4">
+            <div className="w-full mt-4 relative">
                 {image ? (
-                    <div className="w-full">
+                    <div className="w-full relative">
                         <img
                             src={image.preview}
                             alt="Problem"
@@ -83,9 +97,16 @@ export const ProblemForm = ({
                         />
                     </div>
                 ) : (
-                    <div className="w-full h-[200px] border-2 border-dashed border-gray-200 flex items-center justify-center text-gray-400">
-                        문제 이미지가 필요합니다
-                    </div>
+                    <label className="w-full h-[200px] border-2 border-dashed border-gray-200 flex items-center justify-center text-gray-400 cursor-pointer">
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            className="hidden"
+                            disabled={isLoading}
+                        />
+                        문제 이미지를 업로드하세요
+                    </label>
                 )}
             </div>
         </div>

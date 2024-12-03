@@ -110,15 +110,24 @@ export type ReplyAction =
     | { type: 'SET_ERROR'; payload: Error };
 
 export interface CreatePostRequest {
+    category: PostCategory;
     title: string;
     content: string;
-    files: {
+    locationRequest: {
+        placeName: string;
+        address: string;
+        latitude: number;
+        longitude: number;
+    } | null;
+    level: string | null;
+    fileRequests: {
         originalFileName: string;
         displayOrder: number;
     }[];
 }
 
 export interface UploadImage {
+    id?: number;
     file: globalThis.File;
     preview: string;
 }

@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { ProblemForm } from "../../components/community/new/ProblemForm";
 import { LocationData } from '../../types/location';
-import {useUploadProblem} from "../../hooks/useProblemPostUpload.ts";
+import {usePostUpload} from "../../hooks/usePostUpload.ts";
+import {UploadImage} from "../../types/community.ts";
 
 export default function NewProblemPage() {
     const location = useLocation();
@@ -10,21 +11,13 @@ export default function NewProblemPage() {
     const [content, setContent] = useState('');
     const [level, setLevel] = useState('');
     const [locationData, setLocationData] = useState<LocationData | null>(null);
-    const [image, setImage] = useState<{ file: File; preview: string; } | null>(null);
+    const [image, setImage] = useState<UploadImage | null>(null);
 
-    const { uploadProblem, isLoading } = useUploadProblem({
+    const { uploadPost, isLoading } = usePostUpload({
         onError: (error) => {
             alert(error);
         }
     });
-
-    useEffect(() => {
-        const problemImage = location.state?.problemImage;
-        if (problemImage) {
-            console.log('Received problem image:', problemImage);
-            setImage(problemImage);
-        }
-    }, [location.state]);
 
     const handleSubmit = async () => {
         if (!locationData) {
@@ -37,7 +30,7 @@ export default function NewProblemPage() {
             return;
         }
 
-        await uploadProblem(title, content, level, locationData, image);
+        uploadPost('PROBLEM', title, content, image, locationData, level);
     };
 
     return (

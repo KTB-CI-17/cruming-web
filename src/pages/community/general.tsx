@@ -1,27 +1,25 @@
 import { useState } from 'react';
-import { GeneralForm } from '../../components/community/new/GeneralForm.tsx';
-import { useUploadPost } from '../../hooks/useUploadPost.ts';
-import { UploadImage } from '../../types/community.ts';
-import { PADDING } from '../../../constants/layout.ts';
+import { GeneralForm } from '../../components/community/new/GeneralForm';
+import {usePostUpload} from '../../hooks/usePostUpload.ts';
+import { UploadImage } from '../../types/community';
 
 export default function NewGeneralPage() {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [images, setImages] = useState<UploadImage[]>([]);
 
-    const { uploadPost, isLoading } = useUploadPost({
+    const { uploadPost, isLoading } = usePostUpload({
         onError: (error) => {
             alert(error);
         }
     });
 
     const handleSubmit = () => {
-        uploadPost(title, content, images);
+        uploadPost('GENERAL', title, content, images);
     };
-
     return (
         <div className="flex flex-col h-full bg-white">
-            <div className="flex-1" style={{ paddingTop: PADDING.MAIN.TOP }}>
+            <div className="flex-1 pt-6">
                 <GeneralForm
                     title={title}
                     content={content}

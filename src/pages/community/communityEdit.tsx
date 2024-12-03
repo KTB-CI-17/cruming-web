@@ -4,8 +4,14 @@ import { GeneralForm } from '../../components/community/new/GeneralForm';
 import { ProblemForm } from '../../components/community/new/ProblemForm';
 import { LocationData } from '../../types/location';
 import { PADDING } from '../../../constants/layout';
-import {Post, UploadImage} from "../../types/community.ts";
-import {api} from "../../config/axios.ts";
+import { Post, UploadImage } from "../../types/community.ts";
+import { api } from "../../config/axios.ts";
+
+interface ExistingFile {
+    id: number;
+    fileName: string;
+    fileKey: string;
+}
 
 export default function CommunityEdit() {
     const { id } = useParams<{ id: string }>();
@@ -13,15 +19,17 @@ export default function CommunityEdit() {
     const [isLoading, setIsLoading] = useState(true);
     const [post, setPost] = useState<Post | null>(null);
 
-    // General Form States
+    // Form States
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [images, setImages] = useState<UploadImage[]>([]);
-
-    // Problem Form States
     const [level, setLevel] = useState('');
     const [locationData, setLocationData] = useState<LocationData | null>(null);
-    const [image, setImage] = useState<{ file: File; preview: string } | null>(null);
+    const [image, setImage] = useState<UploadImage | null>(null);
+
+    // 파일 관리를 위한 상태
+    const [existingFiles, setExistingFiles] = useState<ExistingFile[]>([]);
+    const [deleteFileIds, setDeleteFileIds] = useState<number[]>([]);
 
     useEffect(() => {
         const fetchPost = async () => {
@@ -31,34 +39,40 @@ export default function CommunityEdit() {
                 const postData = response.data;
                 setPost(postData);
 
-                // 공통 데이터 초기화
+                // 기본 데이터 초기화
                 setTitle(postData.title);
                 setContent(postData.content);
 
-                // 카테고리별 데이터 초기화
-                if (postData.category === 'GENERAL') {
-                    if (postData.files) {
+                // 기존 파일 데이터 초기화
+                if (postData.files) {
+                    setExistingFiles(postData.files);
+
+                    if (postData.category === 'GENERAL') {
                         const uploadImages: UploadImage[] = postData.files.map(file => ({
                             file: new File([], file.fileName),
-                            preview: file.fileKey
+                            preview: file.fileKey,
+                            id: file.id
                         }));
                         setImages(uploadImages);
-                    }
-                } else {
-                    if (postData.files && postData.files.length > 0) {
+                    } else if (postData.files.length > 0) {
                         const problemImage = postData.files[0];
                         setImage({
                             file: new File([], problemImage.fileName),
-                            preview: problemImage.fileKey
+                            preview: problemImage.fileKey,
+                            id: problemImage.id
                         });
                     }
-                    if (postData.level) setLevel(postData.level);
-                    if (postData.location) {
-                        setLocationData({
-                            placeName: postData.location,
-                            // 다른 위치 데이터 필드는 서버 응답에 따라 추가
-                        });
-                    }
+                }
+
+                // Problem 관련 데이터 초기화
+                if (postData.level) setLevel(postData.level);
+                if (postData.location) {
+                    setLocationData({
+                        placeName: postData.location.placeName,
+                        roadAddress: postData.location.address,
+                        longitude: postData.location.longitude,
+                        latitude: postData.location.latitude
+                    });
                 }
             } catch (error) {
                 console.error('Failed to fetch post:', error);
@@ -74,44 +88,84 @@ export default function CommunityEdit() {
         }
     }, [id, navigate]);
 
-    const handleSubmit = async () => {
-        if (post?.category === 'PROBLEM') {
-            if (!locationData) {
-                alert('위치를 선택해주세요.');
-                return;
-            }
+    const handleFileDelete = (fileId: number) => {
+        if (post?.category === 'GENERAL') {
+            setDeleteFileIds(prev => [...prev, fileId]);
+            // 이미지 배열에서도 해당 이미지 제거
+            setImages(prev => prev.filter(img => img.id !== fileId));
+        }
+    };
 
-            if (!image) {
-                alert('문제 이미지를 업로드해주세요.');
+    const handleSubmit = async () => {
+        if (!title || !content) {
+            alert('제목과 내용을 입력해주세요.');
+            return;
+        }
+
+        if (post?.category === 'PROBLEM') {
+            if (!locationData || !level || !image) {
+                alert('모든 필수 항목을 입력해주세요.');
                 return;
             }
         }
 
         try {
             setIsLoading(true);
-            const formData = {
+            const formData = new FormData();
+
+            // FileRequest 배열 생성
+            const newFiles = post?.category === 'GENERAL'
+                ? images
+                    .filter(img => !img.id) // 새로 추가된 이미지만 필터링
+                    .map((img, index) => ({
+                        originalFileName: img.file.name,
+                        displayOrder: index
+                    }))
+                : image && !image.id
+                    ? [{
+                        originalFileName: image.file.name,
+                        displayOrder: 0
+                    }]
+                    : [];
+
+            // 기본 데이터 추가
+            const requestData = {
                 id: Number(id),
                 category: post?.category,
                 title,
                 content,
-                ...(post?.category === 'PROBLEM' && {
-                    location: locationData?.placeName,
-                    level,
-                }),
-                files: post?.category === 'GENERAL'
-                    ? images.map((img, index) => ({
-                        originalFileName: img.file.name,
-                        displayOrder: index
-                    }))
-                    : image
-                        ? [{
-                            originalFileName: image.file.name,
-                            displayOrder: 0
-                        }]
-                        : []
+                level: post?.category === 'PROBLEM' ? level : undefined,
+                locationRequest: post?.category === 'PROBLEM' ? {
+                    placeName: locationData?.placeName,
+                    address: locationData?.roadAddress,
+                    latitude: locationData?.latitude,
+                    longitude: locationData?.longitude
+                } : undefined,
+                deleteFileIds: post?.category === 'GENERAL' ? deleteFileIds : null,
+                newFiles: newFiles  // FileRequest 객체 배열
             };
 
-            await api.put(`/posts/${id}`, formData);
+            formData.append('request', new Blob([JSON.stringify(requestData)], {
+                type: 'application/json'
+            }));
+
+            // 실제 파일 추가 (이 부분은 동일)
+            if (post?.category === 'GENERAL') {
+                images
+                    .filter(img => !img.id)
+                    .forEach(img => {
+                        formData.append('files', img.file);
+                    });
+            } else if (image && !image.id) {
+                formData.append('files', image.file);
+            }
+
+            await api.post(`/posts/${id}`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+
             navigate(`/community/${id}`);
         } catch (error) {
             console.error('Failed to update post:', error);
@@ -125,10 +179,10 @@ export default function CommunityEdit() {
         return <div className="min-h-screen bg-white" />;
     }
 
-    if (post.category === 'GENERAL') {
-        return (
-            <div className="flex flex-col h-full bg-white">
-                <div className="flex-1" style={{ paddingTop: PADDING.MAIN.TOP }}>
+    return (
+        <div className="min-h-screen bg-white flex flex-col">
+            <div className="flex-1" style={{ paddingTop: post.category === 'GENERAL' ? PADDING.MAIN.TOP : 0 }}>
+                {post.category === 'GENERAL' ? (
                     <GeneralForm
                         title={title}
                         content={content}
@@ -136,44 +190,36 @@ export default function CommunityEdit() {
                         onTitleChange={setTitle}
                         onContentChange={setContent}
                         onImagesChange={setImages}
+                        onFileDelete={handleFileDelete}
                         isLoading={isLoading}
                     />
-                </div>
-
-                <div className="py-2">
-                    <button
-                        onClick={handleSubmit}
-                        disabled={isLoading}
-                        className="w-full bg-primary text-white px-0 py-4 rounded-xl font-semibold text-base"
-                    >
-                        완료
-                    </button>
-                </div>
-            </div>
-        );
-    }
-
-    return (
-        <div className="min-h-screen bg-white flex flex-col">
-            <div className="flex-1">
-                <ProblemForm
-                    title={title}
-                    content={content}
-                    level={level}
-                    location={locationData}
-                    image={image}
-                    onTitleChange={setTitle}
-                    onContentChange={setContent}
-                    onLevelChange={setLevel}
-                    onLocationChange={setLocationData}
-                    isLoading={isLoading}
-                />
+                ) : (
+                    <ProblemForm
+                        title={title}
+                        content={content}
+                        level={level}
+                        location={locationData}
+                        image={image}
+                        onTitleChange={setTitle}
+                        onContentChange={setContent}
+                        onLevelChange={setLevel}
+                        onLocationChange={setLocationData}
+                        onFileDelete={handleFileDelete}
+                        onImageChange={setImage}
+                        isLoading={isLoading}
+                    />
+                )}
             </div>
 
             <div className="p-4 border-t">
                 <button
                     onClick={handleSubmit}
-                    disabled={isLoading || !title || !content || !level || !locationData || !image}
+                    disabled={
+                        isLoading ||
+                        !title ||
+                        !content ||
+                        (post.category === 'PROBLEM' && (!level || !locationData || !image))
+                    }
                     className="w-full bg-primary text-white px-0 py-4 rounded-xl font-semibold text-base disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     완료

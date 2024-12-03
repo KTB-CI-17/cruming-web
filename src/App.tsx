@@ -5,6 +5,7 @@ import Profile from "./pages/profile/profile.tsx";
 import Timeline from "./pages/timeline/timeline.tsx";
 import FootAnalysis from "./pages/foot-analysis/foot-analysis.tsx";
 import Community from "./pages/community/community.tsx";
+import CommunityEdit from "./pages/community/communityEdit.tsx";
 import CommunityDetail from "./pages/community/communityDetail.tsx";
 import Hold from "./pages/hold/hold.tsx";
 import { ProtectedRoute } from "./components/ProtectedRoute.tsx";
@@ -31,6 +32,7 @@ function App() {
 
                             <Route path="/community" element={<Community />} />
                             <Route path="/community/:id" element={<CommunityDetail />} />
+                            <Route path="/community/edit/:id" element={<CommunityEdit />} />
                             <Route path="/community/general" element={<NewGeneralPage />} />
                             <Route path="/community/problem" element={<NewProblemPage />} />
 

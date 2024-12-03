@@ -130,6 +130,7 @@ export interface UploadImage {
     id?: number;
     file: globalThis.File;
     preview: string;
+    isFixed?: boolean;
 }
 
 export interface PostFormContentProps {

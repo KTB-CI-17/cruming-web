@@ -95,9 +95,19 @@ export const ProblemForm = ({
                             alt="Problem"
                             className="w-full"
                         />
+                        {/* isFixed 속성이 없을 때만 삭제 버튼을 보여줌 */}
+                        {!image.isFixed && (
+                            <button
+                                onClick={() => onImageChange?.(null)}
+                                className="absolute top-2 right-2 p-2 bg-white rounded-full shadow"
+                            >
+                                {/* 삭제 아이콘 */}
+                            </button>
+                        )}
                     </div>
                 ) : (
-                    <label className="w-full h-[200px] border-2 border-dashed border-gray-200 flex items-center justify-center text-gray-400 cursor-pointer">
+                    <label
+                        className="w-full h-[200px] border-2 border-dashed border-gray-200 flex items-center justify-center text-gray-400 cursor-pointer">
                         <input
                             type="file"
                             accept="image/*"

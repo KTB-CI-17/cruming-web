@@ -2,16 +2,27 @@ import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { ProblemForm } from "../../components/community/new/ProblemForm";
 import { LocationData } from '../../types/location';
-import {usePostUpload} from "../../hooks/usePostUpload.ts";
-import {UploadImage} from "../../types/community.ts";
+import { UploadImage } from "../../types/community.ts";
+import { usePostUpload } from "../../hooks/usePostUpload.ts";
 
 export default function NewProblemPage() {
-    const location = useLocation();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [level, setLevel] = useState('');
     const [locationData, setLocationData] = useState<LocationData | null>(null);
-    const [image, setImage] = useState<UploadImage | null>(null);
+
+    const location = useLocation();
+
+    const [image, setImage] = useState<UploadImage | null>(() => {
+        if (location.state?.problemImage) {
+            return {
+                file: location.state.problemImage.file,
+                preview: location.state.problemImage.preview,
+                isFixed: location.state.problemImage.isFixed
+            };
+        }
+        return null;
+    });
 
     const { uploadPost, isLoading } = usePostUpload({
         onError: (error) => {
@@ -46,6 +57,7 @@ export default function NewProblemPage() {
                     onContentChange={setContent}
                     onLevelChange={setLevel}
                     onLocationChange={setLocationData}
+                    onImageChange={setImage}
                     isLoading={isLoading}
                 />
             </div>

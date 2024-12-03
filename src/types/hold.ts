@@ -1,19 +1,23 @@
-export interface Coordinates {
-    x1: number;
-    y1: number;
-    x2: number;
-    y2: number;
+export interface Point {
+    x: number;
+    y: number;
 }
 
 export interface Detection {
-    coordinates: Coordinates;
-    confidence: number;
-    class_id: number;
+    object_id: number;
+    area: number;
+    center_point: Point;
+    num_points: number;
+    points: [number, number][];
 }
 
 export interface AnalysisResponse {
-    image_path: string;
-    detections: Detection[];
+    info: {
+        date_created: string;
+        image_path: string;
+        total_objects: number;
+    };
+    objects: Detection[];
 }
 
 export interface ImageInfo {
@@ -49,5 +53,5 @@ export interface UseImageProcessingReturn {
     imageInfo: ImageInfo | null;
     layoutInfo: { width: number; height: number } | null;
     setLayoutInfo: (info: { width: number; height: number } | null) => void;
-    calculateScaledCoordinates: (coordinates: Coordinates) => ScaledCoordinates;
+    calculateScaledCoordinates: (points: [number, number][]) => ScaledCoordinates;
 }

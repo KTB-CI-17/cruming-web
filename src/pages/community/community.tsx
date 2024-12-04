@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import TabNavigation from '../../components/community/list/TabNavigation.tsx';
-import SearchBar from '../../components/community/list/SearchBar.tsx';
-import GeneralTab from '../../components/community/list/GeneralTab.tsx';
-import ProblemTab from '../../components/community/list/ProblemTab.tsx';
-import TimelineTab from '../../components/community/list/TimelineTab.tsx';
+import TabNavigation from '../../components/community/list/TabNavigation';
+import SearchBar from '../../components/community/list/SearchBar';
+import GeneralTab from '../../components/community/list/GeneralTab';
+import ProblemTab from '../../components/community/list/ProblemTab';
+import TimelineTab from '../../components/community/list/TimelineTab';
 
 const CommunityPage: React.FC = () => {
     const [currentTab, setCurrentTab] = useState('General');

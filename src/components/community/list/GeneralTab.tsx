@@ -1,10 +1,10 @@
 import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
-import PostCard from './PostCard.tsx';
-import ErrorState from './ErrorState.tsx';
-import { usePostList } from '../../../hooks/usePostList.ts';
-import AddButton from './AddButton.tsx';
+import PostCard from './PostCard';
+import ErrorState from './ErrorState';
+import { usePostList } from '../../../hooks/usePostList';
+import AddButton from './AddButton';
 
 const GeneralTab = () => {
     const navigate = useNavigate();

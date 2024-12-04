@@ -4,8 +4,8 @@ import { GeneralForm } from '../../components/community/new/GeneralForm';
 import { ProblemForm } from '../../components/community/new/ProblemForm';
 import { LocationData } from '../../types/location';
 import { PADDING } from '../../../constants/layout';
-import { Post, UploadImage } from "../../types/community.ts";
-import { api } from "../../config/axios.ts";
+import { Post, UploadImage } from "../../types/community";
+import { api } from "../../config/axios";
 
 interface ExistingFile {
     id: number;

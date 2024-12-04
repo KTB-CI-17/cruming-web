@@ -1,4 +1,4 @@
-import {FootAnalysisResult} from "../../components/foot-analysis/FootAnalysisResult.tsx";
+import {FootAnalysisResult} from "../../components/foot-analysis/FootAnalysisResult";
 
 
 export default function FootAnalysis() {

@@ -1,6 +1,6 @@
 import React from 'react';
 import {useNavigate, useLocation, Navigate} from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext.tsx';
+import { useAuth } from '../../context/AuthContext';
 
 const LoginPage: React.FC = () => {
     const navigate = useNavigate();
@@ -49,18 +49,6 @@ const LoginPage: React.FC = () => {
                             className="w-5 h-5 mr-2"
                         />
                         <span className="text-black font-medium">카카오 로그인</span>
-                    </button>
-
-                    <button
-                        onClick={() => handleSocialLogin('naver')}
-                        className="flex items-center justify-center w-full px-4 py-3 bg-[#03C75A] rounded-lg shadow-md transition-transform hover:scale-[1.02]"
-                    >
-                        <img
-                            src={'/src/assets/icon/naver.png'}
-                            alt="네이버 로고"
-                            className="w-5 h-5 mr-2"
-                        />
-                        <span className="text-white font-medium">네이버 로그인</span>
                     </button>
                 </div>
             </div>

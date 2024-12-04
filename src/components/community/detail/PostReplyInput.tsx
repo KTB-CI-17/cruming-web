@@ -1,6 +1,6 @@
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { PaperAirplaneIcon } from '@heroicons/react/24/solid';
-import { Reply } from "../../../types/community.ts";
+import { Reply } from "../../../types/community";
 import { useRef, useEffect } from "react";
 
 interface PostReplyInputProps {

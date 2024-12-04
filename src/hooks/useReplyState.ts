@@ -1,6 +1,6 @@
 import { useReducer } from 'react';
 import { ReplyState, ReplyAction } from '../types/community';
-import { usePostDetail } from './usePostDetail.ts';
+import { usePostDetail } from './usePostDetail';
 
 const initialState: ReplyState = {
     replies: [],

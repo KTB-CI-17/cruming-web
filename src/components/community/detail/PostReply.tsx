@@ -1,9 +1,9 @@
-import {Reply} from "../../../types/community.ts";
+import {Reply} from "../../../types/community";
 import {useCallback, useEffect, useRef, useState} from "react";
-import {formatTimeAgo} from "../../../utils/formatTime.ts";
-import {REPLY_PAGINATION} from "../../../../constants/replyPagination.ts";
+import {formatTimeAgo} from "../../../utils/formatTime";
+import {REPLY_PAGINATION} from "../../../../constants/replyPagination";
 import {EllipsisHorizontalIcon} from "@heroicons/react/24/outline";
-import MoreActionsMenu from "../../common/MoreActionsMenu.tsx";
+import MoreActionsMenu from "../../common/MoreActionsMenu";
 
 interface PostReplyProps {
     replies: Reply[];

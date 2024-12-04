@@ -1,18 +1,18 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { Layout } from './components/layout/Layout';
-import Profile from "./pages/profile/profile.tsx";
-import Timeline from "./pages/timeline/timeline.tsx";
-import FootAnalysis from "./pages/foot-analysis/foot-analysis.tsx";
-import Community from "./pages/community/community.tsx";
-import CommunityEdit from "./pages/community/communityEdit.tsx";
-import CommunityDetail from "./pages/community/communityDetail.tsx";
-import Hold from "./pages/hold/hold.tsx";
-import { ProtectedRoute } from "./components/ProtectedRoute.tsx";
-import Login from "./pages/login/login.tsx";
-import KakaoCallback from "./pages/login/KakaoCallback.tsx";
-import NewGeneralPage from "./pages/community/general.tsx";
-import NewProblemPage from "./pages/community/problem.tsx";
+import Profile from "./pages/profile/profile";
+import Timeline from "./pages/timeline/timeline";
+import FootAnalysis from "./pages/foot-analysis/foot-analysis";
+import Community from "./pages/community/community";
+import CommunityEdit from "./pages/community/communityEdit";
+import CommunityDetail from "./pages/community/communityDetail";
+import Hold from "./pages/hold/hold";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import Login from "./pages/login/login";
+import KakaoCallback from "./pages/login/KakaoCallback";
+import NewGeneralPage from "./pages/community/general";
+import NewProblemPage from "./pages/community/problem";
 
 function App() {
     return (

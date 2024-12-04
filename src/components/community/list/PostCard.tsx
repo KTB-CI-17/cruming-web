@@ -1,6 +1,6 @@
 import React from 'react';
 import { format, parseISO } from 'date-fns';
-import { ListPost } from '../../../types/community.ts';
+import { ListPost } from '../../../types/community';
 import { ko } from "date-fns/locale";
 
 interface PostCardProps {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Settings, MapPin, Ruler } from 'lucide-react';
-import {UserProfile} from "../../types/user.ts";
+import {UserProfile} from "../../types/user";
 
 interface ProfileInfoProps {
     profile: UserProfile;

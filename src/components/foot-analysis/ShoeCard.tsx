@@ -1,4 +1,4 @@
-import {ShoeCardProps} from "../../types/foot-analysis.ts";
+import {ShoeCardProps} from "../../types/foot-analysis";
 
 export function ShoeCard({ modelName, size, productUrl, imageUrl }: ShoeCardProps) {
     return (

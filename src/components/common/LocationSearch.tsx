@@ -1,6 +1,6 @@
 import { Search, Loader2, X } from 'lucide-react';
-import {LocationData} from "../../types/location.ts";
-import {useKakaoLocationSearch} from "../../hooks/useKakaoLocationSearch.ts";
+import {LocationData} from "../../types/location";
+import {useKakaoLocationSearch} from "../../hooks/useKakaoLocationSearch";
 
 interface LocationSearchProps {
     value?: string;

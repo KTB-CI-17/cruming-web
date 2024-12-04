@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import PostCard from './PostCard.tsx';
-import { usePostList } from '../../../hooks/usePostList.ts';
-import ErrorState from "./ErrorState.tsx";
+import PostCard from './PostCard';
+import { usePostList } from '../../../hooks/usePostList';
+import ErrorState from "./ErrorState";
 
 const TimelineTab = () => {
     const navigate = useNavigate();

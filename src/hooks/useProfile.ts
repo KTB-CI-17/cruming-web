@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { UserProfile, UserInfoResponse } from '../types/user';
-import {api} from "../config/axios.ts";
+import {api} from "../config/axios";
 
 export const useProfile = (userId?: string) => {
     const [profile, setProfile] = useState<UserProfile | null>(null);

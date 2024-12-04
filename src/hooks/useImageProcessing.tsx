@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ImageInfo, UseImageProcessingReturn, Coordinates } from '../types/hold';
+import { ImageInfo, UseImageProcessingReturn } from '../types/hold';
 
 export const useImageProcessing = (imageUri: string): UseImageProcessingReturn => {
     const [imageInfo, setImageInfo] = useState<ImageInfo | null>(null);
@@ -41,7 +41,7 @@ export const useImageProcessing = (imageUri: string): UseImageProcessingReturn =
         };
     }, [layoutInfo, imageUri]);
 
-    const calculateScaledCoordinates = (coordinates: Coordinates) => {
+    const calculateScaledCoordinates = () => {
         if (!imageInfo) return { left: 0, top: 0, width: 0, height: 0 };
 
         const { originalWidth, originalHeight, displayWidth, displayHeight, offsetX, offsetY } = imageInfo;

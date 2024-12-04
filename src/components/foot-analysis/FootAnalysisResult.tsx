@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { FormData } from '../../types/foot-analysis';
-import { DUMMY_RESULTS } from '../../../constants/foot-analysis';
+
 import { ShoeCard } from './ShoeCard';
-import {FootAnalysisForm} from "./FootAnlysisForm.tsx";
+import {FootAnalysisForm} from "./FootAnlysisForm";
+import {DUMMY_RESULTS} from "../../../constants/foot-analysis";
 
 export function FootAnalysisResult() {
     const [showResults, setShowResults] = useState(false);

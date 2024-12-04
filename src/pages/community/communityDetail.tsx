@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import {usePost} from "../../hooks/usePostDetail.ts";
-import {useReply} from "../../hooks/useReply.ts";
-import {api} from "../../config/axios.ts";
-import {Reply} from "../../types/community.ts";
-import PostContent from "../../components/community/detail/PostContent.tsx";
-import PostImageSlider from "../../components/community/detail/PostImageSlider.tsx";
-import PostReply from "../../components/community/detail/PostReply.tsx";
-import PostActions from "../../components/community/detail/PostActions.tsx";
-import PostReplyInput from "../../components/community/detail/PostReplyInput.tsx";
-import {REPLY_PAGINATION} from "../../../constants/replyPagination.ts";
-import MoreActionsMenu from "../../components/common/MoreActionsMenu.tsx";
+import {usePost} from "../../hooks/usePostDetail";
+import {useReply} from "../../hooks/useReply";
+import {api} from "../../config/axios";
+import {Reply} from "../../types/community";
+import PostContent from "../../components/community/detail/PostContent";
+import PostImageSlider from "../../components/community/detail/PostImageSlider";
+import PostReply from "../../components/community/detail/PostReply";
+import PostActions from "../../components/community/detail/PostActions";
+import PostReplyInput from "../../components/community/detail/PostReplyInput";
+import {REPLY_PAGINATION} from "../../../constants/replyPagination";
+import MoreActionsMenu from "../../components/common/MoreActionsMenu";
 
 export default function CommunityDetail() {
     const { id } = useParams<{ id: string }>();

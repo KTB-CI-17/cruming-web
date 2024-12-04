@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useHoldSelection } from "../../hooks/useHoldSelection";
 import { useImageProcessing } from "../../hooks/useImageProcessing";
 import { AnalysisResponse, Detection } from "../../types/hold";
-import {UploadImage} from "../../types/community.ts";
+import {UploadImage} from "../../types/community";
 
 interface HoldAnalysisResultProps {
     imageUri: string;

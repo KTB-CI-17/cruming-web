@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { GeneralForm } from '../../components/community/new/GeneralForm';
-import {usePostUpload} from '../../hooks/usePostUpload.ts';
+import {usePostUpload} from '../../hooks/usePostUpload';
 import { UploadImage } from '../../types/community';
 
 export default function NewGeneralPage() {

@@ -1,6 +1,6 @@
 import React from "react";
-import { LocationData } from "../../../types/location.ts";
-import LocationSearch from "../../common/LocationSearch.tsx";
+import { LocationData } from "../../../types/location";
+import LocationSearch from "../../common/LocationSearch";
 
 interface ProblemFormContentProps {
     title: string;

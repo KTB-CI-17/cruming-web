@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ImageInfo, UseImageProcessingReturn } from '../types/hold';
+import { ImageInfo, UseImageProcessingReturn } from '../../types/hold';
 
 export const useImageProcessing = (imageUri: string): UseImageProcessingReturn => {
     const [imageInfo, setImageInfo] = useState<ImageInfo | null>(null);

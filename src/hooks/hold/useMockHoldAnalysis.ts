@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AnalysisResponse } from '../types/hold';
+import { AnalysisResponse } from '../../types/hold';
 
 // 실제 데이터 구조에 맞게 수정된 더미 데이터
 const MOCK_DATA: AnalysisResponse = {

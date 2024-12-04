@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { SelectionStep, UseHoldSelectionReturn } from '../types/hold';
+import { SelectionStep, UseHoldSelectionReturn } from '../../types/hold';
 
 export const useHoldSelection = (): UseHoldSelectionReturn => {
     const [selectedHolds, setSelectedHolds] = useState<number[]>([]);

@@ -1,20 +1,20 @@
 import { useReducer } from 'react';
 import { ReplyState, ReplyAction } from '../types/community';
-import { usePostDetail } from './usePostDetail';
+import { api } from '../config/axios';
 
 const initialState: ReplyState = {
     replies: [],
     childrenMap: {},
     loadingStates: {},
-    pageStates: {},
-    pendingReplies: {},
+    childrenHasMore: {},
     selectedReplyId: null,
     editingReplyId: null,
     replyText: '',
     isSubmitting: false,
     error: null,
     totalCount: 0,
-    hasMore: true
+    hasMore: true,
+    currentPage: 0
 };
 
 function replyReducer(state: ReplyState, action: ReplyAction): ReplyState {
@@ -24,12 +24,8 @@ function replyReducer(state: ReplyState, action: ReplyAction): ReplyState {
                 ...state,
                 replies: action.payload,
                 totalCount: action.totalCount,
-                hasMore: action.hasMore
-            };
-        case 'ADD_REPLY':
-            return {
-                ...state,
-                replies: [...state.replies, action.payload]
+                hasMore: action.hasMore,
+                currentPage: action.page
             };
         case 'UPDATE_REPLY':
             return {
@@ -51,6 +47,10 @@ function replyReducer(state: ReplyState, action: ReplyAction): ReplyState {
                 childrenMap: {
                     ...state.childrenMap,
                     [action.payload.parentId]: action.payload.children
+                },
+                childrenHasMore: {
+                    ...state.childrenHasMore,
+                    [action.payload.parentId]: action.payload.hasMore
                 }
             };
         case 'SET_LOADING':
@@ -94,9 +94,28 @@ function replyReducer(state: ReplyState, action: ReplyAction): ReplyState {
     }
 }
 
+const postService = {
+    fetchReplies: async (postId: string, page: number) => {
+        const { data } = await api.get(`/posts/${postId}/replies`, { params: { page } });
+        return data;
+    },
+    createReply: async (postId: string, content: string, parentId?: number | null) => {
+        await api.post(`/posts/${postId}/replies`, { content, parentId });
+    },
+    updateReply: async (replyId: number, content: string) => {
+        await api.put(`/replies/${replyId}`, { content });
+    },
+    deleteReply: async (replyId: number) => {
+        await api.delete(`/replies/${replyId}`);
+    },
+    fetchChildReplies: async (parentId: number, page: number) => {
+        const { data } = await api.get(`/replies/${parentId}/children`, { params: { page } });
+        return data;
+    }
+};
+
 export const useReplyState = (postId: string) => {
     const [state, dispatch] = useReducer(replyReducer, initialState);
-    const postService = usePostDetail();
 
     const actions = {
         fetchReplies: async (page = 0) => {
@@ -156,7 +175,7 @@ export const useReplyState = (postId: string) => {
 
                 dispatch({
                     type: 'SET_CHILDREN',
-                    payload: { parentId, children }
+                    payload: { parentId, children, hasMore: !response.last }
                 });
 
                 return !response.last;

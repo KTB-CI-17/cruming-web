@@ -40,24 +40,7 @@ export interface PostListResponse {
 
 export type PostCategory = 'GENERAL' | 'PROBLEM' | 'TIMELINE';
 
-export interface Post extends BasePost {
-    content: string;
-    location?: string;
-    level?: string;
-    category: string;
-    visibility: string;
-    userId: number;
-    userNickname: string;
-    isWriter: boolean;
-    files: File[];
-    instagram_id?: string;
-    isLiked: boolean;
-    likeCount: number;
-    replyCount: number;
-    views: number;
-}
-
-export interface File {
+export interface PostFile {
     id: number;
     fileName: string;
     fileKey: string;
@@ -68,6 +51,23 @@ export interface File {
     userId: number;
     status: string;
     createdAt: string;
+}
+
+export interface Post extends BasePost {
+    content: string;
+    location?: string;
+    level?: string;
+    category: string;
+    visibility: string;
+    userId: number;
+    userNickname: string;
+    isWriter: boolean;
+    files: PostFile[];
+    instagram_id?: string;
+    isLiked: boolean;
+    likeCount: number;
+    replyCount: number;
+    views: number;
 }
 
 export interface Reply {

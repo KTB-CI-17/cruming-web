@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { File } from '../../../types/community';
+import { PostFile } from '../../../types/community';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
 interface PostImageSliderProps {
-    files: File[];
+    files: PostFile[];
     imagesCache: { [key: string]: string };
     onImageIndexChange: (index: number) => void;
 }

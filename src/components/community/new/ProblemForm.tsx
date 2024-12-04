@@ -10,14 +10,15 @@ interface ProblemFormContentProps {
     image: {
         file: File;
         preview: string;
-        id?: number;  // 기존 이미지의 ID
+        id?: number;
+        isFixed?: boolean;
     } | null;
     onTitleChange: (title: string) => void;
     onContentChange: (content: string) => void;
     onLevelChange: (level: string) => void;
     onLocationChange: (location: LocationData) => void;
-    onFileDelete?: (fileId: number) => void;  // 파일 삭제 핸들러 추가
-    onImageChange?: (image: { file: File; preview: string; } | null) => void;  // 이미지 변경 핸들러 추가
+    onFileDelete?: (fileId: number) => void;
+    onImageChange?: (image: { file: File; preview: string; } | null) => void;
     isLoading?: boolean;
 }
 
@@ -95,7 +96,6 @@ export const ProblemForm = ({
                             alt="Problem"
                             className="w-full"
                         />
-                        {/* isFixed 속성이 없을 때만 삭제 버튼을 보여줌 */}
                         {!image.isFixed && (
                             <button
                                 onClick={() => onImageChange?.(null)}

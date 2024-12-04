@@ -4,14 +4,8 @@ import { GeneralForm } from '../../components/community/new/GeneralForm';
 import { ProblemForm } from '../../components/community/new/ProblemForm';
 import { LocationData } from '../../types/location';
 import { PADDING } from '../../constants/layout';
-import { Post, UploadImage } from "../../types/community";
+import { Post, UploadImage, PostFile as PostFile } from "../../types/community";
 import { api } from "../../config/axios";
-
-interface ExistingFile {
-    id: number;
-    fileName: string;
-    fileKey: string;
-}
 
 export default function CommunityEdit() {
     const { id } = useParams<{ id: string }>();
@@ -26,9 +20,6 @@ export default function CommunityEdit() {
     const [level, setLevel] = useState('');
     const [locationData, setLocationData] = useState<LocationData | null>(null);
     const [image, setImage] = useState<UploadImage | null>(null);
-
-    // 파일 관리를 위한 상태
-    const [existingFiles, setExistingFiles] = useState<ExistingFile[]>([]);
     const [deleteFileIds, setDeleteFileIds] = useState<number[]>([]);
 
     useEffect(() => {
@@ -45,13 +36,12 @@ export default function CommunityEdit() {
 
                 // 기존 파일 데이터 초기화
                 if (postData.files) {
-                    setExistingFiles(postData.files);
-
                     if (postData.category === 'GENERAL') {
-                        const uploadImages: UploadImage[] = postData.files.map(file => ({
+                        const uploadImages: UploadImage[] = postData.files.map((file: PostFile) => ({
                             file: new File([], file.fileName),
                             preview: file.fileKey,
-                            id: file.id
+                            id: file.id,
+                            isFixed: true
                         }));
                         setImages(uploadImages);
                     } else if (postData.files.length > 0) {
@@ -59,7 +49,8 @@ export default function CommunityEdit() {
                         setImage({
                             file: new File([], problemImage.fileName),
                             preview: problemImage.fileKey,
-                            id: problemImage.id
+                            id: problemImage.id,
+                            isFixed: true
                         });
                     }
                 }
@@ -142,14 +133,14 @@ export default function CommunityEdit() {
                     longitude: locationData?.longitude
                 } : undefined,
                 deleteFileIds: post?.category === 'GENERAL' ? deleteFileIds : null,
-                newFiles: newFiles  // FileRequest 객체 배열
+                newFiles: newFiles
             };
 
             formData.append('request', new Blob([JSON.stringify(requestData)], {
                 type: 'application/json'
             }));
 
-            // 실제 파일 추가 (이 부분은 동일)
+            // 실제 파일 추가
             if (post?.category === 'GENERAL') {
                 images
                     .filter(img => !img.id)

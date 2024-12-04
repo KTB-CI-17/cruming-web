@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Header } from './Header';
 import { TabBar } from './TabBar';
-import { LAYOUT, PADDING } from '../../../constants/layout';
+import { LAYOUT, PADDING } from '../../constants/layout';
 import { COLORS } from '../../styles/theme';
 
 export const Layout = memo(() => {

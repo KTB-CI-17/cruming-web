@@ -1,7 +1,7 @@
 import { useReducer, useCallback } from 'react';
 import {api} from "../config/axios";
 import {ReplyAction, ReplyState} from "../types/community";
-import {REPLY_PAGINATION} from "../../constants/replyPagination";
+import {REPLY_PAGINATION} from "../constants/replyPagination";
 
 const initialState: ReplyState = {
     replies: [],

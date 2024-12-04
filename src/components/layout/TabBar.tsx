@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { NAVIGATION_TABS } from '../../../constants/navigation';
-import { LAYOUT, Z_INDEX } from '../../../constants/layout';
+import { NAVIGATION_TABS } from '../../constants/navigation';
+import { LAYOUT, Z_INDEX } from '../../constants/layout';
 import { COLORS, FONT } from '../../styles/theme';
 
 export const TabBar = memo(() => {

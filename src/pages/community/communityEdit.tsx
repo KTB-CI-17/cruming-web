@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { GeneralForm } from '../../components/community/new/GeneralForm';
 import { ProblemForm } from '../../components/community/new/ProblemForm';
 import { LocationData } from '../../types/location';
-import { PADDING } from '../../../constants/layout';
+import { PADDING } from '../../constants/layout';
 import { Post, UploadImage } from "../../types/community";
 import { api } from "../../config/axios";
 

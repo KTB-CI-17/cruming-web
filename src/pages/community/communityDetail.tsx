@@ -9,7 +9,7 @@ import PostImageSlider from "../../components/community/detail/PostImageSlider";
 import PostReply from "../../components/community/detail/PostReply";
 import PostActions from "../../components/community/detail/PostActions";
 import PostReplyInput from "../../components/community/detail/PostReplyInput";
-import {REPLY_PAGINATION} from "../../../constants/replyPagination";
+import {REPLY_PAGINATION} from "../../constants/replyPagination";
 import MoreActionsMenu from "../../components/common/MoreActionsMenu";
 
 export default function CommunityDetail() {

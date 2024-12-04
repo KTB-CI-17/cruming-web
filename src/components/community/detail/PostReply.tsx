@@ -1,7 +1,7 @@
 import {Reply} from "../../../types/community";
 import {useCallback, useEffect, useRef, useState} from "react";
 import {formatTimeAgo} from "../../../utils/formatTime";
-import {REPLY_PAGINATION} from "../../../../constants/replyPagination";
+import {REPLY_PAGINATION} from "../../../constants/replyPagination";
 import {EllipsisHorizontalIcon} from "@heroicons/react/24/outline";
 import MoreActionsMenu from "../../common/MoreActionsMenu";
 

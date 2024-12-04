@@ -7,7 +7,7 @@ import { HeaderProps } from '../../types/layout';
 import { COLORS, FONT } from '../../styles/theme';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import {LAYOUT, PADDING, Z_INDEX} from "../../../constants/layout";
+import {LAYOUT, PADDING, Z_INDEX} from "../../constants/layout";
 
 export const Header = memo(({
                                 onBack,

@@ -1,4 +1,4 @@
-import { TabItem } from '../src/types/layout';
+import {TabItem} from "../types/layout";
 
 export const NAVIGATION_TABS: TabItem[] = [
     {

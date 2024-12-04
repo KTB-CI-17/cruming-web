@@ -38,6 +38,11 @@ Thumbs.db
 .vite
 .cache
 
+# TypeScript compile file
+*.js
+*.d.ts
+!vite.config.js
+
 # NPM/Yarn/Pnpm lock files (if not needed)
 # package-lock.json
 # yarn.lock

@@ -53,5 +53,4 @@ export interface UseImageProcessingReturn {
     imageInfo: ImageInfo | null;
     layoutInfo: { width: number; height: number } | null;
     setLayoutInfo: (info: { width: number; height: number } | null) => void;
-    calculateScaledCoordinates: (points: [number, number][]) => ScaledCoordinates;
 }

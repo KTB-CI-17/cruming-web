@@ -41,25 +41,9 @@ export const useImageProcessing = (imageUri: string): UseImageProcessingReturn =
         };
     }, [layoutInfo, imageUri]);
 
-    const calculateScaledCoordinates = () => {
-        if (!imageInfo) return { left: 0, top: 0, width: 0, height: 0 };
-
-        const { originalWidth, originalHeight, displayWidth, displayHeight, offsetX, offsetY } = imageInfo;
-        const scaleX = displayWidth / originalWidth;
-        const scaleY = displayHeight / originalHeight;
-
-        return {
-            left: coordinates.x1 * scaleX + offsetX,
-            top: coordinates.y1 * scaleY + offsetY,
-            width: (coordinates.x2 - coordinates.x1) * scaleX,
-            height: (coordinates.y2 - coordinates.y1) * scaleY,
-        };
-    };
-
     return {
         imageInfo,
         layoutInfo,
         setLayoutInfo,
-        calculateScaledCoordinates,
     };
 };

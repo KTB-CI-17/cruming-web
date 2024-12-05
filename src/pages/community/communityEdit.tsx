@@ -4,7 +4,7 @@ import { GeneralForm } from '../../components/community/new/GeneralForm';
 import { ProblemForm } from '../../components/community/new/ProblemForm';
 import { LocationData } from '../../types/location';
 import { PADDING } from '../../constants/layout';
-import { Post, UploadImage, PostFile as PostFile } from "../../types/community";
+import { Post, UploadImage, PostFile } from "../../types/community";
 import { api } from "../../config/axios";
 
 export default function CommunityEdit() {
@@ -82,7 +82,6 @@ export default function CommunityEdit() {
     const handleFileDelete = (fileId: number) => {
         if (post?.category === 'GENERAL') {
             setDeleteFileIds(prev => [...prev, fileId]);
-            // 이미지 배열에서도 해당 이미지 제거
             setImages(prev => prev.filter(img => img.id !== fileId));
         }
     };
@@ -104,10 +103,9 @@ export default function CommunityEdit() {
             setIsLoading(true);
             const formData = new FormData();
 
-            // FileRequest 배열 생성
             const newFiles = post?.category === 'GENERAL'
                 ? images
-                    .filter(img => !img.id) // 새로 추가된 이미지만 필터링
+                    .filter(img => !img.id)
                     .map((img, index) => ({
                         originalFileName: img.file.name,
                         displayOrder: index
@@ -119,7 +117,6 @@ export default function CommunityEdit() {
                     }]
                     : [];
 
-            // 기본 데이터 추가
             const requestData = {
                 id: Number(id),
                 category: post?.category,
@@ -140,7 +137,6 @@ export default function CommunityEdit() {
                 type: 'application/json'
             }));
 
-            // 실제 파일 추가
             if (post?.category === 'GENERAL') {
                 images
                     .filter(img => !img.id)

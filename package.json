@@ -20,9 +20,11 @@
     "html2canvas": "^1.4.1",
     "lucide-react": "^0.462.0",
     "react": "^18.3.1",
+    "react-calendar": "^5.1.0",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.53.2",
     "react-intersection-observer": "^9.13.1",
+    "react-native-calendars": "^1.1307.0",
     "react-router-dom": "^7.0.1",
     "styled-components": "^6.1.13"
   },

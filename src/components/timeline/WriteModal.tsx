@@ -5,10 +5,12 @@ import DatePicker from './DatePicker';
 import ColorLevelSelect from './ColorLevelSelect';
 import ImageUpload from './ImageUpload';
 import LocationSearch from "../common/LocationSearch";
+import {api} from "../../config/axios";
 
 interface TimelineWriteModalProps {
     isOpen: boolean;
     onClose: () => void;
+    onCreateSuccess: () => void;
 }
 
 const initialFormData: TimelineFormData = {
@@ -72,13 +74,22 @@ export default function TimelineWriteModal({ isOpen, onClose }: TimelineWriteMod
         onClose();
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!validateForm()) return;
 
         if (confirm("입력하신 내용으로 등록하시겠습니까?")) {
             setIsSubmitting(true);
-            console.log('Timeline 입력 데이터:', formData);
-            resetAndClose();
+            try {
+                // API 연동 추가
+                const response = await api.post('/timelines', formData);
+                console.log('Timeline created:', response.data);
+                resetAndClose();
+            } catch (error) {
+                console.error('Failed to create timeline:', error);
+                alert('등록에 실패했습니다. 다시 시도해주세요.');
+            } finally {
+                setIsSubmitting(false);
+            }
         }
     };
 

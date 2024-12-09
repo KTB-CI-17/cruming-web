@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
+import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import Calendar from "react-calendar";
-import { CalendarIcon } from 'lucide-react';
+import { CalendarIcon, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 
 interface DatePickerProps {
     value: string;
@@ -31,14 +31,14 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
     const [isOpen, setIsOpen] = useState(false);
     const today = new Date();
 
+    const formattedDate = value
+        ? format(new Date(value), 'yyyy년 MM월 dd일', { locale: ko })
+        : '';
+
     const handleDayClick = (date: Date) => {
         onChange(format(date, 'yyyy-MM-dd'));
         setIsOpen(false);
     };
-
-    const formattedDate = value
-        ? format(new Date(value), 'yyyy년 MM월 dd일', { locale: ko })
-        : '';
 
     return (
         <div className="relative">
@@ -55,7 +55,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
 
             {isOpen && (
                 <div
-                    className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+                    className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-6"
                     onClick={() => setIsOpen(false)}
                 >
                     <div
@@ -75,7 +75,26 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
                             }}
                             maxDate={today}
                             className="w-full border-none"
-                            tileClassName="text-center"
+                            navigationLabel={({ date }) =>
+                                format(date, 'yyyy년 MM월', { locale: ko })
+                            }
+                            prevLabel={<ChevronLeft className="w-4 h-4" />}
+                            nextLabel={<ChevronRight className="w-4 h-4" />}
+                            prev2Label={<ChevronsLeft className="w-4 h-4" />}
+                            next2Label={<ChevronsRight className="w-4 h-4" />}
+                            tileClassName={({ date }) => {
+                                const day = format(date, 'E', { locale: ko });
+                                let className = "h-10 w-10 rounded-full flex items-center justify-center hover:bg-blue-50";
+
+                                if (day === '일') className += ' text-red-500';
+                                if (day === '토') className += ' text-red-500';
+
+                                return className;
+                            }}
+                            tileDisabled={({ date }) => {
+                                return date > today;
+                            }}
+                            showNeighboringMonth={false}
                         />
                     </div>
                 </div>

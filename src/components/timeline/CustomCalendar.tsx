@@ -15,6 +15,7 @@ interface MarkedDateStyles {
 
 interface CustomCalendarProps {
     markedDates: Record<string, MarkedDateStyles>;
+    onMonthChange?: (date: Date) => void;
 }
 
 const StyledCalendarContainer = styled.div`
@@ -130,7 +131,7 @@ const StyledCalendarContainer = styled.div`
     }
 `;
 
-export default function CustomCalendar({ markedDates }: CustomCalendarProps) {
+export default function CustomCalendar({ markedDates, onMonthChange }: CustomCalendarProps) {
     const tileClassName = ({ date }: { date: Date; view: string }) => {
         const formattedDate = format(date, 'yyyy-MM-dd');
         const isMarked = markedDates[formattedDate];
@@ -152,6 +153,13 @@ export default function CustomCalendar({ markedDates }: CustomCalendarProps) {
     const formatShortWeekday = (_: string | undefined, date: Date): string => {
         const dayStr = format(date, 'E', { locale: ko });
         return dayStr;
+    };
+
+    // 월 변경 이벤트 핸들러 추가
+    const handleActiveStartDateChange = ({ activeStartDate }: { activeStartDate: Date | null }) => {
+        if (activeStartDate && onMonthChange) {
+            onMonthChange(activeStartDate);
+        }
     };
 
     return (
@@ -181,6 +189,7 @@ export default function CustomCalendar({ markedDates }: CustomCalendarProps) {
                 onClickMonth={(_, event) => {
                     event.preventDefault();
                 }}
+                onActiveStartDateChange={handleActiveStartDateChange}
             />
         </StyledCalendarContainer>
     );

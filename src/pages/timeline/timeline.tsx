@@ -1,13 +1,14 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { useTimelinePosts } from "../../hooks/timeline/useTimelinePosts";
 import { Timeline } from "../../types/timeline";
-import CustomCalendar from "../../components/timeline/Calendar";
+import CustomCalendar from "../../components/timeline/CustomCalendar";
 import TimelineCard from "../../components/timeline/TimelineCard";
 import AddTimelineButton from "../../components/timeline/AddTimelineButton";
 import TimelineWriteModal from "../../components/timeline/WriteModal";
 import MoreActionsMenu from "../../components/common/MoreActionsMenu";
+import {api} from "../../config/axios";
 
 export default function TimelinePage() {
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -18,39 +19,26 @@ export default function TimelinePage() {
         timelines,
         isLoading,
         isRefreshing,
-        hasMore,
-        handleRefresh,
-        handleLoadMore,
+        fetchMonthlyTimelines,
         setTimelines
     } = useTimelinePosts();
 
-    // 스크롤 이벤트 핸들러
-    const handleScroll = useCallback(() => {
-        if (!hasMore || isLoading) return;
+    // 달력 월 변경 핸들러
+    const handleMonthChange = (date: Date) => {
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        fetchMonthlyTimelines(year, month);
+    };
 
-        const scrollPosition = window.scrollY;
-        const windowHeight = window.innerHeight;
-        const documentHeight = document.documentElement.scrollHeight;
-
-        // 스크롤이 하단에서 100px 이내일 때 추가 데이터 로드
-        if (documentHeight - (scrollPosition + windowHeight) <= 100) {
-            handleLoadMore();
-        }
-    }, [hasMore, isLoading, handleLoadMore]);
-
+    // 컴포넌트 마운트 시 현재 월의 데이터 로드
     useEffect(() => {
-        // 초기 데이터 로드
-        handleRefresh();
-
-        // 스크롤 이벤트 리스너 등록
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, [handleRefresh, handleScroll]);
+        const currentDate = new Date();
+        fetchMonthlyTimelines(currentDate.getFullYear(), currentDate.getMonth() + 1);
+    }, [fetchMonthlyTimelines]);
 
     const deleteTimeline = async (id: number) => {
         try {
-            // TODO: API 구현 후 실제 API 호출로 대체
-            console.log('삭제할 타임라인 ID:', id);
+            await api.delete(`/timelines/${id}`);
             setTimelines(prev => prev.filter(timeline => timeline.id !== id));
             alert('삭제되었습니다.');
         } catch (error) {
@@ -65,7 +53,6 @@ export default function TimelinePage() {
                 deleteTimeline(id);
             }
         } else if (action === 'edit') {
-            console.log('수정할 타임라인 ID:', id);
             // TODO: 수정 기능 구현
             alert('수정 기능은 준비 중입니다.');
         }
@@ -99,23 +86,25 @@ export default function TimelinePage() {
 
     return (
         <div className="min-h-screen bg-white">
-            {/* 헤더와 탭바 고려한 패딩 */}
             <div>
                 {/* Calendar */}
                 <div className="bg-white mb-4">
-                    <CustomCalendar markedDates={activeMarkedDates} />
+                    <CustomCalendar
+                        markedDates={activeMarkedDates}
+                        onMonthChange={handleMonthChange}
+                    />
                 </div>
 
                 {/* 타임라인 목록 */}
                 <div className="px-4 bg-white">
-                    {isRefreshing && (
+                    {(isLoading || isRefreshing) && (
                         <div className="flex justify-center py-4 bg-white">
                             <Loader2 className="w-6 h-6 animate-spin text-[#735BF2]" />
                         </div>
                     )}
 
                     {/* Timeline Cards */}
-                    {timelines.map((timeline) => (
+                    {!isLoading && !isRefreshing && timelines.map((timeline) => (
                         <TimelineCard
                             key={timeline.id}
                             timeline={{
@@ -128,15 +117,8 @@ export default function TimelinePage() {
                         />
                     ))}
 
-                    {/* 무한 스크롤 로딩 인디케이터 */}
-                    {isLoading && !isRefreshing && (
-                        <div className="flex justify-center py-4">
-                            <Loader2 className="w-6 h-6 animate-spin text-[#735BF2]" />
-                        </div>
-                    )}
-
                     {/* 데이터가 없을 때 */}
-                    {!isLoading && timelines.length === 0 && (
+                    {!isLoading && !isRefreshing && timelines.length === 0 && (
                         <div className="flex flex-col items-center justify-center py-20 text-gray-500">
                             <p>등록된 타임라인이 없습니다.</p>
                             <p className="mt-2">새로운 타임라인을 등록해보세요!</p>
@@ -152,6 +134,10 @@ export default function TimelinePage() {
             <TimelineWriteModal
                 isOpen={isModalVisible}
                 onClose={() => setIsModalVisible(false)}
+                onCreateSuccess={() => {
+                    const currentDate = new Date();
+                    fetchMonthlyTimelines(currentDate.getFullYear(), currentDate.getMonth() + 1);
+                }}
             />
 
             {/* 옵션 메뉴 */}

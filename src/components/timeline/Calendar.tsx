@@ -69,6 +69,7 @@ const StyledCalendarContainer = styled.div`
         border-radius: 4px;
         color: #000;
         pointer-events: none;
+        position: relative;
 
         &:hover {
             background: none;
@@ -89,7 +90,25 @@ const StyledCalendarContainer = styled.div`
     }
 
     .marked-date {
-        background-color: #FFF9C4;
+        position: relative;
+        z-index: 1;
+
+        &::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 32px;
+            height: 32px;
+            background-color: #735BF2;
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        abbr {
+            color: white !important;
+        }
     }
 
     /* 이전/다음 달 날짜 숨기기 */
@@ -97,25 +116,16 @@ const StyledCalendarContainer = styled.div`
         visibility: hidden;
     }
 
+    /* 오늘 날짜 스타일 */
+    .react-calendar__tile--now {
+        font-weight: bold;
+        background: none !important;
+    }
+
     /* 모든 hover 효과 제거 */
     * {
         &:hover {
             background: none !important;
-        }
-    }
-
-    .react-calendar__month-view__weekdays__weekday {
-        &.sunday {
-            color: #f87171;
-            abbr {
-                color: #f87171;
-            }
-        }
-        &.saturday {
-            color: #3b82f6;
-            abbr {
-                color: #3b82f6;
-            }
         }
     }
 `;

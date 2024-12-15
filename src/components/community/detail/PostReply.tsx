@@ -1,9 +1,10 @@
-import {Reply} from "../../../types/community";
-import {useCallback, useEffect, useRef, useState} from "react";
-import {formatTimeAgo} from "../../../utils/formatTime";
-import {REPLY_PAGINATION} from "../../../constants/replyPagination";
-import {EllipsisHorizontalIcon} from "@heroicons/react/24/outline";
+import { Reply } from "../../../types/community";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { formatTimeAgo } from "../../../utils/formatTime";
+import { REPLY_PAGINATION } from "../../../constants/replyPagination";
+import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 import MoreActionsMenu from "../../common/MoreActionsMenu";
+import ProfileAvatar from "../../common/ProfileAvatar";
 
 interface PostReplyProps {
     replies: Reply[];
@@ -20,25 +21,6 @@ interface PostReplyProps {
     childrenHasMore: { [key: number]: boolean };
     onLoadChildren: (parentId: number, page: number) => Promise<boolean>;
 }
-
-// 사용자 ID를 기반으로 일관된 색상을 반환하는 함수
-const getBackgroundColor = (userId: number) => {
-    const colors = [
-        'bg-red-500',
-        'bg-yellow-500',
-        'bg-green-500',
-        'bg-blue-500',
-        'bg-indigo-500',
-        'bg-purple-500',
-        'bg-pink-500'
-    ];
-    return colors[userId % colors.length];
-};
-
-// 닉네임의 첫 글자를 가져오는 함수
-const getInitial = (nickname: string) => {
-    return nickname.charAt(0).toUpperCase();
-};
 
 export default function PostReply({
                                       replies = [],
@@ -89,30 +71,15 @@ export default function PostReply({
         setSelectedReplyId(reply.id);
     };
 
-    const ProfileAvatar = ({ reply }: { reply: Reply }) => (
-        <button
-            onClick={() => onProfilePress(reply.userId)}
-            className="w-8 h-8 rounded-full overflow-hidden shrink-0"
-        >
-            {reply.userProfile ? (
-                <img
-                    src={reply.userProfile}
-                    alt={`${reply.userNickname}님의 프로필`}
-                    className="w-full h-full object-cover"
-                />
-            ) : (
-                <div className={`w-full h-full flex items-center justify-center text-white ${getBackgroundColor(reply.userId)}`}>
-                    <span className="text-sm font-medium">
-                        {getInitial(reply.userNickname)}
-                    </span>
-                </div>
-            )}
-        </button>
-    );
-
     const renderReply = (reply: Reply, isChild: boolean = false) => (
         <div className="flex gap-2 py-4">
-            <ProfileAvatar reply={reply} />
+            <ProfileAvatar
+                userProfile={reply.userProfile}
+                userNickname={reply.userNickname}
+                userId={reply.userId}
+                size="sm"
+                onClick={() => onProfilePress(reply.userId)}
+            />
             <div className="flex-1">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">

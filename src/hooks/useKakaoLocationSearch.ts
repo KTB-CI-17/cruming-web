@@ -118,7 +118,7 @@ export const useKakaoLocationSearch = (
 
         const locationData: LocationData = {
             placeName: location.place_name,
-            roadAddress: location.road_address_name,
+            address: location.road_address_name,
             latitude: parseFloat(location.y),
             longitude: parseFloat(location.x)
         };

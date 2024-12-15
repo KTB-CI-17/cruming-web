@@ -1,30 +1,27 @@
-export interface Timeline {
-    id: number;
-    title: string;
-    subtitle: string;
-    date: string;
-    imageUrl: string;
-    color: string;
-}
+import {LocationData} from "./location";
+import {UploadImage} from "./community";
 
-export interface APIResponse {
-    timelines: Timeline[];
-    meta: {
-        currentPage: number;
-        totalPages: number;
-        hasMore: boolean;
-    };
-}
-
-export type PrivacyType = '전체 공개' | '팔로워 공개' | '나만보기';
+export type VisibilityType = '전체 공개' | '팔로워 공개' | '나만보기';
 
 export interface TimelineFormData {
-    location: string;
-    activityDate: string;
+    location: LocationData | null;
+    activityAt: string;
     level: string;
     content: string;
-    images: string[];
-    privacy: PrivacyType;
+    visibility: VisibilityType;
+    images: UploadImage[];
+}
+
+export interface TimelineRequest {
+    location: LocationData;
+    activityAt: string;
+    level: string;
+    content: string;
+    visibility: string;
+    fileRequests: Array<{
+        originalFileName: string;
+        displayOrder: number;
+    }>;
 }
 
 export interface ColorLevelOption {

@@ -91,7 +91,7 @@ export const usePostUpload = (options: UsePostUploadOptions = {}) => {
                 content: content.trim(),
                 locationRequest: location ? {
                     placeName: location.placeName,
-                    address: location.roadAddress,
+                    address: location.address,
                     latitude: location.latitude,
                     longitude: location.longitude
                 } : null,

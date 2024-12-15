@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
-import { TimelineFormData, PrivacyType } from '../../types/timeline';
+import { TimelineFormData, TimelineRequest, VisibilityType } from '../../types/timeline';
+import { LocationData } from '../../types/location';
 import { LAYOUT, PADDING } from '../../constants/layout';
 import DatePicker from './DatePicker';
 import ColorLevelSelect from './ColorLevelSelect';
-import ImageUpload from './ImageUpload';
 import LocationSearch from "../common/LocationSearch";
-import { api } from "../../config/axios";
+import { multipartApi } from "../../config/axios";
+import {UploadImage} from "../../types/community";
+import {ImageUploadArea} from "../community/new/ImageUploadArea";
 
 interface TimelineWriteModalProps {
     isOpen: boolean;
@@ -15,22 +17,27 @@ interface TimelineWriteModalProps {
 }
 
 const initialFormData: TimelineFormData = {
-    location: '',
-    activityDate: '',
+    location: null,
+    activityAt: '',
     level: '',
     content: '',
     images: [],
-    privacy: '전체 공개'
+    visibility: '전체 공개'
 };
 
-export default function TimelineWriteModal({ isOpen, onClose }: TimelineWriteModalProps) {
+export default function TimelineWriteModal({ isOpen, onClose, onCreateSuccess }: TimelineWriteModalProps) {
     const [formData, setFormData] = useState<TimelineFormData>(initialFormData);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [locationText, setLocationText] = useState('');  // LocationSearch 컴포넌트용
 
     const validateForm = () => {
+        if (!formData.location) {
+            alert('위치를 입력해주세요.');
+            return false;
+        }
+
         const requiredFields: { field: keyof TimelineFormData; label: string }[] = [
-            { field: 'location', label: '위치' },
-            { field: 'activityDate', label: '활동 일자' },
+            { field: 'activityAt', label: '활동 일자' },
             { field: 'level', label: 'Level' },
             { field: 'content', label: '내용' }
         ];
@@ -49,12 +56,12 @@ export default function TimelineWriteModal({ isOpen, onClose }: TimelineWriteMod
 
     const hasInputValues = () => {
         return (
-            formData.location.trim() !== '' ||
-            formData.activityDate !== '' ||
+            formData.location !== null ||
+            formData.activityAt !== '' ||
             formData.level !== '' ||
             formData.content.trim() !== '' ||
             formData.images.length > 0 ||
-            formData.privacy !== '전체 공개'
+            formData.visibility !== '전체 공개'
         );
     };
 
@@ -69,20 +76,68 @@ export default function TimelineWriteModal({ isOpen, onClose }: TimelineWriteMod
         }
     };
 
+    const handleImagesChange = (newImages: UploadImage[]) => {
+        const removedImages = formData.images.filter(
+            img => !newImages.find(newImg => newImg.preview === img.preview)
+        );
+        removedImages.forEach(img => {
+            URL.revokeObjectURL(img.preview);
+        });
+
+        handleInputChange('images', newImages);
+    };
+
     const resetAndClose = () => {
+        formData.images.forEach(image => {
+            URL.revokeObjectURL(image.preview);
+        });
+
         setFormData(initialFormData);
+        setLocationText('');
         setIsSubmitting(false);
         onClose();
     };
 
     const handleSubmit = async () => {
-        if (!validateForm()) return;
+        if (!validateForm() || !formData.location) return;
 
         if (confirm("입력하신 내용으로 등록하시겠습니까?")) {
             setIsSubmitting(true);
             try {
-                const response = await api.post('/timelines', formData);
+                const multipartFormData = new FormData();
+
+                // visibility 변환
+                const visibilityMapping: Record<VisibilityType, string> = {
+                    '전체 공개': 'PUBLIC',
+                    '팔로워 공개': 'FOLLOWER',
+                    '나만보기': 'PRIVATE'
+                };
+
+                const requestData: TimelineRequest = {
+                    location: formData.location,
+                    activityAt: new Date(formData.activityAt).toISOString(), // activityAt을 ISO 8601 형식으로 변환
+                    level: formData.level,
+                    content: formData.content.trim(),
+                    visibility: visibilityMapping[formData.visibility], // visibility 변환
+                    fileRequests: formData.images.map((image, index) => ({
+                        originalFileName: image.file.name,
+                        displayOrder: index
+                    }))
+                };
+
+                console.log(requestData); // 요청 데이터 확인
+
+                multipartFormData.append('request', new Blob([JSON.stringify(requestData)], {
+                    type: 'application/json'
+                }));
+
+                formData.images.forEach(image => {
+                    multipartFormData.append('files', image.file);
+                });
+
+                const response = await multipartApi.post('/timelines', multipartFormData);
                 console.log('Timeline created:', response.data);
+                onCreateSuccess();
                 resetAndClose();
             } catch (error) {
                 console.error('Failed to create timeline:', error);
@@ -91,6 +146,14 @@ export default function TimelineWriteModal({ isOpen, onClose }: TimelineWriteMod
                 setIsSubmitting(false);
             }
         }
+    };
+
+    const handleLocationSelect = (location: LocationData) => {
+        setLocationText(location.placeName);
+        setFormData(prev => ({
+            ...prev,
+            location: location
+        }));
     };
 
     const handleInputChange = (field: keyof TimelineFormData, value: any) => {
@@ -144,16 +207,14 @@ export default function TimelineWriteModal({ isOpen, onClose }: TimelineWriteMod
                         className="space-y-4"
                     >
                         <LocationSearch
-                            value={formData.location}
-                            onLocationSelect={(location) =>
-                                handleInputChange('location', location)
-                            }
+                            value={locationText}
+                            onLocationSelect={handleLocationSelect}
                         />
 
                         <DatePicker
-                            value={formData.activityDate}
+                            value={formData.activityAt}
                             onChange={(date) =>
-                                handleInputChange('activityDate', date)
+                                handleInputChange('activityAt', date)
                             }
                         />
 
@@ -171,23 +232,24 @@ export default function TimelineWriteModal({ isOpen, onClose }: TimelineWriteMod
                             className="w-full h-[150px] p-3 border border-gray-200 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-[#735BF2]"
                         />
 
-                        <ImageUpload
+                        <ImageUploadArea
                             images={formData.images}
-                            onChange={(images) => handleInputChange('images', images)}
+                            onImagesChange={handleImagesChange}
+                            disabled={isSubmitting}
                         />
 
                         <div className="flex gap-2 mt-5 mb-5">
-                            {(['전체 공개', '팔로워 공개', '나만보기'] as PrivacyType[]).map((privacy) => (
+                            {(['전체 공개', '팔로워 공개', '나만보기'] as VisibilityType[]).map((visibility) => (
                                 <button
-                                    key={privacy}
-                                    onClick={() => handleInputChange('privacy', privacy)}
+                                    key={visibility}
+                                    onClick={() => handleInputChange('visibility', visibility)}
                                     className={`flex-1 py-2 px-3 rounded-full border ${
-                                        formData.privacy === privacy
+                                        formData.visibility === visibility
                                             ? 'bg-[#735BF2] border-[#735BF2] text-white'
                                             : 'border-gray-200 text-gray-500'
                                     }`}
                                 >
-                                    {privacy}
+                                    {visibility}
                                 </button>
                             ))}
                         </div>

@@ -60,7 +60,7 @@ export default function CommunityEdit() {
                 if (postData.location) {
                     setLocationData({
                         placeName: postData.location.placeName,
-                        roadAddress: postData.location.address,
+                        address: postData.location.address,
                         longitude: postData.location.longitude,
                         latitude: postData.location.latitude
                     });
@@ -125,7 +125,7 @@ export default function CommunityEdit() {
                 level: post?.category === 'PROBLEM' ? level : undefined,
                 locationRequest: post?.category === 'PROBLEM' ? {
                     placeName: locationData?.placeName,
-                    address: locationData?.roadAddress,
+                    address: locationData?.address,
                     latitude: locationData?.latitude,
                     longitude: locationData?.longitude
                 } : undefined,

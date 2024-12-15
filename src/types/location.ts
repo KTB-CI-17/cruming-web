@@ -2,8 +2,6 @@ export interface LocationDocument {
     place_name: string;
     road_address_name: string;
     address_name: string;
-    phone: string;
-    place_url: string;
     category_name: string;
     x: string;  // longitude
     y: string;  // latitude
@@ -27,7 +25,7 @@ export interface KakaoKeywordResponse {
 
 export interface LocationData {
     placeName: string;
-    roadAddress: string;
+    address: string;
     latitude: number;
     longitude: number;
 }

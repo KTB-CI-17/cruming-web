@@ -1,11 +1,10 @@
-import React from 'react';
-
 interface ProfileAvatarProps {
     userProfile?: string;
     userNickname: string;
     userId: number;
-    size?: 'sm' | 'md' | 'lg';
+    size?: 'sm' | 'md' | 'lg' | 'xl';
     onClick?: () => void;
+    className?: string;
 }
 
 export default function ProfileAvatar({
@@ -13,7 +12,8 @@ export default function ProfileAvatar({
                                           userNickname,
                                           userId,
                                           size = 'md',
-                                          onClick
+                                          onClick,
+                                          className = ''
                                       }: ProfileAvatarProps) {
     // 사용자 ID를 기반으로 일관된 색상을 반환하는 함수
     const getBackgroundColor = (userId: number) => {
@@ -42,15 +42,19 @@ export default function ProfileAvatar({
         },
         md: {
             container: 'w-10 h-10',
-            text: 'text-lg'
+            text: 'text-base'
         },
         lg: {
-            container: 'w-12 h-12',
+            container: 'w-16 h-16',
             text: 'text-xl'
+        },
+        xl: {
+            container: 'w-[120px] h-[120px]',
+            text: 'text-4xl'
         }
     };
 
-    const containerClass = `${sizeStyles[size].container} rounded-full overflow-hidden shrink-0 ${onClick ? 'cursor-pointer' : ''}`;
+    const containerClass = `${sizeStyles[size].container} rounded-full overflow-hidden shrink-0 ${onClick ? 'cursor-pointer' : ''} ${className}`;
 
     return (
         <div

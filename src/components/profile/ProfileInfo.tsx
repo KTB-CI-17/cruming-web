@@ -1,6 +1,7 @@
 import React from 'react';
 import { Settings, MapPin, Ruler } from 'lucide-react';
-import {UserProfile} from "../../types/user";
+import { UserProfile } from "../../types/user";
+import ProfileAvatar from '../common/ProfileAvatar';
 
 interface ProfileInfoProps {
     profile: UserProfile;
@@ -27,10 +28,11 @@ export const ProfileInfo: React.FC<ProfileInfoProps> = ({
 
             {/* Profile Image */}
             <div className="w-[120px] h-[120px] mb-4">
-                <img
-                    src="/assets/images/default-profile.png"
-                    alt="프로필 이미지"
-                    className="w-full h-full rounded-full object-cover"
+                <ProfileAvatar
+                    userProfile={profile.userProfile}
+                    userNickname={profile.nickname}
+                    userId={profile.id}
+                    size="xl"
                 />
             </div>
 

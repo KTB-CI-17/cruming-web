@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
 import { TimelineFormData, PrivacyType } from '../../types/timeline';
+import { LAYOUT, PADDING } from '../../constants/layout';
 import DatePicker from './DatePicker';
 import ColorLevelSelect from './ColorLevelSelect';
 import ImageUpload from './ImageUpload';
 import LocationSearch from "../common/LocationSearch";
-import {api} from "../../config/axios";
+import { api } from "../../config/axios";
 
 interface TimelineWriteModalProps {
     isOpen: boolean;
@@ -80,7 +81,6 @@ export default function TimelineWriteModal({ isOpen, onClose }: TimelineWriteMod
         if (confirm("입력하신 내용으로 등록하시겠습니까?")) {
             setIsSubmitting(true);
             try {
-                // API 연동 추가
                 const response = await api.post('/timelines', formData);
                 console.log('Timeline created:', response.data);
                 resetAndClose();
@@ -104,8 +104,21 @@ export default function TimelineWriteModal({ isOpen, onClose }: TimelineWriteMod
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50">
-            <div className="fixed inset-x-0 bottom-0 bg-white rounded-t-[20px] max-h-[90vh] overflow-hidden">
-                <div className="px-5 py-4 border-b border-gray-200">
+            <div
+                style={{
+                    maxWidth: LAYOUT.MAX_CONTENT_WIDTH,
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
+                    height: `calc(90vh - ${LAYOUT.TAB_BAR_HEIGHT})`
+                }}
+                className="fixed inset-x-0 bottom-0 bg-white rounded-t-[20px] overflow-hidden"
+            >
+                <div
+                    style={{
+                        padding: `${PADDING.MAIN.TOP} ${PADDING.MAIN.HORIZONTAL}`
+                    }}
+                    className="border-b border-gray-200"
+                >
                     <div className="relative flex justify-center items-center">
                         <h2 className="text-lg font-semibold">타임라인 등록</h2>
                         <button
@@ -117,8 +130,19 @@ export default function TimelineWriteModal({ isOpen, onClose }: TimelineWriteMod
                     </div>
                 </div>
 
-                <div className="overflow-y-auto max-h-[calc(90vh-64px)]">
-                    <div className="p-5 space-y-4">
+                <div
+                    style={{
+                        height: `calc(90vh - ${LAYOUT.TAB_BAR_HEIGHT} - 64px)`,
+                        paddingBottom: PADDING.MAIN.BOTTOM
+                    }}
+                    className="overflow-y-auto"
+                >
+                    <div
+                        style={{
+                            padding: `${PADDING.MAIN.TOP} ${PADDING.MAIN.HORIZONTAL}`
+                        }}
+                        className="space-y-4"
+                    >
                         <LocationSearch
                             value={formData.location}
                             onLocationSelect={(location) =>

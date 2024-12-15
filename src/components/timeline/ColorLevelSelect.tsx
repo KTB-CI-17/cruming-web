@@ -22,15 +22,15 @@ export default function ColorLevelSelect({ value, onChange }: ColorLevelSelectPr
     };
 
     return (
-        <div className="relative">
+        <div className="flex flex-col items-center w-full">
             <button
                 type="button"
                 onClick={() => setIsOpen(true)}
-                className="w-full p-3 border border-gray-200 rounded-lg flex justify-between items-center"
+                className="w-full p-4 mb-4 border border-gray-200 rounded-lg flex justify-between items-center hover:bg-gray-50"
             >
-                <div className="flex items-center">
+                <div className="flex items-center gap-2">
                     {value && <Dot color={value} />}
-                    <span className={value ? 'text-black' : 'text-gray-400'}>
+                    <span className={`${value ? 'text-black' : 'text-gray-400'} text-base`}>
                         {getSelectedLabel()}
                     </span>
                 </div>
@@ -38,31 +38,33 @@ export default function ColorLevelSelect({ value, onChange }: ColorLevelSelectPr
             </button>
 
             {isOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end justify-center">
-                    <div className="bg-white w-full rounded-t-[20px] max-h-[90vh]">
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center px-4">
+                    <div className="bg-white w-full max-w-sm rounded-2xl max-h-[80vh] overflow-hidden">
                         <div className="p-4 border-b border-gray-200">
                             <div className="relative flex justify-center items-center">
                                 <h3 className="text-lg font-semibold">Level 선택</h3>
                                 <button
                                     onClick={() => setIsOpen(false)}
-                                    className="absolute right-0 p-1 hover:bg-gray-100 rounded-full"
+                                    className="absolute right-0 p-2 hover:bg-gray-100 rounded-full"
                                 >
-                                    <X className="w-6 h-6 text-gray-400" />
+                                    <X className="w-5 h-5 text-gray-400" />
                                 </button>
                             </div>
                         </div>
 
-                        <div className="p-5 grid grid-cols-2 gap-3">
-                            {colorLevelOptions.map((option) => (
-                                <button
-                                    key={option.value}
-                                    onClick={() => handleSelect(option.value)}
-                                    className="flex items-center p-2 hover:bg-gray-50 rounded-lg"
-                                >
-                                    <Dot color={option.color} />
-                                    <span className="text-gray-700">{option.label}</span>
-                                </button>
-                            ))}
+                        <div className="p-4">
+                            <div className="grid grid-cols-2 gap-2">
+                                {colorLevelOptions.map((option) => (
+                                    <button
+                                        key={option.value}
+                                        onClick={() => handleSelect(option.value)}
+                                        className="flex items-center gap-2 p-3 hover:bg-gray-50 rounded-lg transition-colors"
+                                    >
+                                        <Dot color={option.color} />
+                                        <span className="text-gray-700">{option.label}</span>
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>

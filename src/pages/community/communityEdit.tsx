@@ -35,11 +35,12 @@ export default function CommunityEdit() {
                 setContent(postData.content);
 
                 // 기존 파일 데이터 초기화
+                // 기존 파일 데이터 초기화 부분을 수정
                 if (postData.files) {
                     if (postData.category === 'GENERAL') {
                         const uploadImages: UploadImage[] = postData.files.map((file: PostFile) => ({
                             file: new File([], file.fileName),
-                            preview: file.fileKey,
+                            preview: file.url,  // fileKey 대신 url 사용
                             id: file.id,
                             isFixed: true
                         }));
@@ -48,7 +49,7 @@ export default function CommunityEdit() {
                         const problemImage = postData.files[0];
                         setImage({
                             file: new File([], problemImage.fileName),
-                            preview: problemImage.fileKey,
+                            preview: problemImage.url,  // fileKey 대신 url 사용
                             id: problemImage.id,
                             isFixed: true
                         });

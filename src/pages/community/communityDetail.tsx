@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {usePost} from "../../hooks/usePostDetail";
 import {useReply} from "../../hooks/useReply";
-import {api} from "../../config/axios";
 import {Reply} from "../../types/community";
 import PostContent from "../../components/community/detail/PostContent";
 import PostImageSlider from "../../components/community/detail/PostImageSlider";
@@ -72,9 +71,7 @@ export default function CommunityDetail() {
             if (!post) return;
             try {
                 const imagePromises = post.files.map(async file => {
-                    const response = await api.get(`${file.url}`, { responseType: 'blob' });
-                    const imageUrl = URL.createObjectURL(response.data);
-                    return { [file.url]: imageUrl };
+                    return { [file.url]: file.url };
                 });
 
                 const results = await Promise.all(imagePromises);

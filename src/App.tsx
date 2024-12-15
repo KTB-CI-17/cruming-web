@@ -13,6 +13,7 @@ import Login from "./pages/login/login";
 import KakaoCallback from "./pages/login/KakaoCallback";
 import NewGeneralPage from "./pages/community/general";
 import NewProblemPage from "./pages/community/problem";
+import {Settings} from "./pages/profile/Settings";
 
 function App() {
     return (
@@ -27,6 +28,8 @@ function App() {
                             <Route path="/" element={<Navigate to="/timeline" replace />} />
                             <Route path="/profile" element={<Profile />} />
                             <Route path="/profile/:id" element={<Profile />} />
+                            <Route path="/settings" element={<Settings />} />
+
                             <Route path="/hold" element={<Hold />} />
                             <Route path="/timeline" element={<Timeline />} />
 

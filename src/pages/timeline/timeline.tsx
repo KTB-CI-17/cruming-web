@@ -1,19 +1,17 @@
 import { useState, useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
-import { format } from 'date-fns';
-import { useTimelinePosts } from "../../hooks/timeline/useTimelinePosts";
 import { Timeline } from "../../types/timeline";
+import { useTimelinePosts } from "../../hooks/timeline/useTimelinePosts";
+import { useTimelineCRUD } from "../../hooks/timeline/useTimelineCRUD";
 import CustomCalendar from "../../components/timeline/CustomCalendar";
-import TimelineCard from "../../components/timeline/TimelineCard";
+import TimelineList from "../../components/timeline/TimelineList";
 import AddTimelineButton from "../../components/timeline/AddTimelineButton";
 import TimelineWriteModal from "../../components/timeline/WriteModal";
 import MoreActionsMenu from "../../components/common/MoreActionsMenu";
-import {api} from "../../config/axios";
+import {useTimelineCalendar} from "../../hooks/timeline/useTimelineCalender";
 
 export default function TimelinePage() {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isOptionsMenuOpen, setIsOptionsMenuOpen] = useState(false);
-    const [selectedTimelineId, setSelectedTimelineId] = useState<number | null>(null);
 
     const {
         timelines,
@@ -23,114 +21,63 @@ export default function TimelinePage() {
         setTimelines
     } = useTimelinePosts();
 
-    // 달력 월 변경 핸들러
-    const handleMonthChange = (date: Date) => {
-        const year = date.getFullYear();
-        const month = date.getMonth() + 1;
-        fetchMonthlyTimelines(year, month);
-    };
+    const {
+        handleMonthChange,
+        getMarkedDates
+    } = useTimelineCalendar((year, month) => fetchMonthlyTimelines(year, month));
 
-    // 컴포넌트 마운트 시 현재 월의 데이터 로드
+    const {
+        selectedTimelineId,
+        setSelectedTimelineId,
+        handleTimelineAction
+    } = useTimelineCRUD();
+
     useEffect(() => {
         const currentDate = new Date();
         fetchMonthlyTimelines(currentDate.getFullYear(), currentDate.getMonth() + 1);
     }, [fetchMonthlyTimelines]);
-
-    const deleteTimeline = async (id: number) => {
-        try {
-            await api.delete(`/timelines/${id}`);
-            setTimelines(prev => prev.filter(timeline => timeline.id !== id));
-            alert('삭제되었습니다.');
-        } catch (error) {
-            console.error('Failed to delete timeline:', error);
-            alert('삭제에 실패했습니다. 다시 시도해주세요.');
-        }
-    };
-
-    const handleTimelineAction = (id: number, action: 'edit' | 'delete') => {
-        if (action === 'delete') {
-            if (confirm('활동 기록을 삭제하시겠습니까?')) {
-                deleteTimeline(id);
-            }
-        } else if (action === 'edit') {
-            // TODO: 수정 기능 구현
-            alert('수정 기능은 준비 중입니다.');
-        }
-    };
 
     const handleOptionsPress = (timelineId: number) => {
         setSelectedTimelineId(timelineId);
         setIsOptionsMenuOpen(true);
     };
 
-    const formatDateForDisplay = (date: string) => {
-        return format(new Date(date), 'yyyy. MM. dd.');
+    const handleTimelineClick = (timeline: Timeline) => {
+        console.log('타임라인 클릭:', timeline.id);
     };
 
-    const activeMarkedDates = timelines.reduce((acc, timeline) => ({
-        ...acc,
-        [timeline.date]: {
-            customStyles: {
-                container: {
-                    borderBottomWidth: 2,
-                    borderBottomColor: '#735BF2',
-                }
+    const handleActionComplete = async (action: 'edit' | 'delete') => {
+        if (selectedTimelineId) {
+            const success = await handleTimelineAction(selectedTimelineId, action);
+            if (success && action === 'delete') {
+                setTimelines(prev => prev.filter(timeline => timeline.id !== selectedTimelineId));
             }
+            setIsOptionsMenuOpen(false);
+            setSelectedTimelineId(null);
         }
-    }), {});
-
-    const handleTimelineClick = (timeline: Timeline) => {
-        // TODO: 상세 페이지로 이동
-        console.log('타임라인 클릭:', timeline.id);
     };
 
     return (
         <div className="min-h-screen bg-white">
             <div>
-                {/* Calendar */}
                 <div className="bg-white mb-4">
                     <CustomCalendar
-                        markedDates={activeMarkedDates}
+                        markedDates={getMarkedDates(timelines)}
                         onMonthChange={handleMonthChange}
                     />
                 </div>
 
-                {/* 타임라인 목록 */}
-                <div className="px-4 bg-white">
-                    {(isLoading || isRefreshing) && (
-                        <div className="flex justify-center py-4 bg-white">
-                            <Loader2 className="w-6 h-6 animate-spin text-[#735BF2]" />
-                        </div>
-                    )}
-
-                    {/* Timeline Cards */}
-                    {!isLoading && !isRefreshing && timelines.map((timeline) => (
-                        <TimelineCard
-                            key={timeline.id}
-                            timeline={{
-                                ...timeline,
-                                date: formatDateForDisplay(timeline.date)
-                            }}
-                            onClick={() => handleTimelineClick(timeline)}
-                            showOptions={true}
-                            onOptionsPress={() => handleOptionsPress(timeline.id)}
-                        />
-                    ))}
-
-                    {/* 데이터가 없을 때 */}
-                    {!isLoading && !isRefreshing && timelines.length === 0 && (
-                        <div className="flex flex-col items-center justify-center py-20 text-gray-500">
-                            <p>등록된 타임라인이 없습니다.</p>
-                            <p className="mt-2">새로운 타임라인을 등록해보세요!</p>
-                        </div>
-                    )}
-                </div>
+                <TimelineList
+                    timelines={timelines}
+                    isLoading={isLoading}
+                    isRefreshing={isRefreshing}
+                    onTimelineClick={handleTimelineClick}
+                    onOptionsPress={handleOptionsPress}
+                />
             </div>
 
-            {/* 플로팅 액션 버튼 */}
             <AddTimelineButton onClick={() => setIsModalVisible(true)} />
 
-            {/* 타임라인 작성 모달 */}
             <TimelineWriteModal
                 isOpen={isModalVisible}
                 onClose={() => setIsModalVisible(false)}
@@ -140,23 +87,14 @@ export default function TimelinePage() {
                 }}
             />
 
-            {/* 옵션 메뉴 */}
             <MoreActionsMenu
                 isOpen={isOptionsMenuOpen}
                 onClose={() => {
                     setIsOptionsMenuOpen(false);
                     setSelectedTimelineId(null);
                 }}
-                onEdit={() => {
-                    if (selectedTimelineId) {
-                        handleTimelineAction(selectedTimelineId, 'edit');
-                    }
-                }}
-                onDelete={() => {
-                    if (selectedTimelineId) {
-                        handleTimelineAction(selectedTimelineId, 'delete');
-                    }
-                }}
+                onEdit={() => handleActionComplete('edit')}
+                onDelete={() => handleActionComplete('delete')}
             />
         </div>
     );

@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { Timeline } from '../../types/timeline';
-import {api} from "../../config/axios";
+import { timelineService } from '../../services/timelineService';
 
 export function useTimelinePosts() {
     const [timelines, setTimelines] = useState<Timeline[]>([]);
@@ -10,8 +10,8 @@ export function useTimelinePosts() {
     const fetchMonthlyTimelines = useCallback(async (year: number, month: number) => {
         setIsLoading(true);
         try {
-            const response = await api.get(`/timelines/monthly/${year}/${month}`);
-            setTimelines(response.data.content || []);
+            const data = await timelineService.getMonthlyTimelines(year, month);
+            setTimelines(data);
         } catch (error) {
             console.error('Failed to fetch monthly timelines:', error);
             setTimelines([]);

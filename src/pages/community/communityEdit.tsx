@@ -35,7 +35,6 @@ export default function CommunityEdit() {
                 setContent(postData.content);
 
                 // 기존 파일 데이터 초기화
-                // 기존 파일 데이터 초기화 부분을 수정
                 if (postData.files) {
                     if (postData.category === 'GENERAL') {
                         const uploadImages: UploadImage[] = postData.files.map((file: PostFile) => ({

@@ -8,7 +8,26 @@ interface PostHeaderContentProps {
     onMorePress: () => void;
 }
 
+// 사용자 ID를 기반으로 일관된 색상을 반환하는 함수
+const getBackgroundColor = (userId: number) => {
+    const colors = [
+        'bg-red-500',
+        'bg-yellow-500',
+        'bg-green-500',
+        'bg-blue-500',
+        'bg-indigo-500',
+        'bg-purple-500',
+        'bg-pink-500'
+    ];
+    return colors[userId % colors.length];
+};
+
 export default function PostContent({ post, onProfilePress, onMorePress }: PostHeaderContentProps) {
+    // 닉네임의 첫 글자를 가져오는 함수
+    const getInitial = (nickname: string) => {
+        return nickname.charAt(0).toUpperCase();
+    };
+
     return (
         <div className="px-4 py-4">
             {/* Title and more options */}
@@ -33,12 +52,20 @@ export default function PostContent({ post, onProfilePress, onMorePress }: PostH
                     className="flex items-center gap-3 cursor-pointer"
                     onClick={() => onProfilePress(post.userId)}
                 >
-                    <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200">
-                        <img
-                            src="/images/default-profile.png"
-                            alt="Profile"
-                            className="w-full h-full object-cover"
-                        />
+                    <div className="w-10 h-10 rounded-full overflow-hidden">
+                        {post.userProfile ? (
+                            <img
+                                src={post.userProfile}
+                                alt={`${post.userNickname}님의 프로필`}
+                                className="w-full h-full object-cover"
+                            />
+                        ) : (
+                            <div className={`w-full h-full flex items-center justify-center text-white ${getBackgroundColor(post.userId)}`}>
+                                <span className="text-lg font-medium">
+                                    {getInitial(post.userNickname)}
+                                </span>
+                            </div>
+                        )}
                     </div>
                     <div>
                         <div className="flex items-center gap-2">

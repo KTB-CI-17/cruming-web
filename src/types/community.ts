@@ -61,6 +61,7 @@ export interface Post extends BasePost {
     visibility: string;
     userId: number;
     userNickname: string;
+    userProfile: string;
     isWriter: boolean;
     files: PostFile[];
     instagram_id?: string;
@@ -74,6 +75,7 @@ export interface Reply {
     id: number;
     content: string;
     userId: number;
+    userProfile: string;
     userNickname: string;
     createdAt: string;
     isWriter: boolean;

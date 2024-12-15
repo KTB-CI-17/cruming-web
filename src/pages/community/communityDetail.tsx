@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import {usePost} from "../../hooks/usePostDetail";
-import {useReply} from "../../hooks/useReply";
-import {Reply} from "../../types/community";
+import { usePost } from "../../hooks/usePostDetail";
+import { useReply } from "../../hooks/useReply";
+import { Reply } from "../../types/community";
 import PostContent from "../../components/community/detail/PostContent";
 import PostImageSlider from "../../components/community/detail/PostImageSlider";
 import PostReply from "../../components/community/detail/PostReply";
 import PostActions from "../../components/community/detail/PostActions";
 import PostReplyInput from "../../components/community/detail/PostReplyInput";
-import {REPLY_PAGINATION} from "../../constants/replyPagination";
+import { REPLY_PAGINATION } from "../../constants/replyPagination";
 import MoreActionsMenu from "../../components/common/MoreActionsMenu";
 
 export default function CommunityDetail() {
@@ -16,7 +16,6 @@ export default function CommunityDetail() {
     const navigate = useNavigate();
     const [imagesCache, setImagesCache] = useState<{[key: string]: string}>({});
     const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
-
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -43,17 +42,14 @@ export default function CommunityDetail() {
             return;
         }
 
-        // 게시글과 댓글 동시에 로딩
         const loadData = async () => {
             try {
                 await fetchPost();
                 await replyActions.fetchReplies(0);
 
-                // 로컬 스토리지에서 최근 조회 시간 확인
                 const lastViewTime = localStorage.getItem(`post-${id}-view`);
                 const thirtyMinutesAgo = Date.now() - (30 * 60 * 1000);
 
-                // 30분 이내 조회 기록이 없으면 조회수 증가
                 if (!lastViewTime || parseInt(lastViewTime) < thirtyMinutesAgo) {
                     await incrementView();
                     localStorage.setItem(`post-${id}-view`, Date.now().toString());
@@ -83,7 +79,6 @@ export default function CommunityDetail() {
 
         loadImages();
 
-        // Cleanup function to revoke object URLs
         return () => {
             Object.values(imagesCache).forEach(url => {
                 URL.revokeObjectURL(url);
@@ -190,6 +185,7 @@ export default function CommunityDetail() {
                         childrenHasMore={replyState.childrenHasMore}
                     />
                 </div>
+
                 {post.isWriter && (
                     <MoreActionsMenu
                         isOpen={isMoreMenuOpen}
@@ -200,8 +196,7 @@ export default function CommunityDetail() {
                 )}
             </main>
 
-            <div
-                className="fixed bottom-[var(--bottom-nav-height)] left-0 right-0 max-w-[var(--mobile-max-width)] mx-auto bg-white border-t">
+            <div className="fixed bottom-[var(--bottom-nav-height)] left-0 right-0 max-w-[var(--mobile-max-width)] mx-auto bg-white border-t">
                 <PostReplyInput
                     replyText={replyState.replyText}
                     onReplyTextChange={replyActions.setReplyText}

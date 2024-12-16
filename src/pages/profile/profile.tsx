@@ -5,6 +5,28 @@ import { FollowCountArea } from "../../components/profile/FollowCountArea";
 import { FollowButton } from "../../components/profile/FollowButton";
 import { useNavigate, useParams } from "react-router-dom";
 
+const ProfileButton = ({
+                           onClick,
+                           className = ''
+                       }: {
+    onClick: () => void;
+    className?: string;
+}) => {
+    return (
+        <button
+            onClick={onClick}
+            className={`
+                px-6 py-2 rounded-lg font-medium text-sm
+                transition-colors duration-200
+                bg-gray-100 text-gray-700
+                ${className}
+            `}
+        >
+            프로필 수정
+        </button>
+    );
+};
+
 export default function ProfilePage() {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -33,7 +55,7 @@ export default function ProfilePage() {
     }
 
     const handleSettingsClick = () => {
-        navigate('/settings');
+        navigate('/profile/edit');
     };
 
     return (
@@ -52,16 +74,21 @@ export default function ProfilePage() {
                         isMe={profile.isMe}
                     />
 
-                    {!profile.isMe && (
-                        <div className="flex justify-center">
+                    <div className="flex justify-center">
+                        {profile.isMe ? (
+                            <ProfileButton
+                                onClick={handleSettingsClick}
+                                className="w-[200px]"
+                            />
+                        ) : (
                             <FollowButton
                                 isFollowing={profile.isFollowing || false}
                                 isFollowingMe={profile.isFollowingMe}
                                 onFollowClick={toggleFollow}
                                 className="w-[200px]"
                             />
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

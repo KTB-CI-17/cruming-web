@@ -44,3 +44,34 @@ export interface FollowsResponse {
     totalElements: number;
     totalPages: number;
 }
+
+export interface HomeGymRequest {
+    placeName: string;
+    address: string;
+    latitude: number;
+    longitude: number;
+}
+
+export interface UserEditRequest {
+    nickname: string;
+    height?: number;
+    armReach?: number;
+    intro?: string;
+    instagramId?: string;
+    homeGymRequest?: HomeGymRequest;
+}
+
+export interface UserEditInfo {
+    profileImageUrl: string;
+    nickname: string;
+    height?: number;
+    armReach?: number;
+    intro?: string;
+    instagramId?: string;
+    homeGym: {
+        placeName: string;
+        address: string;
+        latitude: number;
+        longitude: number;
+    } | null;
+}

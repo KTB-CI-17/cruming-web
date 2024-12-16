@@ -1,9 +1,9 @@
 import { Loader } from 'lucide-react';
-import { useProfile } from "../../hooks/useProfile";
 import { ProfileInfo } from "../../components/profile/ProfileInfo";
 import { FollowCountArea } from "../../components/profile/FollowCountArea";
 import { FollowButton } from "../../components/profile/FollowButton";
 import { useNavigate, useParams } from "react-router-dom";
+import {useProfile} from "../../hooks/useProfile";
 
 const ProfileButton = ({
                            onClick,

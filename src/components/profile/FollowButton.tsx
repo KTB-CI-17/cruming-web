@@ -22,12 +22,12 @@ export const FollowButton: React.FC<FollowButtonProps> = ({
 
     const getButtonText = () => {
         if (isFollowing) {
-            return '팔로잉';
+            return '팔로잉 취소';
         }
         if (isFollowingMe) {
-            return '맞팔로우';
+            return '맞팔로잉';
         }
-        return '팔로우';
+        return '팔로잉';
     };
 
     return (

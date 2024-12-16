@@ -26,3 +26,21 @@ export interface UserInfoResponse {
     followerCount: number;
     isMe: boolean;
 }
+
+export interface FollowUser {
+    id: number;
+    nickname: string;
+    profileUrl: string;
+    instagramId: string;
+}
+
+export interface FollowsResponse {
+    content: FollowUser[];
+    pageable: {
+        pageNumber: number;
+        pageSize: number;
+    };
+    last: boolean;
+    totalElements: number;
+    totalPages: number;
+}

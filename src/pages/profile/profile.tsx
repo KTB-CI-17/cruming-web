@@ -1,7 +1,7 @@
 import { Loader } from 'lucide-react';
 import { useProfile } from "../../hooks/useProfile";
 import { ProfileInfo } from "../../components/profile/ProfileInfo";
-import { ProfileStats } from "../../components/profile/ProfileStats";
+import { FollowCountArea } from "../../components/profile/FollowCountArea";
 import { FollowButton } from "../../components/profile/FollowButton";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -45,9 +45,11 @@ export default function ProfilePage() {
                         onSettingsClick={profile.isMe ? handleSettingsClick : undefined}
                     />
 
-                    <ProfileStats
+                    <FollowCountArea
+                        userId={profile.id}
                         followers={profile.followerCount}
                         following={profile.followingCount}
+                        isMe={profile.isMe}
                     />
 
                     {!profile.isMe && (

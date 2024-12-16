@@ -14,6 +14,7 @@ import KakaoCallback from "./pages/login/KakaoCallback";
 import NewGeneralPage from "./pages/community/general";
 import NewProblemPage from "./pages/community/problem";
 import {Settings} from "./pages/profile/Settings";
+import {Follows} from "./pages/profile/follows";
 
 function App() {
     return (
@@ -29,6 +30,8 @@ function App() {
                             <Route path="/profile" element={<Profile />} />
                             <Route path="/profile/:id" element={<Profile />} />
                             <Route path="/settings" element={<Settings />} />
+                            <Route path="/follows" element={<Follows />} />
+                            <Route path="/follows/:userId" element={<Follows />} />
 
                             <Route path="/hold" element={<Hold />} />
                             <Route path="/timeline" element={<Timeline />} />

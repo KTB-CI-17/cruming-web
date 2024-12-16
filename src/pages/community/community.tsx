@@ -25,7 +25,7 @@ const CommunityPage: React.FC = () => {
         <div className="flex flex-col h-full bg-white page-container">
             <div className="bg-white">
                 <TabNavigation onTabChange={setCurrentTab}/>
-                <SearchBar/>
+                {/*<SearchBar/>*/}
             </div>
             <div className="max-w-screen-sm mx-auto w-full">
                 {renderTabContent()}

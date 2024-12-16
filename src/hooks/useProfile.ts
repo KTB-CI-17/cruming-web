@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { UserProfile, UserInfoResponse } from '../types/user';
-import {api} from "../config/axios";
+import { api } from "../config/axios";
 
 export const useProfile = (userId?: string) => {
     const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -26,12 +26,13 @@ export const useProfile = (userId?: string) => {
         }
     };
 
-    const handleFollow = async () => {
+    const toggleFollow = async () => {
         if (!profile) return;
 
         try {
-            const isFollowing = !profile.isFollowing;
-            await api.post(`/users/${profile.id}/follow`);
+            const response = await api.patch<boolean>(`/follows/toggle/${profile.id}`);
+            const isFollowing = response.data;
+
             setProfile(prev => {
                 if (!prev) return prev;
                 return {
@@ -41,7 +42,7 @@ export const useProfile = (userId?: string) => {
                 };
             });
         } catch (err) {
-            console.error('Failed to update follow status:', err);
+            console.error('팔로우 상태 업데이트 실패:', err);
         }
     };
 
@@ -53,6 +54,6 @@ export const useProfile = (userId?: string) => {
         profile,
         loading,
         error,
-        handleFollow
+        toggleFollow
     };
 };

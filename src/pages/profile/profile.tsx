@@ -1,14 +1,14 @@
 import { Loader } from 'lucide-react';
-import {useProfile} from "../../hooks/useProfile";
-import {ProfileInfo} from "../../components/profile/ProfileInfo";
-import {ProfileStats} from "../../components/profile/ProfileStats";
-import {FollowButton} from "../../components/profile/FollowButton";
-import {useNavigate, useParams} from "react-router-dom";
+import { useProfile } from "../../hooks/useProfile";
+import { ProfileInfo } from "../../components/profile/ProfileInfo";
+import { ProfileStats } from "../../components/profile/ProfileStats";
+import { FollowButton } from "../../components/profile/FollowButton";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function ProfilePage() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { profile, loading, error, handleFollow } = useProfile(id);
+    const { profile, loading, error, toggleFollow } = useProfile(id);
 
     if (loading) {
         return (
@@ -37,29 +37,30 @@ export default function ProfilePage() {
     };
 
     return (
-        <div className="page-container">
-            <div className="flex flex-col gap-6">
-                <ProfileInfo
-                    profile={profile}
-                    onSettingsClick={profile.isMe ? handleSettingsClick : undefined}
-                />
+        <div className="flex flex-col h-full bg-white page-container">
+            <div className="max-w-screen-sm mx-auto w-full pt-6">
+                <div className="flex flex-col gap-6">
+                    <ProfileInfo
+                        profile={profile}
+                        onSettingsClick={profile.isMe ? handleSettingsClick : undefined}
+                    />
 
-                <ProfileStats
-                    followers={profile.followerCount}
-                    following={profile.followingCount}
-                />
+                    <ProfileStats
+                        followers={profile.followerCount}
+                        following={profile.followingCount}
+                    />
 
-                {!profile.isMe && (
-                    <div className="flex justify-center">
-                        <FollowButton
-                            isFollowing={profile.isFollowing || false}
-                            isFollowingMe={profile.isFollowingMe}
-                            onFollowClick={handleFollow}
-                            className="w-[200px]"
-                        />
-                    </div>
-                )}
-
+                    {!profile.isMe && (
+                        <div className="flex justify-center">
+                            <FollowButton
+                                isFollowing={profile.isFollowing || false}
+                                isFollowingMe={profile.isFollowingMe}
+                                onFollowClick={toggleFollow}
+                                className="w-[200px]"
+                            />
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

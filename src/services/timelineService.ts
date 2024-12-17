@@ -15,6 +15,32 @@ export const timelineService = {
         return response.data;
     },
 
+    getSelfTimelines: async (page: number = 0): Promise<TimelinePageResponse> => {
+        const response = await api.get<TimelinePageResponse>(
+            `/timelines/me`,
+            {
+                params: {
+                    page,
+                    size: 10
+                }
+            }
+        );
+        return response.data;
+    },
+
+    getUserTimelines: async (userId: number, page: number = 0): Promise<TimelinePageResponse> => {
+        const response = await api.get<TimelinePageResponse>(
+            `/timelines/users/${userId}`,
+            {
+                params: {
+                    page,
+                    size: 10
+                }
+            }
+        );
+        return response.data;
+    },
+
     deleteTimeline: async (id: number): Promise<void> => {
         await api.delete(`/timelines/${id}`);
     },

@@ -1,9 +1,13 @@
 import { Loader } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { ProfileInfo } from "../../components/profile/ProfileInfo";
 import { FollowCountArea } from "../../components/profile/FollowCountArea";
 import { FollowButton } from "../../components/profile/FollowButton";
 import { useNavigate, useParams } from "react-router-dom";
-import {useProfile} from "../../hooks/useProfile";
+import { useProfile } from "../../hooks/useProfile";
+import TimelineList from "../../components/timeline/TimelineList";
+import MoreActionsMenu from "../../components/common/MoreActionsMenu";
+import { useProfileTimeline } from "../../hooks/timeline/useProfileTimeline";
 
 const ProfileButton = ({
                            onClick,
@@ -31,6 +35,42 @@ export default function ProfilePage() {
     const { id } = useParams();
     const navigate = useNavigate();
     const { profile, loading, error, toggleFollow } = useProfile(id);
+    const [isOptionsMenuOpen, setIsOptionsMenuOpen] = useState(false);
+    const [selectedTimelineId, setSelectedTimelineId] = useState<number | null>(null);
+
+    const {
+        timelines,
+        isLoading: timelineLoading,
+        isRefreshing,
+        hasMore,
+        fetchNextPage,
+        fetchTimelines,
+        setTimelines
+    } = useProfileTimeline(id);
+
+    useEffect(() => {
+        fetchTimelines();
+    }, [fetchTimelines]);
+
+    const handleOptionsPress = (timelineId: number) => {
+        setSelectedTimelineId(timelineId);
+        setIsOptionsMenuOpen(true);
+    };
+
+    const handleActionComplete = async (action: 'edit' | 'delete') => {
+        if (selectedTimelineId) {
+            if (action === 'delete') {
+                setTimelines(prev => prev.filter(timeline => timeline.id !== selectedTimelineId));
+            }
+            setIsOptionsMenuOpen(false);
+            setSelectedTimelineId(null);
+        }
+    };
+
+    const handleMenuClose = () => {
+        setIsOptionsMenuOpen(false);
+        setSelectedTimelineId(null);
+    };
 
     if (loading) {
         return (
@@ -63,37 +103,59 @@ export default function ProfilePage() {
     };
 
     return (
-        <div className="flex flex-col h-full bg-white page-container">
-            <div className="max-w-screen-sm mx-auto w-full pt-6">
-                <div className="flex flex-col gap-6">
-                    <ProfileInfo
-                        profile={profile}
-                        onSettingsClick={profile.isMe ? handleSettingsClick : undefined}
-                    />
+        <div className="max-w-screen-sm mx-auto w-full pt-6">
+            <div className="flex flex-col gap-6">
+                <ProfileInfo
+                    profile={profile}
+                    onSettingsClick={profile.isMe ? handleSettingsClick : undefined}
+                />
 
-                    <FollowCountArea
-                        userId={profile.id}
-                        followers={profile.followerCount}
-                        following={profile.followingCount}
-                        isMe={profile.isMe}
-                    />
+                <FollowCountArea
+                    userId={profile.id}
+                    followers={profile.followerCount}
+                    following={profile.followingCount}
+                    isMe={profile.isMe}
+                />
 
-                    <div className="flex justify-center">
-                        {profile.isMe ? (
-                            <ProfileButton
-                                onClick={handleEditClick}
-                                className="w-[200px]"
-                            />
-                        ) : (
-                            <FollowButton
-                                isFollowing={profile.isFollowing || false}
-                                isFollowingMe={profile.isFollowingMe}
-                                onFollowClick={toggleFollow}
-                                className="w-[200px]"
-                            />
-                        )}
-                    </div>
+                <div className="flex justify-center">
+                    {profile.isMe ? (
+                        <ProfileButton
+                            onClick={handleEditClick}
+                            className="w-[200px]"
+                        />
+                    ) : (
+                        <FollowButton
+                            isFollowing={profile.isFollowing || false}
+                            isFollowingMe={profile.isFollowingMe}
+                            onFollowClick={toggleFollow}
+                            className="w-[200px]"
+                        />
+                    )}
                 </div>
+
+                <div className="mt-6">
+                    {timelineLoading ? (
+                        <div className="flex justify-center items-center py-4">
+                            <Loader className="animate-spin" size={24}/>
+                        </div>
+                    ) : (
+                        <TimelineList
+                            timelines={timelines || []}
+                            isLoading={timelineLoading}
+                            isRefreshing={isRefreshing}
+                            onOptionsPress={handleOptionsPress}
+                            hasMore={hasMore}
+                            onLoadMore={fetchNextPage}
+                        />
+                    )}
+                </div>
+
+                <MoreActionsMenu
+                    isOpen={isOptionsMenuOpen}
+                    onClose={handleMenuClose}
+                    onEdit={() => handleActionComplete('edit')}
+                    onDelete={() => handleActionComplete('delete')}
+                />
             </div>
         </div>
     );

@@ -8,7 +8,7 @@ export const timelineService = {
             {
                 params: {
                     page,
-                    size: 1
+                    size: 10
                 }
             }
         );
@@ -17,6 +17,11 @@ export const timelineService = {
 
     deleteTimeline: async (id: number): Promise<void> => {
         await api.delete(`/timelines/${id}`);
+    },
+
+    getActivityDates: async (year: number, month: number): Promise<string[]> => {
+        const response = await api.get<string[]>(`/timelines/activity/${year}/${month}`);
+        return response.data;
     },
 
     createTimeline: async (data: Omit<TimelineListResponse, "id">): Promise<TimelineListResponse> => {

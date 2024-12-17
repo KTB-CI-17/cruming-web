@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTimelinePosts } from "../../hooks/timeline/useTimelinePosts";
 import { useTimelineCRUD } from "../../hooks/timeline/useTimelineCRUD";
-import { useTimelineCalendar } from "../../hooks/timeline/useTimelineCalender";
+import { useTimelineMarkedDates } from "../../hooks/timeline/useTimelineMarkedDates";
 import CustomCalendar from "../../components/timeline/CustomCalendar";
 import TimelineList from "../../components/timeline/TimelineList";
 import AddTimelineButton from "../../components/timeline/AddTimelineButton";
@@ -33,17 +33,26 @@ export default function TimelinePage({ userId }: TimelinePageProps) {
     } = useTimelineCRUD();
 
     const {
-        handleMonthChange,
-        getMarkedDates
-    } = useTimelineCalendar((year, month) => fetchMonthlyTimelines(year, month));
+        markedDates,
+        isLoadingDates,
+        fetchMarkedDates
+    } = useTimelineMarkedDates();
+
+    const handleMonthChange = useCallback((date: Date) => {
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        fetchMonthlyTimelines(year, month);
+        fetchMarkedDates(year, month);
+    }, [fetchMonthlyTimelines, fetchMarkedDates]);
 
     useEffect(() => {
         const currentDate = new Date();
-        fetchMonthlyTimelines(
-            currentDate.getFullYear(),
-            currentDate.getMonth() + 1
-        );
-    }, [fetchMonthlyTimelines, userId]);
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth() + 1;
+
+        fetchMonthlyTimelines(year, month);
+        fetchMarkedDates(year, month);
+    }, [fetchMonthlyTimelines, fetchMarkedDates, userId]);
 
     const handleOptionsPress = (timelineId: number) => {
         setSelectedTimelineId(timelineId);
@@ -55,6 +64,9 @@ export default function TimelinePage({ userId }: TimelinePageProps) {
             const success = await handleTimelineAction(selectedTimelineId, action);
             if (success && action === 'delete') {
                 setTimelines(prev => prev.filter(timeline => timeline.id !== selectedTimelineId));
+                // 삭제 후 해당 월의 마킹 데이터 다시 조회
+                const currentDate = new Date();
+                fetchMarkedDates(currentDate.getFullYear(), currentDate.getMonth() + 1);
             }
             setIsOptionsMenuOpen(false);
             setSelectedTimelineId(null);
@@ -67,10 +79,11 @@ export default function TimelinePage({ userId }: TimelinePageProps) {
 
     const handleCreateSuccess = () => {
         const currentDate = new Date();
-        fetchMonthlyTimelines(
-            currentDate.getFullYear(),
-            currentDate.getMonth() + 1
-        );
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth() + 1;
+
+        fetchMonthlyTimelines(year, month);
+        fetchMarkedDates(year, month);  // 새로운 타임라인 생성 후 마킹 데이터 갱신
         handleModalClose();
     };
 
@@ -85,8 +98,9 @@ export default function TimelinePage({ userId }: TimelinePageProps) {
                 <div>
                     <div className="bg-white mb-4">
                         <CustomCalendar
-                            markedDates={getMarkedDates(timelines)}
+                            markedDates={markedDates}
                             onMonthChange={handleMonthChange}
+                            isLoading={isLoadingDates}
                         />
                     </div>
 
@@ -100,7 +114,7 @@ export default function TimelinePage({ userId }: TimelinePageProps) {
                     />
                 </div>
 
-                <AddTimelineButton onClick={() => setIsModalVisible(true)}/>
+                <AddTimelineButton onClick={() => setIsModalVisible(true)} />
 
                 <TimelineWriteModal
                     isOpen={isModalVisible}

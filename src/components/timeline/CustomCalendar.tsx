@@ -16,6 +16,7 @@ interface MarkedDateStyles {
 interface CustomCalendarProps {
     markedDates: Record<string, MarkedDateStyles>;
     onMonthChange?: (date: Date) => void;
+    isLoading?: boolean;
 }
 
 const StyledCalendarContainer = styled.div`
@@ -92,7 +93,7 @@ const StyledCalendarContainer = styled.div`
 
     .marked-date {
         position: relative;
-        z-index: 1;
+        z-index: 1;  // 컨테이너의 z-index를 양수로
 
         &::after {
             content: '';
@@ -102,13 +103,14 @@ const StyledCalendarContainer = styled.div`
             transform: translate(-50%, -50%);
             width: 32px;
             height: 32px;
-            background-color: #735BF2;
+            border: 2px solid #735BF2;
             border-radius: 50%;
-            z-index: -1;
+            z-index: -1;  // 원은 뒤에 있되
         }
 
         abbr {
-            color: white !important;
+            position: relative;
+            z-index: 2;
         }
     }
 
@@ -131,7 +133,11 @@ const StyledCalendarContainer = styled.div`
     }
 `;
 
-export default function CustomCalendar({ markedDates, onMonthChange }: CustomCalendarProps) {
+export default function CustomCalendar({
+                                           markedDates,
+                                           onMonthChange,
+                                           isLoading = false
+                                       }: CustomCalendarProps) {
     const tileClassName = ({ date }: { date: Date; view: string }) => {
         const formattedDate = format(date, 'yyyy-MM-dd');
         const isMarked = markedDates[formattedDate];
@@ -164,6 +170,11 @@ export default function CustomCalendar({ markedDates, onMonthChange }: CustomCal
 
     return (
         <StyledCalendarContainer>
+            {isLoading ? (
+                <div className="absolute inset-0 bg-white/50 z-10 flex items-center justify-center">
+                    <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                </div>
+            ) : null}
             <Calendar
                 formatMonth={(_, date) => format(date, 'MM월', { locale: ko })}
                 formatYear={(_, date) => format(date, 'yyyy년', { locale: ko })}

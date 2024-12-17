@@ -58,7 +58,7 @@ export default function TimelineList({
                     key={timeline.id}
                     timeline={{
                         ...timeline,
-                        createdAt: timeline.createdAt ? formatDateForDisplay(timeline.createdAt) : ''
+                        activityAt: formatDateForDisplay(timeline.activityAt)
                     }}
                     onClick={() => onTimelineClick(timeline)}
                     showOptions={true}

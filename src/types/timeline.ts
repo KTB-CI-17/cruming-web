@@ -119,7 +119,8 @@ export interface TimelineListResponse {
     content: string;
     level: string;
     location: LocationData;
-    createdAt: string;
+    activityAt: string;
+    // createdAt: string;
     userId: number;
     userNickname: string;
     isWriter: boolean;

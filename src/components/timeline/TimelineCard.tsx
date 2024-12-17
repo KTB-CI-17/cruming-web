@@ -11,17 +11,16 @@ interface TimelineCardProps {
 }
 
 export default function TimelineCard({
-                                         timeline,
-                                         onOptionsPress,
-                                         showOptions = false,
-                                         onClick,
-                                         className = ''
-                                     }: TimelineCardProps) {
+    timeline,
+    onOptionsPress,
+    showOptions = false,
+    onClick,
+    className = ''
+}: TimelineCardProps) {
     const handleClick = () => {
         if (onClick) {
             onClick();
         } else {
-            // Navigate to detail page
             window.location.href = `/timeline/${timeline.id}`;
         }
     };
@@ -33,8 +32,8 @@ export default function TimelineCard({
         >
             <div className="p-4 flex justify-between items-center">
                 <div className="flex items-center">
-                    <Dot color={timeline.color} />
-                    <span className="text-sm">{timeline.date}</span>
+                    <Dot color={timeline.level} />
+                    <span className="text-sm">{timeline.activityAt}</span>
                 </div>
                 {showOptions && onOptionsPress && (
                     <button
@@ -51,18 +50,20 @@ export default function TimelineCard({
 
             <div className="px-4">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2 truncate">
-                    {timeline.title}
+                    {timeline.content}
                 </h3>
                 <p className="text-sm text-gray-500 mb-3 line-clamp-2">
-                    {timeline.subtitle}
+                    {timeline.location?.placeName}
                 </p>
             </div>
 
-            <img
-                src={timeline.imageUrl}
-                alt={timeline.title}
-                className="w-full h-[150px] object-cover"
-            />
+            {timeline.files && timeline.files.length > 0 && (
+                <img
+                    src={timeline.files[0].url}
+                    alt={timeline.content}
+                    className="w-full h-[150px] object-cover"
+                />
+            )}
         </div>
     );
 }

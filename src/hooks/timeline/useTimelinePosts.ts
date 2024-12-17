@@ -18,7 +18,7 @@ export function useTimelinePosts() {
                 likeCount: 0,
                 replyCount: 0,
                 visibility: 'PUBLIC' as ServerVisibilityType,
-                activityAt: item.createdAt
+                activityAt: item.activityAt
             }));
             setTimelines(transformedData);
         } catch (error) {
@@ -41,7 +41,7 @@ export function useTimelinePosts() {
                 likeCount: 0,
                 replyCount: 0,
                 visibility: 'PUBLIC' as ServerVisibilityType,
-                activityAt: item.createdAt
+                activityAt: item.activityAt
             }));
             setTimelines(transformedData);
         } catch (error) {

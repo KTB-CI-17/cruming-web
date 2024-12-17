@@ -14,7 +14,7 @@ export function useTimelineCRUD() {
         }
     };
 
-    const handleTimelineAction = async (id: number, action: 'edit' | 'delete') => {
+    const handleTimelineAction = async (id: number, action: 'edit' | 'delete'): Promise<boolean> => {
         if (action === 'delete') {
             if (window.confirm('활동 기록을 삭제하시겠습니까?')) {
                 const success = await deleteTimeline(id);

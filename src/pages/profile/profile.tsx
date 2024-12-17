@@ -1,5 +1,5 @@
+import { useState, useEffect } from 'react';
 import { Loader } from 'lucide-react';
-import { useEffect, useState } from 'react';
 import { ProfileInfo } from "../../components/profile/ProfileInfo";
 import { FollowCountArea } from "../../components/profile/FollowCountArea";
 import { FollowButton } from "../../components/profile/FollowButton";
@@ -8,6 +8,7 @@ import { useProfile } from "../../hooks/useProfile";
 import TimelineList from "../../components/timeline/TimelineList";
 import MoreActionsMenu from "../../components/common/MoreActionsMenu";
 import { useProfileTimeline } from "../../hooks/timeline/useProfileTimeline";
+import { useTimelineCRUD } from "../../hooks/timeline/useTimelineCRUD";
 
 const ProfileButton = ({
                            onClick,
@@ -36,7 +37,6 @@ export default function ProfilePage() {
     const navigate = useNavigate();
     const { profile, loading, error, toggleFollow } = useProfile(id);
     const [isOptionsMenuOpen, setIsOptionsMenuOpen] = useState(false);
-    const [selectedTimelineId, setSelectedTimelineId] = useState<number | null>(null);
 
     const {
         timelines,
@@ -48,6 +48,12 @@ export default function ProfilePage() {
         setTimelines
     } = useProfileTimeline(id);
 
+    const {
+        selectedTimelineId,
+        setSelectedTimelineId,
+        handleTimelineAction
+    } = useTimelineCRUD();
+
     useEffect(() => {
         fetchTimelines();
     }, [fetchTimelines]);
@@ -57,21 +63,22 @@ export default function ProfilePage() {
         setIsOptionsMenuOpen(true);
     };
 
-    const handleActionComplete = async (action: 'edit' | 'delete') => {
-        if (selectedTimelineId) {
-            if (action === 'delete') {
-                setTimelines(prev => prev.filter(timeline => timeline.id !== selectedTimelineId));
-            }
-            setIsOptionsMenuOpen(false);
-            setSelectedTimelineId(null);
-        }
-    };
-
     const handleMenuClose = () => {
         setIsOptionsMenuOpen(false);
         setSelectedTimelineId(null);
     };
 
+    const handleDeleteSuccess = (id: number) => {
+        setTimelines(prev => prev.filter(timeline => timeline.id !== id));
+    };
+
+    const handleDeleteClick = async () => {
+        const success: boolean = await handleTimelineAction(selectedTimelineId!, 'delete');
+        if (success) {
+            handleDeleteSuccess(selectedTimelineId!);
+        }
+    };
+    
     if (loading) {
         return (
             <div className="flex justify-center items-center min-h-screen">
@@ -153,8 +160,8 @@ export default function ProfilePage() {
                 <MoreActionsMenu
                     isOpen={isOptionsMenuOpen}
                     onClose={handleMenuClose}
-                    onEdit={() => handleActionComplete('edit')}
-                    onDelete={() => handleActionComplete('delete')}
+                    onEdit={() => handleTimelineAction(selectedTimelineId!, 'edit')}
+                    onDelete={handleDeleteClick}
                 />
             </div>
         </div>

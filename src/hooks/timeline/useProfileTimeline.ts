@@ -47,6 +47,21 @@ export function useProfileTimeline(userId?: string) {
         await fetchTimelines(nextPage);
     }, [currentPage, hasMore, isLoading, fetchTimelines]);
 
+    // 타임라인 삭제 함수
+    const deleteTimeline = async (id: number) => {
+        try {
+            await timelineService.deleteTimeline(id);
+            // 삭제된 타임라인을 배열에서 제거
+            setTimelines((prevTimelines) =>
+                prevTimelines.filter((timeline) => timeline.id !== id)
+            );
+            return true;
+        } catch (error) {
+            console.error('Failed to delete timeline:', error);
+            return false;
+        }
+    };
+
     return {
         timelines,
         isLoading,
@@ -54,6 +69,7 @@ export function useProfileTimeline(userId?: string) {
         hasMore,
         fetchTimelines,
         fetchNextPage,
+        deleteTimeline, // 추가된 deleteTimeline 함수
         setTimelines
     };
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from '../../context/AuthContext';
@@ -11,12 +11,16 @@ const KakaoCallback = () => {
     const navigate = useNavigate();
     const { setIsAuthenticated } = useAuth();
     const [isLoading, setIsLoading] = useState(true);
+    const isProcessing = useRef(false);
 
     useEffect(() => {
-        const searchParams = new URLSearchParams(window.location.search);
-        const code = searchParams.get('code');
-
         const sendCodeToBackend = async () => {
+            if (isProcessing.current) return;
+            isProcessing.current = true;
+
+            const searchParams = new URLSearchParams(window.location.search);
+            const code = searchParams.get('code');
+
             if (!code) {
                 setIsLoading(false);
                 navigate('/login');
@@ -32,14 +36,18 @@ const KakaoCallback = () => {
                     }
                 );
 
-                localStorage.setItem('accessToken', response.data.accessToken);
+                const { accessToken } = response.data;
+                localStorage.setItem('accessToken', accessToken);
+                
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
                 setIsAuthenticated(true);
-                setIsLoading(false);
                 navigate('/timeline', { replace: true });
             } catch (error) {
                 console.error('Error during login:', error);
-                setIsLoading(false);
                 navigate('/login', { replace: true });
+            } finally {
+                setIsLoading(false);
             }
         };
 

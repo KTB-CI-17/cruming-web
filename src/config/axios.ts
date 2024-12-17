@@ -37,7 +37,8 @@ class ApiClient {
             headers: {
                 ...instance.defaults.headers,
                 'Content-Type': 'multipart/form-data'
-            }
+            },
+            withCredentials: true
         });
 
         // 인터셉터 재사용

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Timeline } from "../../types/timeline";
 import { useTimelinePosts } from "../../hooks/timeline/useTimelinePosts";
 import { useTimelineCRUD } from "../../hooks/timeline/useTimelineCRUD";
@@ -12,12 +12,14 @@ import {useTimelineCalendar} from "../../hooks/timeline/useTimelineCalender";
 export default function TimelinePage() {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isOptionsMenuOpen, setIsOptionsMenuOpen] = useState(false);
+    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
     const {
         timelines,
         isLoading,
         isRefreshing,
         fetchMonthlyTimelines,
+        fetchDailyTimelines,
         setTimelines
     } = useTimelinePosts();
 
@@ -57,6 +59,15 @@ export default function TimelinePage() {
         }
     };
 
+    const handleDateClick = (date: Date) => {
+        setSelectedDate(date);
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        
+        fetchDailyTimelines(year, month, day);
+    };
+
     return (
         <div className="min-h-screen bg-white">
             <div>
@@ -64,6 +75,7 @@ export default function TimelinePage() {
                     <CustomCalendar
                         markedDates={getMarkedDates(timelines)}
                         onMonthChange={handleMonthChange}
+                        onDateClick={handleDateClick}
                     />
                 </div>
 
@@ -84,6 +96,9 @@ export default function TimelinePage() {
                 onCreateSuccess={() => {
                     const currentDate = new Date();
                     fetchMonthlyTimelines(currentDate.getFullYear(), currentDate.getMonth() + 1);
+                    if (selectedDate) {
+                        handleDateClick(selectedDate);
+                    }
                 }}
             />
 

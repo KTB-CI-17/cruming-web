@@ -16,6 +16,7 @@ interface MarkedDateStyles {
 interface CustomCalendarProps {
     markedDates: Record<string, MarkedDateStyles>;
     onMonthChange?: (date: Date) => void;
+    onDateClick?: (date: Date) => void;
 }
 
 const StyledCalendarContainer = styled.div`
@@ -69,7 +70,6 @@ const StyledCalendarContainer = styled.div`
         font-size: 16px;
         border-radius: 4px;
         color: #000;
-        pointer-events: none;
         position: relative;
 
         &:hover {
@@ -112,7 +112,7 @@ const StyledCalendarContainer = styled.div`
         }
     }
 
-    /* 이전/다음 달 날짜 숨기기 */
+    /* 이전/��음 달 날짜 숨기기 */
     .react-calendar__month-view__days__day--neighboringMonth {
         visibility: hidden;
     }
@@ -131,7 +131,7 @@ const StyledCalendarContainer = styled.div`
     }
 `;
 
-export default function CustomCalendar({ markedDates, onMonthChange }: CustomCalendarProps) {
+export default function CustomCalendar({ markedDates, onMonthChange, onDateClick }: CustomCalendarProps) {
     const tileClassName = ({ date }: { date: Date; view: string }) => {
         const formattedDate = format(date, 'yyyy-MM-dd');
         const isMarked = markedDates[formattedDate];
@@ -183,8 +183,10 @@ export default function CustomCalendar({ markedDates, onMonthChange }: CustomCal
                 navigationLabel={({ date }) =>
                     `${format(date, 'yyyy년 MM월', { locale: ko })}`
                 }
-                onClickDay={(_, event) => {
-                    event.preventDefault();
+                onClickDay={(value) => {
+                    if (onDateClick) {
+                        onDateClick(value);
+                    }
                 }}
                 onClickMonth={(_, event) => {
                     event.preventDefault();

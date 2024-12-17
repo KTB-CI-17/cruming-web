@@ -9,6 +9,7 @@ import LocationSearch from "../common/LocationSearch";
 import { multipartApi } from "../../config/axios";
 import {UploadImage} from "../../types/community";
 import {ImageUploadArea} from "../community/new/ImageUploadArea";
+import { TimelineResponse } from '../../types/timeline';
 
 interface TimelineWriteModalProps {
     isOpen: boolean;
@@ -99,6 +100,13 @@ export default function TimelineWriteModal({ isOpen, onClose, onCreateSuccess }:
     };
 
     const handleSubmit = async () => {
+        const token = localStorage.getItem('accessToken');
+        if (!token) {
+            alert('로그인이 필요합니다.');
+            // 필요한 경우 로그인 페이지로 리다이렉트
+            return;
+        }
+
         if (!validateForm() || !formData.location) return;
 
         if (confirm("입력하신 내용으로 등록하시겠습니까?")) {
@@ -135,7 +143,7 @@ export default function TimelineWriteModal({ isOpen, onClose, onCreateSuccess }:
                     multipartFormData.append('files', image.file);
                 });
 
-                const response = await multipartApi.post('/timelines', multipartFormData);
+                const response = await multipartApi.post<TimelineResponse>('/timelines', multipartFormData);
                 console.log('Timeline created:', response.data);
                 onCreateSuccess();
                 resetAndClose();

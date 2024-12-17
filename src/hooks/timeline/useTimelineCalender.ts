@@ -22,7 +22,7 @@ export function useTimelineCalendar(onMonthChange: (year: number, month: number)
     const getMarkedDates = useCallback((timelines: Timeline[]): MarkedDates => {
         return timelines.reduce((acc, timeline) => ({
             ...acc,
-            [timeline.date]: {
+            [timeline.createdAt]: {
                 customStyles: {
                     container: {
                         borderBottomWidth: 2,

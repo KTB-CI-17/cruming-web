@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import TabNavigation from '../../components/community/list/TabNavigation';
-import SearchBar from '../../components/community/list/SearchBar';
 import GeneralTab from '../../components/community/list/GeneralTab';
 import ProblemTab from '../../components/community/list/ProblemTab';
 import TimelineTab from '../../components/community/list/TimelineTab';

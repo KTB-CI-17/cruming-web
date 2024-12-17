@@ -29,7 +29,7 @@ export const ProfileInfo: React.FC<ProfileInfoProps> = ({
             {/* Profile Image */}
             <div className="w-[120px] h-[120px] mb-4">
                 <ProfileAvatar
-                    userProfile={profile.userProfile}
+                    userProfile={profile.profile}
                     userNickname={profile.nickname}
                     userId={profile.id}
                     size="xl"

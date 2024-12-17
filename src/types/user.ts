@@ -6,7 +6,7 @@ export interface UserProfile {
     intro?: string;
     homeGym?: string;
     instagramId?: string;
-    userProfile?: string;
+    profile?: string;
     followingCount: number;
     followerCount: number;
     isMe: boolean;

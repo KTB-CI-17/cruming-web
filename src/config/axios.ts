@@ -8,6 +8,9 @@ class ApiClient {
     private static instance: AxiosInstance;
     private static isRefreshing = false;
     private static refreshSubscribers: ((token: string) => void)[] = [];
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    private static readonly API_BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL;
 
     private static subscribeTokenRefresh(cb: (token: string) => void) {
         this.refreshSubscribers.push(cb);
@@ -21,7 +24,7 @@ class ApiClient {
     public static getInstance(): AxiosInstance {
         if (!this.instance) {
             this.instance = axios.create({
-                baseURL: 'http://localhost:8080/api/v1',
+                baseURL: this.API_BASE_URL,
                 withCredentials: true
             });
 
@@ -50,7 +53,7 @@ class ApiClient {
     private static async refreshToken() {
         try {
             const response = await axios.post<{ accessToken: string }>(
-                'http://localhost:8080/api/v1/auth/refresh',
+                `${this.API_BASE_URL}/auth/refresh`,
                 {},
                 { withCredentials: true }
             );

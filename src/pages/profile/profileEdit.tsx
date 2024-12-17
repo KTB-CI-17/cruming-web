@@ -27,28 +27,57 @@ export default function ProfileEditPage() {
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-
-        const editRequest: UserEditRequest = {
-            nickname: formData.nickname,
-            height: formData.height,
-            armReach: formData.armReach,
-            intro: formData.intro,
-            instagramId: formData.instagramId,
-            homeGymRequest: formData.homeGym ? {
-                placeName: formData.homeGym.placeName,
-                address: formData.homeGym.address,
-                latitude: formData.homeGym.latitude,
-                longitude: formData.homeGym.longitude
-            } : undefined
-        };
+        if (submitting) return; // 중복 제출 방지
 
         try {
-            await updateProfile(editRequest);
+            // 닉네임 검증
+            if (!formData.nickname?.trim()) {
+                alert('닉네임을 입력해주세요.');
+                return;
+            }
+
+            // 값 검증 및 변환
+            let processedHeight = null;
+            let processedArmReach = null;
+
+            if (formData.height !== undefined && formData.height !== null) {
+                const height = Number(formData.height);
+                if (height <= 30 || height >= 300) {
+                    alert('키는 30cm에서 300cm 사이여야 합니다.');
+                    return;
+                }
+                processedHeight = height;
+            }
+
+            if (formData.armReach !== undefined && formData.armReach !== null) {
+                const armReach = Number(formData.armReach);
+                if (armReach <= 30 || armReach >= 300) {
+                    alert('팔 길이는 30cm에서 300cm 사이여야 합니다.');
+                    return;
+                }
+                processedArmReach = armReach;
+            }
+
+            const request: UserEditRequest = {
+                nickname: formData.nickname.trim(),
+                height: processedHeight || undefined,  // null 대신 undefined 사용
+                armReach: processedArmReach || undefined,  // null 대신 undefined 사용
+                intro: formData.intro ? formData.intro.trim() : undefined,  // null 대신 undefined 사용
+                instagramId: formData.instagramId ? formData.instagramId.trim() : undefined,  // null 대신 undefined 사용
+                homeGymRequest: formData.homeGym ? {
+                    placeName: formData.homeGym.placeName.trim(),
+                    address: formData.homeGym.address.trim(),
+                    latitude: formData.homeGym.latitude,
+                    longitude: formData.homeGym.longitude
+                } : undefined  // null 대신 undefined 사용
+            };
+
+            await updateProfile(request);
             navigate('/profile');
         } catch (error) {
-            console.error(error);
+            alert(error);
         }
     };
 
@@ -63,7 +92,7 @@ export default function ProfileEditPage() {
     return (
         <div className="flex flex-col h-full bg-white page-container">
             <div className="max-w-screen-sm mx-auto w-full pt-6">
-                <div className="flex flex-col gap-6"> {/* form을 div로 변경 */}
+                <div className="flex flex-col gap-6">
                     {/* Profile Image */}
                     <div className="flex flex-col items-center gap-4">
                         <div className="relative">
@@ -105,12 +134,13 @@ export default function ProfileEditPage() {
                                 className="mt-1 w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#735BF2]"
                                 placeholder="닉네임을 입력하세요"
                                 required
+                                maxLength={50}
                                 disabled={submitting}
                             />
                         </div>
 
                         <div>
-                            <label className="text-sm text-gray-500">SNS Link</label>
+                            <label className="text-sm text-gray-500">인스타그램 ID</label>
                             <input
                                 type="text"
                                 name="instagramId"
@@ -157,12 +187,6 @@ export default function ProfileEditPage() {
                                     onLocationSelect={handleLocationSelect}
                                 />
                             </div>
-                            {formData.homeGym && (
-                                <div className="mt-2 p-2 bg-gray-50 rounded-lg">
-                                    <p className="text-sm text-gray-900">{formData.homeGym.placeName}</p>
-                                    <p className="text-xs text-gray-500">{formData.homeGym.address}</p>
-                                </div>
-                            )}
                         </div>
 
                         <div>
@@ -179,6 +203,7 @@ export default function ProfileEditPage() {
                         </div>
 
                         <button
+                            type="button"
                             onClick={handleSubmit}
                             disabled={submitting}
                             className="w-full p-3 bg-[#735BF2] text-white rounded-lg hover:bg-[#5D4ACC] transition-colors disabled:opacity-50"

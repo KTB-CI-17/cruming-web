@@ -50,6 +50,19 @@ export const timelineService = {
         return response.data;
     },
 
+    getFollowingTimeline: async (page: number = 0): Promise<TimelinePageResponse> => {
+        const response = await api.get<TimelinePageResponse>(
+            `/timelines/following`,
+            {
+                params: {
+                    page,
+                    size: 10
+                }
+            }
+        );
+        return response.data;
+    },
+
     createTimeline: async (data: Omit<TimelineListResponse, "id">): Promise<TimelineListResponse> => {
         const response = await api.post<TimelineListResponse>('/timelines', data);
         return response.data;

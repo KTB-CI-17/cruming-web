@@ -47,11 +47,9 @@ export function useProfileTimeline(userId?: string) {
         await fetchTimelines(nextPage);
     }, [currentPage, hasMore, isLoading, fetchTimelines]);
 
-    // 타임라인 삭제 함수
     const deleteTimeline = async (id: number) => {
         try {
             await timelineService.deleteTimeline(id);
-            // 삭제된 타임라인을 배열에서 제거
             setTimelines((prevTimelines) =>
                 prevTimelines.filter((timeline) => timeline.id !== id)
             );

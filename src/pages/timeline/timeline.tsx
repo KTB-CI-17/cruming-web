@@ -8,13 +8,10 @@ import AddTimelineButton from "../../components/timeline/AddTimelineButton";
 import TimelineWriteModal from "../../components/timeline/WriteModal";
 import MoreActionsMenu from "../../components/common/MoreActionsMenu";
 
-interface TimelinePageProps {
-    userId?: string;
-}
-
-export default function TimelinePage({ userId }: TimelinePageProps) {
+export default function TimelinePage() {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isOptionsMenuOpen, setIsOptionsMenuOpen] = useState(false);
+    const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
 
     const {
         timelines,
@@ -39,6 +36,7 @@ export default function TimelinePage({ userId }: TimelinePageProps) {
     } = useTimelineMarkedDates();
 
     const handleMonthChange = useCallback((date: Date) => {
+        setCurrentMonth(date);
         const year = date.getFullYear();
         const month = date.getMonth() + 1;
         fetchMonthlyTimelines(year, month);
@@ -46,30 +44,30 @@ export default function TimelinePage({ userId }: TimelinePageProps) {
     }, [fetchMonthlyTimelines, fetchMarkedDates]);
 
     useEffect(() => {
-        const currentDate = new Date();
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth() + 1;
+        const year = currentMonth.getFullYear();
+        const month = currentMonth.getMonth() + 1;
 
         fetchMonthlyTimelines(year, month);
         fetchMarkedDates(year, month);
-    }, [fetchMonthlyTimelines, fetchMarkedDates, userId]);
+    }, [fetchMonthlyTimelines, fetchMarkedDates, currentMonth]);
 
     const handleOptionsPress = (timelineId: number) => {
         setSelectedTimelineId(timelineId);
         setIsOptionsMenuOpen(true);
     };
 
-    const handleActionComplete = async (action: 'edit' | 'delete') => {
-        if (selectedTimelineId) {
-            const success = await handleTimelineAction(selectedTimelineId, action);
-            if (success && action === 'delete') {
-                setTimelines(prev => prev.filter(timeline => timeline.id !== selectedTimelineId));
-                // 삭제 후 해당 월의 마킹 데이터 다시 조회
-                const currentDate = new Date();
-                fetchMarkedDates(currentDate.getFullYear(), currentDate.getMonth() + 1);
-            }
-            setIsOptionsMenuOpen(false);
-            setSelectedTimelineId(null);
+    const handleDeleteSuccess = (id: number) => {
+        setTimelines(prev => prev.filter(timeline => timeline.id !== id));
+
+        const year = currentMonth.getFullYear();
+        const month = currentMonth.getMonth() + 1;
+        fetchMarkedDates(year, month);
+    };
+
+    const handleDeleteClick = async () => {
+        const success: boolean = await handleTimelineAction(selectedTimelineId!, 'delete');
+        if (success) {
+            handleDeleteSuccess(selectedTimelineId!);
         }
     };
 
@@ -78,12 +76,11 @@ export default function TimelinePage({ userId }: TimelinePageProps) {
     };
 
     const handleCreateSuccess = () => {
-        const currentDate = new Date();
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth() + 1;
+        const year = currentMonth.getFullYear();
+        const month = currentMonth.getMonth() + 1;
 
         fetchMonthlyTimelines(year, month);
-        fetchMarkedDates(year, month);  // 새로운 타임라인 생성 후 마킹 데이터 갱신
+        fetchMarkedDates(year, month);
         handleModalClose();
     };
 
@@ -125,8 +122,8 @@ export default function TimelinePage({ userId }: TimelinePageProps) {
                 <MoreActionsMenu
                     isOpen={isOptionsMenuOpen}
                     onClose={handleMenuClose}
-                    onEdit={() => handleActionComplete('edit')}
-                    onDelete={() => handleActionComplete('delete')}
+                    onEdit={() => handleTimelineAction(selectedTimelineId!, 'edit')}
+                    onDelete={handleDeleteClick}
                 />
             </div>
         </div>

@@ -11,6 +11,19 @@ export function useTimelinePosts() {
     const [currentYear, setCurrentYear] = useState<number>();
     const [currentMonth, setCurrentMonth] = useState<number>();
 
+    const deleteTimeline = async (id: number) => {
+        try {
+            await timelineService.deleteTimeline(id);
+            setTimelines((prevTimelines) =>
+                prevTimelines.filter((timeline) => timeline.id !== id)
+            );
+            return true;
+        } catch (error) {
+            console.error('Failed to delete timeline:', error);
+            return false;
+        }
+    };
+
     const fetchMonthlyTimelines = useCallback(async (year: number, month: number, page = 0) => {
         if (page === 0) {
             setIsLoading(true);
@@ -53,6 +66,7 @@ export function useTimelinePosts() {
         hasMore,
         fetchMonthlyTimelines,
         fetchNextPage,
-        setTimelines
+        setTimelines,
+        deleteTimeline
     };
 }

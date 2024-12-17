@@ -54,8 +54,12 @@ export default function ProfilePage() {
         );
     }
 
-    const handleSettingsClick = () => {
+    const handleEditClick = () => {
         navigate('/profile/edit');
+    };
+
+    const handleSettingsClick = () => {
+        navigate('/profile/setting');
     };
 
     return (
@@ -77,7 +81,7 @@ export default function ProfilePage() {
                     <div className="flex justify-center">
                         {profile.isMe ? (
                             <ProfileButton
-                                onClick={handleSettingsClick}
+                                onClick={handleEditClick}
                                 className="w-[200px]"
                             />
                         ) : (

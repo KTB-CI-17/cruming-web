@@ -30,6 +30,31 @@ export interface ColorLevelOption {
     value: string;
 }
 
+export interface TimelineListResponse {
+    id: number;
+    content: string;
+    level: string;
+    location: string;
+    activityAt: string;
+    userId: number;
+    userNickname: string;
+    isWriter: boolean;
+    file: string;
+}
+
+export interface PageResponse<T> {
+    content: T[];
+    pageable: {
+        pageNumber: number;
+        pageSize: number;
+    };
+    last: boolean;
+    totalElements: number;
+    totalPages: number;
+}
+
+export type TimelinePageResponse = PageResponse<TimelineListResponse>;
+
 export const colorLevelOptions: ColorLevelOption[] = [
     { color: '#FF4747', label: '빨강', value: '#FF4747' },
     { color: '#FF8A3D', label: '주황', value: '#FF8A3D' },

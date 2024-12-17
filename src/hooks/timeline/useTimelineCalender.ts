@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Timeline } from '../../types/timeline';
+import {TimelineListResponse} from "../../types/timeline";
 
 interface MarkedDates {
     [key: string]: {
@@ -19,10 +19,10 @@ export function useTimelineCalendar(onMonthChange: (year: number, month: number)
         onMonthChange(year, month);
     }, [onMonthChange]);
 
-    const getMarkedDates = useCallback((timelines: Timeline[]): MarkedDates => {
+    const getMarkedDates = useCallback((timelines: TimelineListResponse[]): MarkedDates => {
         return timelines.reduce((acc, timeline) => ({
             ...acc,
-            [timeline.date]: {
+            [timeline.activityAt]: {
                 customStyles: {
                     container: {
                         borderBottomWidth: 2,

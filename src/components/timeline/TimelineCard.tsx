@@ -1,9 +1,9 @@
 import { MoreVertical } from 'lucide-react';
-import { Timeline } from '../../types/timeline';
 import { Dot } from './Dot';
+import {TimelineListResponse} from "../../types/timeline";
 
 interface TimelineCardProps {
-    timeline: Timeline;
+    timeline: TimelineListResponse;
     onOptionsPress?: () => void;
     showOptions?: boolean;
     onClick?: () => void;
@@ -21,7 +21,6 @@ export default function TimelineCard({
         if (onClick) {
             onClick();
         } else {
-            // Navigate to detail page
             window.location.href = `/timeline/${timeline.id}`;
         }
     };
@@ -33,8 +32,8 @@ export default function TimelineCard({
         >
             <div className="p-4 flex justify-between items-center">
                 <div className="flex items-center">
-                    <Dot color={timeline.color} />
-                    <span className="text-sm">{timeline.date}</span>
+                    <Dot color={timeline.level} />
+                    <span className="text-sm">{timeline.activityAt}</span>
                 </div>
                 {showOptions && onOptionsPress && (
                     <button
@@ -51,16 +50,16 @@ export default function TimelineCard({
 
             <div className="px-4">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2 truncate">
-                    {timeline.title}
+                    {timeline.location}
                 </h3>
                 <p className="text-sm text-gray-500 mb-3 line-clamp-2">
-                    {timeline.subtitle}
+                    {timeline.content}
                 </p>
             </div>
 
             <img
-                src={timeline.imageUrl}
-                alt={timeline.title}
+                src={timeline.file}
+                alt={timeline.file}
                 className="w-full h-[150px] object-cover"
             />
         </div>

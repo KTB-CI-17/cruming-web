@@ -115,7 +115,7 @@ export default function TimelineWriteModal({ isOpen, onClose, onCreateSuccess }:
 
                 const requestData: TimelineRequest = {
                     location: formData.location,
-                    activityAt: new Date(formData.activityAt).toISOString(), // activityAt을 ISO 8601 형식으로 변환
+                    activityAt: formData.activityAt.split('T')[0],
                     level: formData.level,
                     content: formData.content.trim(),
                     visibility: visibilityMapping[formData.visibility], // visibility 변환

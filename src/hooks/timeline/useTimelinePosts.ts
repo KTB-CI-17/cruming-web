@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Timeline } from '../../types/timeline';
+import { ServerVisibilityType, Timeline } from '../../types/timeline';
 import { timelineService } from '../../services/timelineService';
 
 export function useTimelinePosts() {
@@ -11,7 +11,16 @@ export function useTimelinePosts() {
         setIsLoading(true);
         try {
             const data = await timelineService.getMonthlyTimelines(year, month);
-            setTimelines(data);
+            const transformedData: Timeline[] = data.map(item => ({
+                ...item,
+                userProfile: '',
+                isLiked: false,
+                likeCount: 0,
+                replyCount: 0,
+                visibility: 'PUBLIC' as ServerVisibilityType,
+                activityAt: item.createdAt
+            }));
+            setTimelines(transformedData);
         } catch (error) {
             console.error('Failed to fetch monthly timelines:', error);
             setTimelines([]);
@@ -21,11 +30,33 @@ export function useTimelinePosts() {
         }
     }, []);
 
+    const fetchDailyTimelines = useCallback(async (year: number, month: number, day: number) => {
+        setIsLoading(true);
+        try {
+            const data = await timelineService.getDailyTimelines(year, month, day);
+            const transformedData: Timeline[] = data.map(item => ({
+                ...item,
+                userProfile: '',
+                isLiked: false,
+                likeCount: 0,
+                replyCount: 0,
+                visibility: 'PUBLIC' as ServerVisibilityType,
+                activityAt: item.createdAt
+            }));
+            setTimelines(transformedData);
+        } catch (error) {
+            console.error('Failed to fetch daily timelines:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
     return {
         timelines,
         isLoading,
         isRefreshing,
         fetchMonthlyTimelines,
+        fetchDailyTimelines,
         setTimelines
     };
 }

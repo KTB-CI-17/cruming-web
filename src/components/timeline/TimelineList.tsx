@@ -18,8 +18,20 @@ export default function TimelineList({
                                          onTimelineClick,
                                          onOptionsPress
                                      }: TimelineListProps) {
-    const formatDateForDisplay = (date: string) => {
-        return format(new Date(date), 'yyyy. MM. dd.');
+    const formatDateForDisplay = (date: string | null) => {
+        if (!date) return '';
+        
+        try {
+            const parsedDate = new Date(date);
+            if (isNaN(parsedDate.getTime())) {
+                console.error('Invalid date value:', date);
+                return '';
+            }
+            return format(parsedDate, 'yyyy. MM. dd.');
+        } catch (error) {
+            console.error('Date formatting error:', error);
+            return '';
+        }
     };
 
     if (isLoading || isRefreshing) {
@@ -46,7 +58,7 @@ export default function TimelineList({
                     key={timeline.id}
                     timeline={{
                         ...timeline,
-                        date: formatDateForDisplay(timeline.date)
+                        createdAt: timeline.createdAt ? formatDateForDisplay(timeline.createdAt) : ''
                     }}
                     onClick={() => onTimelineClick(timeline)}
                     showOptions={true}

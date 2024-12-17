@@ -1,7 +1,21 @@
 import {LocationData} from "./location";
 import {UploadImage} from "./community";
+import { Page } from './common';
 
 export type VisibilityType = '전체 공개' | '팔로워 공개' | '나만보기';
+
+export type ServerVisibilityType = 'PUBLIC' | 'FOLLOWERS' | 'PRIVATE';
+
+export const visibilityMapper = {
+    toServer: (type: VisibilityType): ServerVisibilityType => {
+        const map: Record<VisibilityType, ServerVisibilityType> = {
+            '전체 공개': 'PUBLIC',
+            '팔로워 공개': 'FOLLOWERS',
+            '나만보기': 'PRIVATE',
+        };
+        return map[type];
+    },
+};
 
 export interface TimelineFormData {
     location: LocationData | null;
@@ -44,3 +58,87 @@ export const colorLevelOptions: ColorLevelOption[] = [
     { color: '#495057', label: '회색', value: '#495057' },
     { color: '#212529', label: '검정', value: '#212529' },
 ];
+
+export interface BaseTimeline {
+    id: number;
+    content: string;
+    createdAt: string;
+}
+
+export interface TimelineFile {
+    id: number;
+    fileName: string;
+    fileKey: string;
+    url: string;
+    fileType: string;
+    fileSize: number;
+    displayOrder: number;
+    userId: number;
+    status: string;
+    createdAt: string;
+}
+
+export interface Timeline extends BaseTimeline {
+    level: string;
+    location: LocationData;
+    userId: number;
+    userNickname: string;
+    userProfile: string;
+    isWriter: boolean;
+    files: TimelineFile[];
+    isLiked: boolean;
+    likeCount: number;
+    replyCount: number;
+    visibility: ServerVisibilityType;
+    activityAt: string;
+}
+
+export interface TimelineUser {
+    id: number;
+    nickname: string;
+    profileImageUrl: string | null;
+}
+
+export interface TimelineResponse {
+    id: number;
+    user: TimelineUser;
+    location: LocationData;
+    level: string;
+    content: string;
+    visibility: ServerVisibilityType;
+    activityAt: string;
+    likeCount: number;
+    replyCount: number;
+    isLiked: boolean;
+    createdAt: string;
+    files: TimelineFile[];
+}
+
+export interface TimelineListResponse {
+    id: number;
+    content: string;
+    level: string;
+    location: LocationData;
+    createdAt: string;
+    userId: number;
+    userNickname: string;
+    isWriter: boolean;
+    files: TimelineFile[];
+}
+
+export interface TimelineReplyResponse {
+    id: number;
+    user: TimelineUser;
+    content: string;
+    children: TimelineReplyResponse[];
+    createdAt: string;
+    updatedAt: string;
+    isWriter: boolean;
+}
+
+export interface TimelineReplyRequest {
+    content: string;
+    parentId?: number;
+}
+
+export type TimelinePageResponse = Page<TimelineListResponse>;

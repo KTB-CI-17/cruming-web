@@ -8,7 +8,7 @@ interface TimelineListProps {
     timelines: TimelineListResponse[];
     isLoading: boolean;
     isRefreshing: boolean;
-    onOptionsPress: (timelineId: number) => void;
+    onOptionsPress?: (timelineId: number) => void | null;
     hasMore: boolean;
     onLoadMore: () => void;
 }
@@ -69,8 +69,8 @@ export default function TimelineList({
                     <TimelineCard
                         timeline={timeline}
                         onClick={() => onTimelineClick(timeline.id)}
-                        showOptions={true}
-                        onOptionsPress={() => onOptionsPress(timeline.id)}
+                        showOptions={!!onOptionsPress}
+                        onOptionsPress={onOptionsPress ? () => onOptionsPress(timeline.id) : undefined}
                     />
                 </div>
             ))}

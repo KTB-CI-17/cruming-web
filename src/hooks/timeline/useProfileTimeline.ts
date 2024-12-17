@@ -12,7 +12,7 @@ export function useProfileTimeline(userId?: string) {
     const fetchTimelines = useCallback(async (page = 0) => {
         if (page === 0) {
             setIsLoading(true);
-            setTimelines([]); // 첫 페이지일 경우 데이터 초기화
+            setTimelines([]);
         }
 
         try {

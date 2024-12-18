@@ -16,13 +16,9 @@ export function useCommunityTimeline(userId?: string) {
         }
 
         try {
-            const response = await timelineService.getFollowingTimeline();
-            if (page === 0) {
-                setTimelines(response.content);
-            } else {
-                setTimelines(prev => [...prev, ...response.content]);
-            }
+            const response = await timelineService.getFollowingTimeline(page);
 
+            setTimelines(prev => (page === 0 ? response.content : [...prev, ...response.content]));
             setCurrentPage(page);
             setHasMore(!response.last);
         } catch (error) {
@@ -47,6 +43,6 @@ export function useCommunityTimeline(userId?: string) {
         isRefreshing,
         hasMore,
         fetchTimelines,
-        fetchNextPage
+        fetchNextPage,
     };
 }

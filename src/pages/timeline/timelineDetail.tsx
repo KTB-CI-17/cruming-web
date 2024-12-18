@@ -95,7 +95,7 @@ export default function TimelineDetailPage() {
                 }
             }
         } else {
-            navigate(`/timeline/edit/${id}`);
+            navigate(`/timelines/edit/${id}`);
         }
     };
 

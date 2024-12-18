@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { timelineService } from '../../services/timelineService';
+import {useNavigate} from "react-router-dom";
 
 export function useTimelineCRUD() {
     const [selectedTimelineId, setSelectedTimelineId] = useState<number | null>(null);
-
+    const navigate = useNavigate();
     const deleteTimeline = async (id: number) => {
         try {
             await timelineService.deleteTimeline(id);
@@ -26,7 +27,7 @@ export function useTimelineCRUD() {
                 }
             }
         } else if (action === 'edit') {
-            alert('수정 기능은 준비 중입니다.');
+            navigate('/timelines/edit/' + id);
         }
         return false;
     };

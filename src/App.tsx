@@ -17,6 +17,7 @@ import {Settings} from "./pages/profile/Settings";
 import {Follows} from "./pages/profile/follows";
 import ProfileEdit from "./pages/profile/profileEdit";
 import TimelineDetail from "./pages/timeline/timelineDetail";
+import TimelineEdit from "./pages/timeline/timelineEdit";
 
 function App() {
     return (
@@ -28,7 +29,7 @@ function App() {
 
                     <Route element={<ProtectedRoute />}>
                         <Route element={<Layout />}>
-                            <Route path="/" element={<Navigate to="/timeline" replace />} />
+                            <Route path="/" element={<Navigate to="/timelines" replace />} />
                             <Route path="/profile" element={<Profile />} />
                             <Route path="/profile/:id" element={<Profile />} />
                             <Route path="/profile/edit" element={<ProfileEdit />} />
@@ -39,6 +40,7 @@ function App() {
                             <Route path="/hold" element={<Hold />} />
                             <Route path="/timelines" element={<Timeline />} />
                             <Route path="/timelines/:id" element={<TimelineDetail />} />
+                            <Route path="/timelines/edit/:id" element={<TimelineEdit />} />
 
                             <Route path="/community" element={<Community />} />
                             <Route path="/community/:id" element={<CommunityDetail />} />

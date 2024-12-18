@@ -1,6 +1,6 @@
 import { MoreVertical } from 'lucide-react';
-import { Dot } from './Dot';
-import { TimelineListResponse } from "../../types/timeline";
+import { Dot } from '../Dot';
+import { TimelineListResponse } from "../../../types/timeline";
 
 interface TimelineCardProps {
     timeline: TimelineListResponse;

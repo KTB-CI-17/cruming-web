@@ -4,7 +4,7 @@ import {
     ShareIcon
 } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
-import {TimelineDetailResponse} from "../../types/timeline";
+import {TimelineDetailResponse} from "../../../types/timeline";
 
 interface TimelineActionsProps {
     timeline: TimelineDetailResponse;

@@ -1,4 +1,4 @@
-import TimelineList from "../../timeline/TimelineList";
+import TimelineList from "../../timeline/list/TimelineList";
 import { useCommunityTimeline } from "../../../hooks/timeline/useCommunityTimeline";
 import { useEffect, useState, useRef } from "react";
 

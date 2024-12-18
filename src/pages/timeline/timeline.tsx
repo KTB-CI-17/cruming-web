@@ -2,10 +2,10 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTimelinePosts } from "../../hooks/timeline/useTimelinePosts";
 import { useTimelineCRUD } from "../../hooks/timeline/useTimelineCRUD";
 import { useTimelineMarkedDates } from "../../hooks/timeline/useTimelineMarkedDates";
-import CustomCalendar from "../../components/timeline/CustomCalendar";
-import TimelineList from "../../components/timeline/TimelineList";
-import AddTimelineButton from "../../components/timeline/AddTimelineButton";
-import TimelineWriteModal from "../../components/timeline/WriteModal";
+import CustomCalendar from "../../components/timeline/new/CustomCalendar";
+import TimelineList from "../../components/timeline/list/TimelineList";
+import AddTimelineButton from "../../components/timeline/list/AddTimelineButton";
+import TimelineWriteModal from "../../components/timeline/new/WriteModal";
 import MoreActionsMenu from "../../components/common/MoreActionsMenu";
 
 export default function TimelinePage() {

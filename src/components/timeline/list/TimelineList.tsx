@@ -2,7 +2,7 @@ import { useRef, useCallback } from 'react';
 import { Loader2 } from 'lucide-react';
 import TimelineCard from './TimelineCard';
 import { useNavigate } from "react-router-dom";
-import { TimelineListResponse } from "../../types/timeline";
+import { TimelineListResponse } from "../../../types/timeline";
 
 interface TimelineListProps {
     timelines: TimelineListResponse[];

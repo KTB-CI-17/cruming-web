@@ -1,8 +1,8 @@
 import { EllipsisHorizontalIcon, MapPinIcon } from "@heroicons/react/24/outline";
-import { formatTimeAgo } from '../../utils/formatTime';
-import ProfileAvatar from '../common/ProfileAvatar';
-import {TimelineDetailResponse} from "../../types/timeline";
-import {Dot} from "./Dot";
+import { formatTimeAgo } from '../../../utils/formatTime';
+import ProfileAvatar from '../../common/ProfileAvatar';
+import {TimelineDetailResponse} from "../../../types/timeline";
+import {Dot} from "../Dot";
 
 interface PostHeaderContentProps {
     timeline: TimelineDetailResponse;

@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
-import { TimelineFormData, TimelineRequest, VisibilityType } from '../../types/timeline';
-import { LocationData } from '../../types/location';
-import { LAYOUT, PADDING } from '../../constants/layout';
+import { TimelineFormData, TimelineRequest, VisibilityType } from '../../../types/timeline';
+import { LocationData } from '../../../types/location';
+import { LAYOUT, PADDING } from '../../../constants/layout';
 import DatePicker from './DatePicker';
 import ColorLevelSelect from './ColorLevelSelect';
-import LocationSearch from "../common/LocationSearch";
-import { multipartApi } from "../../config/axios";
-import {UploadImage} from "../../types/community";
-import {ImageUploadArea} from "../community/new/ImageUploadArea";
+import LocationSearch from "../../common/LocationSearch";
+import { multipartApi } from "../../../config/axios";
+import {UploadImage} from "../../../types/community";
+import {ImageUploadArea} from "../../community/new/ImageUploadArea";
 
 interface TimelineWriteModalProps {
     isOpen: boolean;

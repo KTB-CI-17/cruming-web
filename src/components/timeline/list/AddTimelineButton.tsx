@@ -1,5 +1,5 @@
 import { Plus } from 'lucide-react';
-import {LAYOUT, PADDING} from "../../constants/layout";
+import {LAYOUT, PADDING} from "../../../constants/layout";
 
 interface AddTimelineButtonProps {
     onClick: () => void;

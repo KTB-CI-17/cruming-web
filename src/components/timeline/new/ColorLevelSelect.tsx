@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ChevronDown, X } from 'lucide-react';
-import { colorLevelOptions } from '../../types/timeline';
-import { Dot } from './Dot';
+import { colorLevelOptions } from '../../../types/timeline';
+import { Dot } from '../Dot';
 
 interface ColorLevelSelectProps {
     value: string;

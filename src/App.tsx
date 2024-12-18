@@ -16,6 +16,7 @@ import NewProblemPage from "./pages/community/problem";
 import {Settings} from "./pages/profile/Settings";
 import {Follows} from "./pages/profile/follows";
 import ProfileEdit from "./pages/profile/profileEdit";
+import TimelineDetail from "./pages/timeline/timelineDetail";
 
 function App() {
     return (
@@ -37,6 +38,7 @@ function App() {
 
                             <Route path="/hold" element={<Hold />} />
                             <Route path="/timelines" element={<Timeline />} />
+                            <Route path="/timelines/:id" element={<TimelineDetail />} />
 
                             <Route path="/community" element={<Community />} />
                             <Route path="/community/:id" element={<CommunityDetail />} />

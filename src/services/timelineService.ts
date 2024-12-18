@@ -1,5 +1,5 @@
 import { api } from "../config/axios";
-import { TimelineListResponse, TimelinePageResponse } from "../types/timeline";
+import {TimelineDetailResponse, TimelineListResponse, TimelinePageResponse} from "../types/timeline";
 
 export const timelineService = {
     getMonthlyTimelines: async (year: number, month: number, page: number = 0): Promise<TimelinePageResponse> => {
@@ -47,6 +47,13 @@ export const timelineService = {
 
     getActivityDates: async (year: number, month: number): Promise<string[]> => {
         const response = await api.get<string[]>(`/timelines/activity/${year}/${month}`);
+        return response.data;
+    },
+
+    getDetail: async (timelineId: string): Promise<TimelineDetailResponse> => {
+        const response = await api.get<TimelineDetailResponse>(
+            `/timelines/` + timelineId
+        )
         return response.data;
     },
 

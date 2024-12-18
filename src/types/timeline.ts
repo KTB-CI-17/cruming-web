@@ -30,6 +30,24 @@ export interface ColorLevelOption {
     value: string;
 }
 
+export interface TimelineDetailResponse {
+    id: number;
+    content: string;
+    level: string;
+    location: string;
+    activityAt: string;
+    userProfileImage: string;
+    userId: number;
+    userNickname: string;
+    isWriter: boolean;
+    instagram_id: string;
+    visibility: VisibilityType;
+    files: string[];
+    likeCount: number;
+    replyCount: number;
+    isLiked: boolean;
+}
+
 export interface TimelineListResponse {
     id: number;
     content: string;

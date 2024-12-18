@@ -4,6 +4,7 @@ import MoreActionsMenu from "../../components/common/MoreActionsMenu";
 import {useTimelineDetail} from "../../hooks/timeline/useTimelineDetail";
 import TimelineContent from '../../components/timeline/TimelineContent';
 import TimelineImageSlider from '../../components/timeline/TimelineImageSlider';
+import TimelineActions from "../../components/timeline/TimelineActions";
 
 export default function TimelineDetailPage() {
     const { id } = useParams<{ id: string }>();
@@ -24,8 +25,8 @@ export default function TimelineDetailPage() {
         isLoading,
         error,
         fetchTimelineDetail,
-        deleteTimeline
-        // toggleTimelineLike
+        deleteTimeline,
+        toggleTimelineLike
     } = useTimelineDetail(id || '');
 
     useEffect(() => {
@@ -139,15 +140,15 @@ export default function TimelineDetailPage() {
                     onImageIndexChange={setCurrentImageIndex}
                 />
 
-                {/*<PostActions*/}
-                {/*    post={timeline}*/}
-                {/*    onLike={togglePostLike}*/}
-                {/*    onShare={() => alert('공유하기 기능이 준비 중입니다.')}*/}
-                {/*    onReply={() => {*/}
-                {/*        const replySection = document.getElementById('replies');*/}
-                {/*        replySection?.scrollIntoView({behavior: 'smooth'});*/}
-                {/*    }}*/}
-                {/*/>*/}
+                <TimelineActions
+                    timeline={timeline}
+                    onLike={toggleTimelineLike}
+                    onShare={() => alert('공유하기 기능이 준비 중입니다.')}
+                    onReply={() => {
+                        const replySection = document.getElementById('replies');
+                        replySection?.scrollIntoView({behavior: 'smooth'});
+                    }}
+                />
 
                 {/*<div id="replies">*/}
                 {/*    <PostReply*/}

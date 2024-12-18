@@ -43,7 +43,7 @@ export function useTimelineDetail(timelineId: string) {
         if (!timeline) return false;
 
         try {
-            const { data } = await api.post<boolean>(`/posts/${timeline.id}/likes`);
+            const { data } = await api.post<boolean>(`/timelines/${timeline.id}/likes`);
             setTimeline(prev => {
                 if (!prev) return null;
                 return {

@@ -1,5 +1,5 @@
 import { Post } from '../../../types/community';
-import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
+import { EllipsisHorizontalIcon, MapPinIcon, FireIcon } from "@heroicons/react/24/outline";
 import { formatTimeAgo } from '../../../utils/formatTime';
 import ProfileAvatar from '../../common/ProfileAvatar';
 
@@ -29,7 +29,7 @@ export default function PostContent({ post, onProfilePress, onMorePress }: PostH
 
             <div className="flex items-center gap-3">
                 <div
-                    className="flex items-center gap-3"
+                    className="flex items-center gap-3 cursor-pointer"
                     onClick={() => onProfilePress(post.userId)}
                 >
                     <ProfileAvatar
@@ -54,6 +54,20 @@ export default function PostContent({ post, onProfilePress, onMorePress }: PostH
                     </div>
                 </div>
             </div>
+
+            {post.location && (
+                <div className="flex items-center bg-gray-50 px-4 py-3 rounded-lg mt-4">
+                    <MapPinIcon className="w-5 h-5 text-gray-600" />
+                    <span className="ml-2 text-sm text-gray-700">{post.location}</span>
+                </div>
+            )}
+
+            {post.level && (
+                <div className="flex items-center bg-gray-50 px-4 py-3 rounded-lg mt-4">
+                    <FireIcon className="w-5 h-5 text-gray-600" />
+                    <span className="ml-2 text-sm text-gray-700">{post.level}</span>
+                </div>
+            )}
 
             <div className="mt-4">
                 <p className="text-base leading-relaxed">{post.content}</p>

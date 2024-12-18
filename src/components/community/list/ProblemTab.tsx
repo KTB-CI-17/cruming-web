@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
 import PostCard from './PostCard';
 import ErrorState from './ErrorState';
-import { usePostList } from '../../../hooks/usePostList';
+import { usePostList } from '../../../hooks/community/usePostList';
 
 const GeneralTab = () => {
     const navigate = useNavigate();

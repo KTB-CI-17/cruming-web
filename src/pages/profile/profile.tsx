@@ -4,7 +4,7 @@ import { ProfileInfo } from "../../components/profile/ProfileInfo";
 import { FollowCountArea } from "../../components/profile/FollowCountArea";
 import { FollowButton } from "../../components/profile/FollowButton";
 import { useNavigate, useParams } from "react-router-dom";
-import { useProfile } from "../../hooks/useProfile";
+import { useProfile } from "../../hooks/community/useProfile";
 import TimelineList from "../../components/timeline/TimelineList";
 import MoreActionsMenu from "../../components/common/MoreActionsMenu";
 import { useProfileTimeline } from "../../hooks/timeline/useProfileTimeline";

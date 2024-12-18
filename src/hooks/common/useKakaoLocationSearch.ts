@@ -3,7 +3,7 @@ import {
     LocationDocument,
     KakaoKeywordResponse,
     LocationData
-} from '../types/location';
+} from '../../types/location';
 
 const RESULTS_PER_PAGE = 15;
 

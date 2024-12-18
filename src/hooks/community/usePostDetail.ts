@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { AxiosError } from 'axios';
-import {api} from "../config/axios";
-import {Post} from "../types/community";
+import {api} from "../../config/axios";
+import {Post} from "../../types/community";
 
 export function usePost(postId: string) {
     const [post, setPost] = useState<Post | null>(null);

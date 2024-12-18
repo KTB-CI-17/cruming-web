@@ -1,6 +1,6 @@
 import { useReducer } from 'react';
-import { ReplyState, ReplyAction } from '../types/community';
-import { api } from '../config/axios';
+import { ReplyState, ReplyAction } from '../../types/community';
+import { api } from '../../config/axios';
 
 const initialState: ReplyState = {
     replies: [],

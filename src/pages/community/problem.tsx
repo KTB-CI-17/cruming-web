@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { ProblemForm } from "../../components/community/new/ProblemForm";
 import { LocationData } from '../../types/location';
 import { UploadImage } from "../../types/community";
-import { usePostUpload } from "../../hooks/usePostUpload";
+import { usePostUpload } from "../../hooks/community/usePostUpload";
 
 export default function NewProblemPage() {
     const [title, setTitle] = useState('');

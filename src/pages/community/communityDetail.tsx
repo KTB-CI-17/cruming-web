@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { usePost } from "../../hooks/usePostDetail";
-import { useReply } from "../../hooks/useReply";
+import { usePost } from "../../hooks/community/usePostDetail";
+import { useReply } from "../../hooks/community/useReply";
 import { Reply } from "../../types/community";
 import PostContent from "../../components/community/detail/PostContent";
 import PostImageSlider from "../../components/community/detail/PostImageSlider";

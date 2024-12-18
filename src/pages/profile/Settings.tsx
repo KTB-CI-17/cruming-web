@@ -49,7 +49,7 @@ const Settings: React.FC = () => {
 // src/pages/profile/ProfilePage.tsx
 import { useParams, useNavigate } from 'react-router-dom';
 import { Loader } from 'lucide-react';
-import { useProfile } from "../../hooks/useProfile";
+import { useProfile } from "../../hooks/community/useProfile";
 import { ProfileInfo } from "../../components/profile/ProfileInfo";
 import { FollowCountArea } from "../../components/profile/FollowCountArea";
 import { FollowButton } from "../../components/profile/FollowButton";

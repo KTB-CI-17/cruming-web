@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AxiosError } from 'axios';
-import { LocationData } from '../types/location';
-import { multipartApi } from '../config/axios';
+import { LocationData } from '../../types/location';
+import { multipartApi } from '../../config/axios';
 
 export type PostCategory = 'GENERAL' | 'PROBLEM';
 

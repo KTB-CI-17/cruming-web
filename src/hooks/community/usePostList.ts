@@ -1,5 +1,5 @@
-import { api } from '../config/axios';
-import { PostCategory, PostListResponse, ListPost } from '../types/community';
+import { api } from '../../config/axios';
+import { PostCategory, PostListResponse, ListPost } from '../../types/community';
 import { useState, useCallback, useRef, useEffect } from 'react';
 import axios from 'axios';
 

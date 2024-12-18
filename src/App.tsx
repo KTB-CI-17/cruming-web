@@ -36,7 +36,7 @@ function App() {
                             <Route path="/follows/:userId" element={<Follows />} />
 
                             <Route path="/hold" element={<Hold />} />
-                            <Route path="/timeline" element={<Timeline />} />
+                            <Route path="/timelines" element={<Timeline />} />
 
                             <Route path="/community" element={<Community />} />
                             <Route path="/community/:id" element={<CommunityDetail />} />

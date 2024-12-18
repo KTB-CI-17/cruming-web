@@ -63,11 +63,6 @@ export const timelineService = {
         return response.data;
     },
 
-    createTimeline: async (data: Omit<TimelineListResponse, "id">): Promise<TimelineListResponse> => {
-        const response = await api.post<TimelineListResponse>('/timelines', data);
-        return response.data;
-    },
-
     updateTimeline: async (id: number, data: Partial<TimelineListResponse>): Promise<TimelineListResponse> => {
         const response = await api.put<TimelineListResponse>(`/timelines/${id}`, data);
         return response.data;

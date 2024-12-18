@@ -12,7 +12,7 @@ export const NAVIGATION_TABS: TabItem[] = [
         icon: '/src/assets/icon/hold.png'
     },
     {
-        path: '/timeline',
+        path: '/timelines',
         title: '타임라인',
         icon: '/src/assets/icon/timeline.png'
     },

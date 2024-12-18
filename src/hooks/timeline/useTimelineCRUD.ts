@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { timelineService } from '../../services/timelineService';
+import { Timeline } from '../../types/timeline';
 
 export function useTimelineCRUD() {
     const [selectedTimelineId, setSelectedTimelineId] = useState<number | null>(null);
+    const [selectedTimeline, setSelectedTimeline] = useState<Timeline | null>(null);
+    const [isEditModalVisible, setIsEditModalVisible] = useState(false);
 
     const deleteTimeline = async (id: number) => {
         try {
@@ -26,7 +29,15 @@ export function useTimelineCRUD() {
                 }
             }
         } else if (action === 'edit') {
-            alert('수정 기능은 준비 중입니다.');
+            try {
+                const timeline = await timelineService.getTimelineDetail(id);
+                setSelectedTimeline(timeline);
+                setIsEditModalVisible(true);
+                return true;
+            } catch (error) {
+                console.error('Failed to fetch timeline details:', error);
+                alert('타임라인 정보를 불러오는데 실패했습니다.');
+            }
         }
         return false;
     };
@@ -34,6 +45,9 @@ export function useTimelineCRUD() {
     return {
         selectedTimelineId,
         setSelectedTimelineId,
+        selectedTimeline,
+        isEditModalVisible,
+        setIsEditModalVisible,
         handleTimelineAction
     };
 }

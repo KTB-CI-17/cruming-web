@@ -48,9 +48,15 @@ export const timelineService = {
     },
 
     // 타임라인 상세 조회
-    getTimelineDetail: async (timelineId: number): Promise<TimelineResponse> => {
-        const response = await api.get<TimelineResponse>(`/timelines/${timelineId}/detail`);
-        return response.data;
+    getTimelineDetail: async (id: number): Promise<Timeline> => {
+        const response = await api.get<TimelineResponse>(`/timelines/${id}`);
+        return {
+            ...response.data,
+            userId: response.data.user.id,
+            userNickname: response.data.user.nickname,
+            userProfile: response.data.user.profileImageUrl || '',
+            isWriter: true
+        };
     },
 
     // 타임라인 댓글 조회
@@ -78,6 +84,19 @@ export const timelineService = {
     // 일별 타임라인 조회
     getDailyTimelines: async (year: number, month: number, day: number): Promise<TimelineListResponse[]> => {
         const response = await api.get<TimelineListResponse[]>(`/timelines/daily/${year}/${month}/${day}`);
+        return response.data;
+    },
+
+    // 타임라인 수정
+    updateTimeline: async (timelineId: number, request: TimelineRequest, files?: File[]): Promise<TimelineResponse> => {
+        const formData = new FormData();
+        formData.append('request', new Blob([JSON.stringify(request)], { type: 'application/json' }));
+        
+        if (files) {
+            files.forEach(file => formData.append('files', file));
+        }
+
+        const response = await multipartApi.put<TimelineResponse>(`/timelines/${timelineId}`, formData);
         return response.data;
     }
 };

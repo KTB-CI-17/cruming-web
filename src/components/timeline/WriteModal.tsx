@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
-import { TimelineFormData, TimelineRequest, VisibilityType } from '../../types/timeline';
+import { TimelineFormData, TimelineRequest, VisibilityType, TimelineFile, Timeline } from '../../types/timeline';
 import { LocationData } from '../../types/location';
 import { LAYOUT, PADDING } from '../../constants/layout';
 import DatePicker from './DatePicker';
@@ -15,6 +15,8 @@ interface TimelineWriteModalProps {
     isOpen: boolean;
     onClose: () => void;
     onCreateSuccess: () => void;
+    timelineToEdit?: Timeline;  // 수정할 타임라인 데이터
+    mode?: 'create' | 'edit';
 }
 
 const initialFormData: TimelineFormData = {
@@ -26,10 +28,38 @@ const initialFormData: TimelineFormData = {
     visibility: '전체 공개'
 };
 
-export default function TimelineWriteModal({ isOpen, onClose, onCreateSuccess }: TimelineWriteModalProps) {
+export default function TimelineWriteModal({ 
+    isOpen, 
+    onClose, 
+    onCreateSuccess, 
+    timelineToEdit,
+    mode = 'create' 
+}: TimelineWriteModalProps) {
     const [formData, setFormData] = useState<TimelineFormData>(initialFormData);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [locationText, setLocationText] = useState('');  // LocationSearch 컴포넌트용
+
+    useEffect(() => {
+        if (mode === 'edit' && timelineToEdit) {
+            setFormData({
+                ...formData,
+                location: timelineToEdit.location,  // 위치 정보 설정
+                activityAt: timelineToEdit.activityAt,
+                level: timelineToEdit.level,
+                content: timelineToEdit.content,
+                visibility: timelineToEdit.visibility === 'PUBLIC' ? '전체 공개' : 
+                          timelineToEdit.visibility === 'FOLLOWERS' ? '팔로워 공개' : '나만보기',
+                images: timelineToEdit.files.map(file => ({
+                    file: new File([], file.fileName),
+                    preview: file.url,
+                    id: file.id,
+                    isFixed: true
+                }))
+            });
+            // 위치 검색 입력창에 장소명 설정
+            setLocationText(timelineToEdit.location.placeName);
+        }
+    }, [mode, timelineToEdit]);
 
     const validateForm = () => {
         if (!formData.location) {
@@ -109,7 +139,7 @@ export default function TimelineWriteModal({ isOpen, onClose, onCreateSuccess }:
 
         if (!validateForm() || !formData.location) return;
 
-        if (confirm("입력하신 내용으로 등록하시겠습니까?")) {
+        if (confirm(`입력하신 내용으로 ${mode === 'create' ? '등록' : '수정'}하���겠습니까?`)) {
             setIsSubmitting(true);
             try {
                 const multipartFormData = new FormData();
@@ -143,13 +173,19 @@ export default function TimelineWriteModal({ isOpen, onClose, onCreateSuccess }:
                     multipartFormData.append('files', image.file);
                 });
 
-                const response = await multipartApi.post<TimelineResponse>('/timelines', multipartFormData);
-                console.log('Timeline created:', response.data);
+                let response;
+                if (mode === 'create') {
+                    response = await multipartApi.post<TimelineResponse>('/timelines', multipartFormData);
+                } else if (timelineToEdit) {
+                    response = await multipartApi.put<TimelineResponse>(`/timelines/${timelineToEdit.id}`, multipartFormData);
+                }
+
+                console.log(`Timeline ${mode === 'create' ? 'created' : 'updated'}:`, response?.data);
                 onCreateSuccess();
                 resetAndClose();
             } catch (error) {
-                console.error('Failed to create timeline:', error);
-                alert('등록에 실패했습니다. 다시 시도해주세요.');
+                console.error(`Failed to ${mode === 'create' ? 'create' : 'update'} timeline:`, error);
+                alert(`${mode === 'create' ? '등록' : '수정'}에 실패했습니다. 다시 시도해주세요.`);
             } finally {
                 setIsSubmitting(false);
             }

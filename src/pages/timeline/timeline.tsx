@@ -8,11 +8,13 @@ import AddTimelineButton from "../../components/timeline/AddTimelineButton";
 import TimelineWriteModal from "../../components/timeline/WriteModal";
 import MoreActionsMenu from "../../components/common/MoreActionsMenu";
 import {useTimelineCalendar} from "../../hooks/timeline/useTimelineCalender";
+import { timelineService } from '../../services/timelineService';
 
 export default function TimelinePage() {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isOptionsMenuOpen, setIsOptionsMenuOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const [editingTimeline, setEditingTimeline] = useState<Timeline | null>(null);
 
     const {
         timelines,
@@ -51,8 +53,14 @@ export default function TimelinePage() {
     const handleActionComplete = async (action: 'edit' | 'delete') => {
         if (selectedTimelineId) {
             const success = await handleTimelineAction(selectedTimelineId, action);
-            if (success && action === 'delete') {
-                setTimelines(prev => prev.filter(timeline => timeline.id !== selectedTimelineId));
+            if (success) {
+                if (action === 'delete') {
+                    setTimelines(prev => prev.filter(timeline => timeline.id !== selectedTimelineId));
+                } else if (action === 'edit') {
+                    const timelineData = await timelineService.getTimelineDetail(selectedTimelineId);
+                    setEditingTimeline(timelineData);
+                    setIsModalVisible(true);
+                }
             }
             setIsOptionsMenuOpen(false);
             setSelectedTimelineId(null);
@@ -92,14 +100,20 @@ export default function TimelinePage() {
 
             <TimelineWriteModal
                 isOpen={isModalVisible}
-                onClose={() => setIsModalVisible(false)}
+                onClose={() => {
+                    setIsModalVisible(false);
+                    setEditingTimeline(null);
+                }}
                 onCreateSuccess={() => {
                     const currentDate = new Date();
                     fetchMonthlyTimelines(currentDate.getFullYear(), currentDate.getMonth() + 1);
                     if (selectedDate) {
                         handleDateClick(selectedDate);
                     }
+                    setEditingTimeline(null);
                 }}
+                timelineToEdit={editingTimeline || undefined}
+                mode={editingTimeline ? 'edit' : 'create'}
             />
 
             <MoreActionsMenu

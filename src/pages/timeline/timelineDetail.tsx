@@ -20,6 +20,7 @@ export default function TimelineDetailPage() {
         navigate(`/profile/${userId}`);
     };
 
+
     const {
         timeline,
         isLoading,
@@ -75,7 +76,7 @@ export default function TimelineDetailPage() {
         if (action === 'delete') {
             if (window.confirm('게시글을 삭제하시겠습니까?')) {
                 try {
-                    await deleteTimeline();
+                    await deleteTimeline(id as string);
                     navigate(-1);
                 } catch (error) {
                     console.error(error);

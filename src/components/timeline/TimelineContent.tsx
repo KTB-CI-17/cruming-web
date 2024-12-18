@@ -14,6 +14,20 @@ export default function PostContent({ timeline, onProfilePress, onMorePress }: P
     return (
         <div className="px-4 py-4">
             <div className="flex items-center justify-between mb-4">
+
+                {timeline.level && (
+                    <div className="flex items-center bg-gray-50 px-4 py-3 rounded-lg mt-4">
+                        <Dot color={timeline.level} />
+                    </div>
+                )}
+
+                {timeline.location && (
+                    <div className="flex items-center bg-gray-50 px-4 py-3 rounded-lg mt-4">
+                        <MapPinIcon className="w-5 h-5 text-gray-600" />
+                        <span className="ml-2 text-sm text-gray-700">{timeline.location}</span>
+                    </div>
+                )}
+
                 {timeline.isWriter && (
                     <button
                         onClick={(e) => {
@@ -22,13 +36,13 @@ export default function PostContent({ timeline, onProfilePress, onMorePress }: P
                         }}
                         className="p-2 hover:bg-gray-100 rounded-full shrink-0"
                     >
-                        <EllipsisHorizontalIcon className="w-6 h-6 text-gray-600" />
+                        <EllipsisHorizontalIcon className="w-6 h-6 text-gray-600"/>
                     </button>
                 )}
             </div>
 
             <div className="flex items-center gap-3">
-                <div
+            <div
                     className="flex items-center gap-3 cursor-pointer"
                     onClick={() => onProfilePress(timeline.userId)}
                 >
@@ -52,19 +66,6 @@ export default function PostContent({ timeline, onProfilePress, onMorePress }: P
                     </div>
                 </div>
             </div>
-
-            {timeline.location && (
-                <div className="flex items-center bg-gray-50 px-4 py-3 rounded-lg mt-4">
-                    <MapPinIcon className="w-5 h-5 text-gray-600" />
-                    <span className="ml-2 text-sm text-gray-700">{timeline.location}</span>
-                </div>
-            )}
-
-            {timeline.level && (
-                <div className="flex items-center bg-gray-50 px-4 py-3 rounded-lg mt-4">
-                    <Dot color={timeline.level} />
-                </div>
-            )}
 
             <div className="mt-4">
                 <p className="text-base leading-relaxed">{timeline.content}</p>

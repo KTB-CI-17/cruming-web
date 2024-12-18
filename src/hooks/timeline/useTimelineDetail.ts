@@ -28,16 +28,15 @@ export function useTimelineDetail(timelineId: string) {
         }
     }, [timelineId]);
 
-    const deleteTimeline = useCallback(async () => {
-        if (!timeline) return;
+    const deleteTimeline = useCallback(async (id: string) => {
         try {
-            await api.delete(`/posts/${timeline.id}`);
+            await api.delete(`/timelines/${id}`);
             return true;
         } catch (error) {
             console.error(error);
             throw new Error("삭제에 실패했습니다.");
         }
-    }, [timeline]);
+    }, []);
 
     const toggleTimelineLike = useCallback(async () => {
         if (!timeline) return false;

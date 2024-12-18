@@ -35,7 +35,6 @@ const TimelineTab = () => {
     return (
         <div className="max-w-screen-sm mx-auto w-full pt-6">
             <div className="flex flex-col gap-6">
-                {/* 타임라인 리스트를 감싸는 div에 ref 설정 */}
                 <div
                     ref={timelineListRef}
                     style={{ maxHeight: '80vh', overflowY: 'auto' }}

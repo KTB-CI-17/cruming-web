@@ -1,6 +1,6 @@
 import { MoreVertical } from 'lucide-react';
 import { Dot } from './Dot';
-import {TimelineListResponse} from "../../types/timeline";
+import { TimelineListResponse } from "../../types/timeline";
 
 interface TimelineCardProps {
     timeline: TimelineListResponse;
@@ -35,16 +35,22 @@ export default function TimelineCard({
                     <Dot color={timeline.level} />
                     <span className="text-sm">{timeline.activityAt}</span>
                 </div>
-                {showOptions && onOptionsPress && (
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            onOptionsPress();
-                        }}
-                        className="p-2 hover:bg-gray-100 rounded-full"
-                    >
-                        <MoreVertical className="w-5 h-5 text-gray-400" />
-                    </button>
+
+                {/* 수정된 조건: onOptionsPress가 null이면 닉네임, 아니면 더보기 버튼 */}
+                {onOptionsPress === null || showOptions === false ? (
+                    <span className="text-sm text-right">{timeline.userNickname}</span>
+                ) : (
+                    showOptions && onOptionsPress && (
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onOptionsPress();
+                            }}
+                            className="p-2 hover:bg-gray-100 rounded-full"
+                        >
+                            <MoreVertical className="w-5 h-5 text-gray-400" />
+                        </button>
+                    )
                 )}
             </div>
 

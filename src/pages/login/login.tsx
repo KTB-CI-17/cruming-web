@@ -10,7 +10,7 @@ const LoginPage: React.FC = () => {
     const { isAuthenticated, login } = useAuth();
 
     if (isAuthenticated) {
-        return <Navigate to="/timeline" replace />;
+        return <Navigate to="/timelines" replace />;
     }
 
     const handleSocialLogin = async (provider: 'kakao' | 'naver') => {

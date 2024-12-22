@@ -58,9 +58,7 @@ export const useKakaoLocationSearch = (
                 {
                     method: 'GET',
                     headers: {
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-expect-error
-                        Authorization: `KakaoAK ${import.meta.env.VITE_KAKAO_REST_API_KEY}`,
+                        Authorization: `KakaoAK ${__KAKAO_KEY__}`,
                     },
                 }
             );

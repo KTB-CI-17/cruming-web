@@ -28,6 +28,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const login = async (provider: 'kakao' | 'naver') => {
         if (provider === 'kakao') {
+            console.log("KAKAO_KEY:", __KAKAO_KEY__);
+            console.log("KAKAO_REDIRECT:", __KAKAO_REDIRECT__);
+
             const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${__KAKAO_KEY__}&redirect_uri=${__KAKAO_REDIRECT__}&response_type=code`;
             window.location.href = kakaoURL;
         }

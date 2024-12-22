@@ -12,10 +12,9 @@ export default defineConfig(({ mode }) => {
         '@': path.resolve(__dirname, './src'),
       }
     },
-    envPrefix: 'VITE_',
     define: {
-      __KAKAO_KEY__: JSON.stringify(env.VITE_KAKAO_REST_API_KEY),
-      __KAKAO_REDIRECT__: JSON.stringify(env.VITE_KAKAO_LOGIN_REDIRECT_URL)
+      __KAKAO_KEY__: `"${env.VITE_KAKAO_REST_API_KEY}"`,
+      __KAKAO_REDIRECT__: `"${env.VITE_KAKAO_LOGIN_REDIRECT_URL}"`
     }
   }
 });

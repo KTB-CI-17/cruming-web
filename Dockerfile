@@ -24,14 +24,13 @@ COPY . .
 # 7. 정적 파일 빌드
 RUN npm run build
 
-# 8. Nginx 이미지 설정
-FROM nginx:1.25
+# 8. 정적 파일만 제공
+FROM node:18
 
-# 9. 빌드된 정적 파일 복사
-COPY --from=build /app/dist /usr/share/nginx/html
+WORKDIR /app
 
-# 10. 포트 노출
-EXPOSE 80
+COPY --from=build /app/dist /usr/share/app
 
-# 11. 컨테이너 실행 시 Nginx 시작
-CMD ["nginx", "-g", "daemon off;"]
+# 9. HTTP 서버 실행
+RUN npm install -g serve
+CMD ["serve", "-s", "/usr/share/app", "-l", "80"]

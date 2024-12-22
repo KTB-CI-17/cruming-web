@@ -18,6 +18,7 @@ import ProfileEdit from "./pages/profile/profileEdit";
 import TimelineDetail from "./pages/timeline/timelineDetail";
 import TimelineEdit from "./pages/timeline/timelineEdit";
 import Settings from "./pages/profile/settings";
+import Error from "./pages/error";
 
 function App() {
     return (
@@ -48,8 +49,10 @@ function App() {
                             <Route path="/community/general" element={<NewGeneralPage />} />
                             <Route path="/community/problem" element={<NewProblemPage />} />
 
-
                             <Route path="/foot-analysis" element={<FootAnalysis />} />
+
+
+                            <Route path="*" element={<Error />} />
                         </Route>
                     </Route>
                 </Routes>

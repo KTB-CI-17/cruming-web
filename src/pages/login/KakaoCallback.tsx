@@ -35,7 +35,7 @@ const KakaoCallback = () => {
                 localStorage.setItem('accessToken', response.data.accessToken);
                 setIsAuthenticated(true);
                 setIsLoading(false);
-                navigate('/timeline', { replace: true });
+                navigate('/timelines', { replace: true });
             } catch (error) {
                 console.error('Error during login:', error);
                 setIsLoading(false);

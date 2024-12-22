@@ -13,11 +13,11 @@ import Login from "./pages/login/login";
 import KakaoCallback from "./pages/login/KakaoCallback";
 import NewGeneralPage from "./pages/community/general";
 import NewProblemPage from "./pages/community/problem";
-import {Settings} from "./pages/profile/Settings";
 import {Follows} from "./pages/profile/follows";
 import ProfileEdit from "./pages/profile/profileEdit";
 import TimelineDetail from "./pages/timeline/timelineDetail";
 import TimelineEdit from "./pages/timeline/timelineEdit";
+import Settings from "./pages/profile/settings";
 
 function App() {
     return (
@@ -33,7 +33,7 @@ function App() {
                             <Route path="/profile" element={<Profile />} />
                             <Route path="/profile/:id" element={<Profile />} />
                             <Route path="/profile/edit" element={<ProfileEdit />} />
-                            <Route path="/settings" element={<Settings />} />
+                            <Route path="/profile/setting" element={<Settings />} />
                             <Route path="/follows" element={<Follows />} />
                             <Route path="/follows/:userId" element={<Follows />} />
 

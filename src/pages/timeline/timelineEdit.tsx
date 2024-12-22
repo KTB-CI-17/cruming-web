@@ -3,18 +3,12 @@ import { LocationData } from '../../types/location';
 import {PostFile, UploadImage} from "../../types/community";
 import {useNavigate, useParams} from "react-router-dom";
 import {api} from "../../config/axios";
-import {colorLevelOptions, TimelineFormData, VisibilityType} from "../../types/timeline";
+import {colorLevelOptions, TimelineFormData} from "../../types/timeline";
 import {PADDING} from "../../constants/layout";
 import LocationSearch from "../../components/common/LocationSearch";
 import DatePicker from "../../components/timeline/new/DatePicker";
 import ColorLevelSelect from "../../components/timeline/new/ColorLevelSelect";
 import {ImageUploadArea} from "../../components/community/new/ImageUploadArea";
-
-const visibilityMap = {
-    'PUBLIC': '전체 공개',
-    'FOLLOWER': '팔로워 공개',
-    'PRIVATE': '나만보기'
-} as const;
 
 const visibilityMapReverse = {
     '전체 공개': 'PUBLIC',
@@ -41,8 +35,8 @@ export default function TimelineEdit() {
         );
 
         deletedImages.forEach(img => {
-            if (img.id) {
-                setDeleteFileIds(prev => [...prev, img.id]);
+            if (img.id !== undefined) {
+                setDeleteFileIds(prev => [...prev, img.id!]);
             }
         });
 
@@ -50,7 +44,7 @@ export default function TimelineEdit() {
     };
 
     const handleSubmit = async () => {
-        if (!timeline) return;
+        if (!timeline || !timeline.location) return;
 
         try {
             setIsSubmitting(true);
@@ -162,7 +156,7 @@ export default function TimelineEdit() {
                     className="space-y-4"
                 >
                     <LocationSearch
-                        value={timeline.location.placeName}
+                        value={timeline.location?.placeName || ''}
                         onLocationSelect={handleLocationSelect}
                     />
 
@@ -194,12 +188,12 @@ export default function TimelineEdit() {
                     />
 
                     <div className="flex gap-2 mt-5 mb-5">
-                        {(['전체 공개', '팔로워 공개', '나만보기'] as VisibilityType[]).map((visibilityOption) => (
+                        {(['전체 공개', '팔로워 공개', '나만보기'] as const).map((visibilityOption) => (
                             <button
                                 key={visibilityOption}
                                 onClick={() => handleInputChange('visibility', visibilityMapReverse[visibilityOption])}
                                 className={`flex-1 py-2 px-3 rounded-full border ${
-                                    visibilityMap[timeline.visibility] === visibilityOption
+                                    timeline.visibility === visibilityOption
                                         ? 'bg-[#735BF2] border-[#735BF2] text-white'
                                         : 'border-gray-200 text-gray-500'
                                 }`}

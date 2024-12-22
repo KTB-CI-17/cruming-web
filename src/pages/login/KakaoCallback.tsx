@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from '../../context/AuthContext';
+import { api } from '../../config/axios';
 
 interface TokenResponse {
     accessToken: string;
@@ -24,18 +24,17 @@ const KakaoCallback = () => {
             }
 
             try {
-                const response = await axios.get<TokenResponse>(
-                    'http://localhost:8080/api/v1/auth/code',
+                const response = await api.get<TokenResponse>(
+                    '/auth/code',
                     {
-                        params: { code },
-                        withCredentials: true
+                        params: { code }
                     }
                 );
 
                 localStorage.setItem('accessToken', response.data.accessToken);
                 setIsAuthenticated(true);
                 setIsLoading(false);
-                navigate('/timelines', { replace: true });
+                navigate('/', { replace: true });
             } catch (error) {
                 console.error('Error during login:', error);
                 setIsLoading(false);

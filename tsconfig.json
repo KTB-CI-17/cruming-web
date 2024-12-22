@@ -2,7 +2,11 @@
   "compilerOptions": {
     "typeRoots": ["./types", "./node_modules/@types"],
     "esModuleInterop": true,
-    "jsx": "react"
+    "jsx": "react",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
   "files": [
     "./env.d.ts"

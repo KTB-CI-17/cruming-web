@@ -1,6 +1,8 @@
 import React from 'react';
 import {useNavigate, useLocation, Navigate} from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import mainLogo from '@/assets/logo.png';
+import kakaoIcon from '@/assets/icon/kakao.png';
 
 const LoginPage: React.FC = () => {
     const navigate = useNavigate();
@@ -31,7 +33,7 @@ const LoginPage: React.FC = () => {
                 <div className="flex justify-center">
                     <div className="w-64 h-64 mb-4">
                         <img
-                            src={'/src/assets/logo.png'}
+                            src={mainLogo}
                             alt="로고"
                             className="w-full h-full object-contain"
                         />
@@ -44,7 +46,7 @@ const LoginPage: React.FC = () => {
                         className="flex items-center justify-center w-full px-4 py-3 bg-[#FEE500] rounded-lg shadow-md transition-transform hover:scale-[1.02]"
                     >
                         <img
-                            src={'/src/assets/icon/kakao.png'}
+                            src={kakaoIcon}
                             alt="카카오 로고"
                             className="w-5 h-5 mr-2"
                         />

@@ -10,7 +10,16 @@ import DatePicker from "../../components/timeline/new/DatePicker";
 import ColorLevelSelect from "../../components/timeline/new/ColorLevelSelect";
 import {ImageUploadArea} from "../../components/community/new/ImageUploadArea";
 
-const visibilityMapReverse = {
+type ServerVisibility = 'PUBLIC' | 'FOLLOWER' | 'PRIVATE';
+type ClientVisibility = '전체 공개' | '팔로워 공개' | '나만보기';
+
+const visibilityMap: Record<ServerVisibility, ClientVisibility> = {
+    'PUBLIC': '전체 공개',
+    'FOLLOWER': '팔로워 공개',
+    'PRIVATE': '나만보기'
+} as const;
+
+const visibilityMapReverse: Record<ClientVisibility, ServerVisibility> = {
     '전체 공개': 'PUBLIC',
     '팔로워 공개': 'FOLLOWER',
     '나만보기': 'PRIVATE'
@@ -51,7 +60,6 @@ export default function TimelineEdit() {
 
             const formData = new FormData();
 
-            // Create request object matching TimelineEditRequest structure
             const requestData = {
                 location: {
                     placeName: timeline.location.placeName,
@@ -61,7 +69,7 @@ export default function TimelineEdit() {
                 },
                 level: timeline.level,
                 content: timeline.content,
-                visibility: timeline.visibility,
+                visibility: visibilityMapReverse[timeline.visibility as ClientVisibility],
                 activityAt: timeline.activityAt,
                 deleteFileIds: deleteFileIds,
                 newFiles: images
@@ -72,12 +80,10 @@ export default function TimelineEdit() {
                     }))
             };
 
-            // Append the main request data
             formData.append('request', new Blob([JSON.stringify(requestData)], {
                 type: 'application/json'
             }));
 
-            // Append new files
             images
                 .filter(img => !img.isFixed && img.file)
                 .forEach(img => {
@@ -112,6 +118,7 @@ export default function TimelineEdit() {
 
                 setTimeline({
                     ...timelineData,
+                    visibility: visibilityMap[timelineData.visibility as ServerVisibility],
                     level: matchingLevel ? matchingLevel.value : colorLevelOptions[0].value
                 });
 
@@ -191,7 +198,7 @@ export default function TimelineEdit() {
                         {(['전체 공개', '팔로워 공개', '나만보기'] as const).map((visibilityOption) => (
                             <button
                                 key={visibilityOption}
-                                onClick={() => handleInputChange('visibility', visibilityMapReverse[visibilityOption])}
+                                onClick={() => handleInputChange('visibility', visibilityOption)}
                                 className={`flex-1 py-2 px-3 rounded-full border ${
                                     timeline.visibility === visibilityOption
                                         ? 'bg-[#735BF2] border-[#735BF2] text-white'

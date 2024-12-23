@@ -1,6 +1,7 @@
 import { MoreVertical } from 'lucide-react';
 import { Dot } from '../Dot';
 import { TimelineListResponse } from "../../../types/timeline";
+import mainLogo from '@/assets/logo.png';
 
 interface TimelineCardProps {
     timeline: TimelineListResponse;
@@ -36,7 +37,6 @@ export default function TimelineCard({
                     <span className="text-sm">{timeline.activityAt}</span>
                 </div>
 
-                {/* 수정된 조건: onOptionsPress가 null이면 닉네임, 아니면 더보기 버튼 */}
                 {onOptionsPress === null || showOptions === false ? (
                     <span className="text-sm text-right">{timeline.userNickname}</span>
                 ) : (
@@ -63,11 +63,14 @@ export default function TimelineCard({
                 </p>
             </div>
 
-            <img
-                src={timeline.file}
-                alt={timeline.file}
-                className="w-full h-[150px] object-cover"
-            />
+            <div className="w-full h-[150px] bg-white flex items-center justify-center">
+                <img
+                    src={timeline.file || mainLogo}
+                    alt={timeline.file || 'Default logo'}
+                    className={`h-[150px] w-full ${timeline.file ? 'object-cover' : 'object-contain bg-white'}`}
+                    style={{ objectPosition: timeline.file ? 'center' : '50% 50%' }}
+                />
+            </div>
         </div>
     );
 }

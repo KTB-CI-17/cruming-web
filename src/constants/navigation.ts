@@ -3,7 +3,7 @@ import mypageIcon from '@/assets/icon/mypage.png';
 import holdIcon from '@/assets/icon/hold.png';
 import timelineIcon from '@/assets/icon/timeline.png';
 import communityIcon from '@/assets/icon/community.png';
-import shoesIcon from '@/assets/icon/shoes.png';
+// import shoesIcon from '@/assets/icon/shoes.png';
 
 export const NAVIGATION_TABS: TabItem[] = [
     {
@@ -25,10 +25,11 @@ export const NAVIGATION_TABS: TabItem[] = [
         path: '/community',
         title: '커뮤니티',
         icon: communityIcon
-    },
-    {
-        path: '/foot-analysis',
-        title: '암벽화',
-        icon: shoesIcon
     }
+    //,
+    // {
+    //     path: '/foot-analysis',
+    //     title: '암벽화',
+    //     icon: shoesIcon
+    // }
 ] as const;

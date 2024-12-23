@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { Camera } from 'lucide-react';
 import HoldAnalysisLoading from "../../components/hold/HoldAnalysisLoading";
 import HoldAnalysisResult from "../../components/hold/HoldAnalysisResult";
-import {useMockHoldAnalysis} from "../../hooks/hold/useMockHoldAnalysis";
+import {useHoldAnalysis} from "../../hooks/hold/useHoldAnalysis";
 
 export default function HoldPage() {
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -13,7 +13,7 @@ export default function HoldPage() {
         analysisResult,
         handleImageSelect,
         handleSubmit
-    } = useMockHoldAnalysis();  // useHoldAnalysis에서 useMockHoldAnalysis로 변경
+    } = useHoldAnalysis();
 
     const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];

@@ -34,7 +34,7 @@ function App() {
                             <Route path="/profile" element={<Profile />} />
                             <Route path="/profile/:id" element={<Profile />} />
                             <Route path="/profile/edit" element={<ProfileEdit />} />
-                            <Route path="/profile/setting" element={<Settings />} />
+                            <Route path="/profile/settings" element={<Settings />} />
                             <Route path="/follows" element={<Follows />} />
                             <Route path="/follows/:userId" element={<Follows />} />
 

@@ -1,28 +1,30 @@
 import React from 'react';
-import { MapPin, Ruler } from 'lucide-react';
+import { Settings, MapPin, Ruler } from 'lucide-react';
 import { UserProfile } from "../../types/user";
 import ProfileAvatar from '../common/ProfileAvatar';
 
 interface ProfileInfoProps {
     profile: UserProfile;
+    onSettingsClick?: () => void;
 }
 
 export const ProfileInfo: React.FC<ProfileInfoProps> = ({
-                                                            profile
+                                                            profile,
+                                                            onSettingsClick
                                                         }) => {
     return (
         <div className="flex flex-col items-center w-full">
-            {/*/!* Settings Button *!/*/}
-            {/*{profile.isMe && onSettingsClick && (*/}
-            {/*    <div className="self-end mb-4">*/}
-            {/*        <button*/}
-            {/*            onClick={onSettingsClick}*/}
-            {/*            className="p-2 text-gray-600 hover:bg-gray-100 rounded-full"*/}
-            {/*        >*/}
-            {/*            <Settings size={20} />*/}
-            {/*        </button>*/}
-            {/*    </div>*/}
-            {/*)}*/}
+            {/* Settings Button */}
+            {profile.isMe && onSettingsClick && (
+                <div className="self-end mb-4">
+                    <button
+                        onClick={onSettingsClick}
+                        className="p-2 text-gray-600 hover:bg-gray-100 rounded-full"
+                    >
+                        <Settings size={20} />
+                    </button>
+                </div>
+            )}
 
             {/* Profile Image */}
             <div className="w-[120px] h-[120px] mb-4">

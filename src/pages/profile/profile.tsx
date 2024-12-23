@@ -105,11 +105,16 @@ export default function ProfilePage() {
         navigate('/profile/edit');
     };
 
+    const handleSettingsClick = () => {
+        navigate('/profile/settings');
+    };
+
     return (
         <div className="max-w-screen-sm mx-auto w-full pt-6">
             <div className="flex flex-col gap-6">
                 <ProfileInfo
                     profile={profile}
+                    onSettingsClick={handleSettingsClick}
                 />
 
                 <FollowCountArea

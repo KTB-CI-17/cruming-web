@@ -6,10 +6,9 @@ pipeline {
         GIT_BRANCH                = 'main'
         GIT_CREDENTIALS_ID        = 'github_account'
         DOCKER_HUB_CREDENTIALS_ID = 'docker_hub_credentials'
-        DOCKER_HUB_REPO           = 'minyubo/cruming-web'  // 프론트엔드의 Docker Hub 저장소
+        DOCKER_HUB_REPO           = 'minyubo/cruming-web'
         IMAGE_TAG                 = "${env.BUILD_NUMBER}"
 
-        // Kubernetes 매니페스트 저장소 설정
         K8S_MANIFEST_REPO         = 'KTB-CI-17/cruming-k8s'
         K8S_MANIFEST_BRANCH       = 'main'
         K8S_MANIFEST_CREDENTIALS  = 'github_account'
@@ -24,17 +23,16 @@ pipeline {
             }
         }
 
-//         stage('Install Dependencies & Build') {
-//             steps {
-//                 script {
-//                     sh """
-//                         # Node.js 환경에서 의존성 설치 및 빌드
-//                         npm install
-//                         npm run build
-//                     """
-//                 }
-//             }
-//         }
+        // stage('Install Dependencies & Build') {
+        //     steps {
+        //         script {
+        //             sh """
+        //                 npm install
+        //                 npm run build
+        //             """
+        //         }
+        //     }
+        // }
 
         stage('Build Docker Image') {
             steps {
@@ -67,16 +65,13 @@ pipeline {
         stage('Update Kubernetes Manifests') {
             steps {
                 script {
-                    // cruming-k8s 저장소 클론
                     sh """
                         git clone https://github.com/${K8S_MANIFEST_REPO}.git
                     """
                     dir('cruming-k8s') {
-                        // cruming-web deployment.yaml에서 이미지 태그 업데이트
                         sh """
                             sed -i 's|image: ${DOCKER_HUB_REPO}:.*|image: ${DOCKER_HUB_REPO}:${IMAGE_TAG}|' app/cruming-web/deployment.yaml
                         """
-                        // 변경 사항 커밋 및 푸시
                         withCredentials([string(credentialsId: 'github_account', variable: 'GIT_TOKEN')]) {
                             sh """
                                 git config user.email "dtj06045@naver.com"
@@ -87,18 +82,6 @@ pipeline {
                             """
                         }
                     }
-                }
-            }
-        }
-
-        stage('Debug Environment Variables') {
-            steps {
-                script {
-                    echo "REPO: ${REPO}"
-                    echo "GIT_BRANCH: ${GIT_BRANCH}"
-                    echo "DOCKER_HUB_CREDENTIALS_ID: ${DOCKER_HUB_CREDENTIALS_ID}"
-                    echo "DOCKER_HUB_REPO: ${DOCKER_HUB_REPO}"
-                    echo "IMAGE_TAG: ${IMAGE_TAG}"
                 }
             }
         }

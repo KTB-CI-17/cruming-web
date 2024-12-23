@@ -24,17 +24,17 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies & Build') {
-            steps {
-                script {
-                    sh """
-                        # Node.js 환경에서 의존성 설치 및 빌드
-                        npm install
-                        npm run build
-                    """
-                }
-            }
-        }
+//         stage('Install Dependencies & Build') {
+//             steps {
+//                 script {
+//                     sh """
+//                         # Node.js 환경에서 의존성 설치 및 빌드
+//                         npm install
+//                         npm run build
+//                     """
+//                 }
+//             }
+//         }
 
         stage('Build Docker Image') {
             steps {
@@ -44,6 +44,9 @@ pipeline {
                         docker buildx build --platform linux/amd64 \
                             -t ${DOCKER_HUB_REPO}:${IMAGE_TAG} \
                             -t ${DOCKER_HUB_REPO}:latest \
+                            --build-arg VITE_KAKAO_REST_API_KEY=${env.VITE_KAKAO_REST_API_KEY} \
+                            --build-arg VITE_KAKAO_LOGIN_REDIRECT_URL=${env.VITE_KAKAO_LOGIN_REDIRECT_URL} \
+                            --build-arg VITE_BACKEND_API_BASE_URL=${env.VITE_BACKEND_API_BASE_URL} \
                             --load .
                     """
                 }
